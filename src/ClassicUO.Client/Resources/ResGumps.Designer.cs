@@ -10,8 +10,8 @@
 
 namespace ClassicUO.Resources {
     using System;
-    
-    
+
+
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -23,15 +23,15 @@ namespace ClassicUO.Resources {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class ResGumps {
-        
+
         private static global::System.Resources.ResourceManager resourceMan;
-        
+
         private static global::System.Globalization.CultureInfo resourceCulture;
-        
+
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal ResGumps() {
         }
-        
+
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
@@ -45,7 +45,7 @@ namespace ClassicUO.Resources {
                 return resourceMan;
             }
         }
-        
+
         /// <summary>
         ///   Overrides the current thread's CurrentUICulture property for all
         ///   resource lookups using this strongly typed resource class.
@@ -59,7 +59,7 @@ namespace ClassicUO.Resources {
                 resourceCulture = value;
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Abilities.
         /// </summary>
@@ -68,7 +68,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Abilities", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Accept.
         /// </summary>
@@ -77,7 +77,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Accept", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Account Name.
         /// </summary>
@@ -86,7 +86,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Account", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Activated.
         /// </summary>
@@ -95,7 +95,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Activated", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Active chat when pressing ENTER.
         /// </summary>
@@ -104,7 +104,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ActiveChatWhenPressingEnter", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Add.
         /// </summary>
@@ -113,7 +113,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Add", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to + Add item.
         /// </summary>
@@ -122,7 +122,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("AddItem", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Add Marker.
         /// </summary>
@@ -131,7 +131,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("AddMarker", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Add Marker on Player.
         /// </summary>
@@ -140,7 +140,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("AddMarkerOnPlayer", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Add New Member.
         /// </summary>
@@ -149,7 +149,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("AddNewMember", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Character {0} already exist in a list..
         /// </summary>
@@ -158,7 +158,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("AddToIgnoreListExist", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to This is not a player..
         /// </summary>
@@ -167,7 +167,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("AddToIgnoreListNotMobile", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Added {0} to ignore list..
         /// </summary>
@@ -176,7 +176,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("AddToIgnoreListSuccess", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to All.
         /// </summary>
@@ -185,7 +185,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("All", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to [Alliance]: .
         /// </summary>
@@ -194,7 +194,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Alliance", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Alliance Message Color.
         /// </summary>
@@ -203,7 +203,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("AllianceMessageColor", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to [Alliance][{0}]: {1}.
         /// </summary>
@@ -212,7 +212,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("AllianceName0Text1", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Allow Positional Targeting.
         /// </summary>
@@ -221,7 +221,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("AllowPositionalTargeting", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Hold ALT key + right click to close Anchored gumps.
         /// </summary>
@@ -230,7 +230,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("AltCloseGumps", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Alternative lights.
         /// </summary>
@@ -239,7 +239,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("AlternativeLights", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Hold ALT key to move gumps.
         /// </summary>
@@ -248,7 +248,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("AltMoveGumps", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Always run.
         /// </summary>
@@ -257,7 +257,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("AlwaysRun", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Unless hidden.
         /// </summary>
@@ -266,7 +266,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("AlwaysRunHidden", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Always use fullsize game window.
         /// </summary>
@@ -275,7 +275,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("AlwaysUseFullsizeGameWindow", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Animated water effect.
         /// </summary>
@@ -284,7 +284,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("AnimatedWaterEffect", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Anisotropic Clamp.
         /// </summary>
@@ -293,7 +293,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("AnisotropicClamp", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Armor.
         /// </summary>
@@ -302,7 +302,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Armor", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to ASCII.
         /// </summary>
@@ -311,7 +311,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ASCII", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Aura on mouse target.
         /// </summary>
@@ -320,7 +320,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("AuraOnMouseTarget", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Always.
         /// </summary>
@@ -329,7 +329,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("AuraType_Always", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Ctrl+Shift.
         /// </summary>
@@ -338,7 +338,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("AuraType_CtrlShift", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to None.
         /// </summary>
@@ -347,7 +347,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("AuraType_None", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Warmode.
         /// </summary>
@@ -356,7 +356,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("AuraType_Warmode", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Aura under feet.
         /// </summary>
@@ -365,7 +365,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("AuraUnderFeet", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Author:.
         /// </summary>
@@ -374,7 +374,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Author", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Autologin.
         /// </summary>
@@ -383,7 +383,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Autologin", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Auto Open Corpses.
         /// </summary>
@@ -392,7 +392,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("AutoOpenCorpses", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Auto Open Doors.
         /// </summary>
@@ -401,7 +401,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("AutoOpenDoors", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Select Character Backpack Style.
         /// </summary>
@@ -410,7 +410,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("BackpackStyle", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Default.
         /// </summary>
@@ -419,7 +419,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("BackpackStyle_Default", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to GhoulSkin.
         /// </summary>
@@ -428,7 +428,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("BackpackStyle_GhoulSkin", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to PolarBear.
         /// </summary>
@@ -437,7 +437,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("BackpackStyle_PolarBear", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Suede.
         /// </summary>
@@ -446,7 +446,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("BackpackStyle_Suede", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Backup.
         /// </summary>
@@ -455,7 +455,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Backup", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Base.
         /// </summary>
@@ -464,7 +464,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Base", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Benefic Spell Hue.
         /// </summary>
@@ -473,7 +473,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("BeneficSpellHue", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Black &amp; White mode for dead player.
         /// </summary>
@@ -482,7 +482,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("BlackWhiteModeForDeadPlayer", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Book page {0} single line too LONG, total length -&gt; {1} vs MAX 79 bytes allowed, some content might get lost.
         /// </summary>
@@ -491,7 +491,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("BookPage0LineTooLong1", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Book page {0} split into too many lines: {1} Additional lines will be lost.
         /// </summary>
@@ -500,7 +500,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("BookPage0TooManyLines1Lost", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Borderless window.
         /// </summary>
@@ -509,7 +509,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("BorderlessWindow", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to - Brighlight:.
         /// </summary>
@@ -518,7 +518,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Brighlight", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Buffs.
         /// </summary>
@@ -527,7 +527,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Buffs", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to by.
         /// </summary>
@@ -536,7 +536,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("By", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Can Be Attacked Color.
         /// </summary>
@@ -545,7 +545,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("CanAttackColor", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Cancel.
         /// </summary>
@@ -554,7 +554,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Cancel", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Cap.
         /// </summary>
@@ -563,7 +563,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Cap", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Cell size:.
         /// </summary>
@@ -572,7 +572,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("CellSize", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Changing language needs restart to take effect.
         /// </summary>
@@ -581,7 +581,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ChangingLanguageNeedsRestartToTakeEffect", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Channels.
         /// </summary>
@@ -590,7 +590,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Channels", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Chat.
         /// </summary>
@@ -599,7 +599,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Chat", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Chat button pushed! Not implemented yet!.
         /// </summary>
@@ -608,7 +608,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ChatButtonPushedNotImplementedYet", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Chat Message Color.
         /// </summary>
@@ -617,7 +617,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ChatMessageColor", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You are about to choose your name for the Ultima Online chat system. This name will be PERMANENT and unique on this shard. It will apply to all characters using this account. Do not use your Ultima Online account name for this name as the name you choose will be public. Enter your chat name here:.
         /// </summary>
@@ -626,7 +626,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ChooseName", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Transparency type:.
         /// </summary>
@@ -635,7 +635,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("CircleTransType", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Full.
         /// </summary>
@@ -644,7 +644,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("CircleTransType_Full", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Gradient.
         /// </summary>
@@ -653,7 +653,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("CircleTransType_Gradient", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Clear.
         /// </summary>
@@ -662,7 +662,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Clear", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Clear all changes, returning your design in progress to a blank foundation..
         /// </summary>
@@ -671,7 +671,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ClearAllChanges", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Close all Anchored gumps when right click on a group.
         /// </summary>
@@ -680,7 +680,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ClickCloseAllGumps", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Close healthbar gump when:.
         /// </summary>
@@ -689,7 +689,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("CloseHPGumpWhen", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Cold Resistance.
         /// </summary>
@@ -698,7 +698,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ColdResistance", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Color.
         /// </summary>
@@ -707,7 +707,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Color", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Colored bars.
         /// </summary>
@@ -716,7 +716,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ColoredBars", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Combat music.
         /// </summary>
@@ -725,7 +725,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("CombatMusic", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Combat-Spells.
         /// </summary>
@@ -734,7 +734,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("CombatSpells", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to [Command]: .
         /// </summary>
@@ -743,7 +743,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Command", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Commit.
         /// </summary>
@@ -752,7 +752,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Commit", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Containers.
         /// </summary>
@@ -761,7 +761,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Containers", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to - Container scale:.
         /// </summary>
@@ -770,7 +770,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ContainerScale", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Last dragged position.
         /// </summary>
@@ -779,7 +779,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ContLoc_LastDraggedPosition", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Near container position.
         /// </summary>
@@ -788,7 +788,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ContLoc_NearContainerPosition", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Remember every container.
         /// </summary>
@@ -797,7 +797,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ContLoc_RememberEveryContainer", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Top right.
         /// </summary>
@@ -806,7 +806,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ContLoc_TopRight", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to [GridLoot]: Corpse is empty!.
         /// </summary>
@@ -815,7 +815,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("CorpseIsEmpty", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Corpse Open Options:.
         /// </summary>
@@ -824,7 +824,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("CorpseOpenOptions", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Corpse Open Range:.
         /// </summary>
@@ -833,7 +833,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("CorpseOpenRange", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Both.
         /// </summary>
@@ -842,7 +842,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("CorpseOpt_Both", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to None.
         /// </summary>
@@ -851,7 +851,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("CorpseOpt_None", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Not Hiding.
         /// </summary>
@@ -860,7 +860,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("CorpseOpt_NotHid", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Not Targeting.
         /// </summary>
@@ -869,7 +869,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("CorpseOpt_NotTar", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Cost.
         /// </summary>
@@ -878,7 +878,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Cost", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Columns:.
         /// </summary>
@@ -887,7 +887,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Counter_Columns", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Rows:.
         /// </summary>
@@ -896,7 +896,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Counter_Rows", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Counter Layout:.
         /// </summary>
@@ -905,7 +905,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("CounterLayout", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Counters.
         /// </summary>
@@ -914,7 +914,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Counters", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Create.
         /// </summary>
@@ -923,7 +923,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Create", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Create a channel:.
         /// </summary>
@@ -932,7 +932,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("CreateAChannel", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to + Create macro button.
         /// </summary>
@@ -941,7 +941,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("CreateMacroButton", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Create.
         /// </summary>
@@ -950,7 +950,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("CreateMarker", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Criminal Color.
         /// </summary>
@@ -959,7 +959,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("CriminalColor", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to ClassicUO Version {0}.
         /// </summary>
@@ -968,7 +968,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("CUOVersion0", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Custom color aura for party members.
         /// </summary>
@@ -977,7 +977,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("CustomColorAuraForPartyMembers", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Damage.
         /// </summary>
@@ -986,7 +986,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Damage", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Dark mode.
         /// </summary>
@@ -995,7 +995,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("DarkMode", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Dark nights.
         /// </summary>
@@ -1004,7 +1004,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("DarkNights", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Data.
         /// </summary>
@@ -1013,7 +1013,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Data", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Data highlight type:.
         /// </summary>
@@ -1022,7 +1022,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("DataHighlightType", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Date:.
         /// </summary>
@@ -1031,7 +1031,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Date", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Date/Time.
         /// </summary>
@@ -1040,7 +1040,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("DateTime", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Debug.
         /// </summary>
@@ -1049,7 +1049,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Debug", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Decline.
         /// </summary>
@@ -1058,7 +1058,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Decline", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Default zoom:.
         /// </summary>
@@ -1067,7 +1067,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("DefaultZoom", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Defense Chance Increase.
         /// </summary>
@@ -1076,7 +1076,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("DefenseChanceIncrease", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Delay before display:.
         /// </summary>
@@ -1085,7 +1085,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("DelayBeforeDisplay", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Delete.
         /// </summary>
@@ -1094,7 +1094,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Delete", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Delete macro.
         /// </summary>
@@ -1103,7 +1103,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("DeleteMacro", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Dex.
         /// </summary>
@@ -1112,7 +1112,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Dex", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Dexterity.
         /// </summary>
@@ -1121,7 +1121,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Dexterity", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Disable arrows &amp; numlock arrows (player moving).
         /// </summary>
@@ -1130,7 +1130,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("DisableArrowsPlayerMovement", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Disable Right+Left Click Automove.
         /// </summary>
@@ -1139,7 +1139,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("DisableClickAutomove", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Disable default UO hotkeys.
         /// </summary>
@@ -1148,7 +1148,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("DisableDefaultUOHotkeys", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Disable the Menu Bar.
         /// </summary>
@@ -1157,7 +1157,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("DisableMenu", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Disable Ctrl + Q/W (messageHistory).
         /// </summary>
@@ -1166,7 +1166,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("DisableMessageHistory", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Disable TAB (toggle warmode).
         /// </summary>
@@ -1175,7 +1175,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("DisableTab", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Disband the party.
         /// </summary>
@@ -1184,7 +1184,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("DisbandTheParty", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Doors.
         /// </summary>
@@ -1193,7 +1193,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Doors", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Double click to loot items inside containers.
         /// </summary>
@@ -1202,7 +1202,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("DoubleClickLootContainers", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Select hostiles only.
         /// </summary>
@@ -1211,7 +1211,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("DragHostileOnly", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Select humanoids only.
         /// </summary>
@@ -1220,7 +1220,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("DragHumanoidsOnly", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Drag-select modifier key.
         /// </summary>
@@ -1229,7 +1229,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("DragKey", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Anchored Healthbar.
         /// </summary>
@@ -1238,7 +1238,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("DragSelectAnchoredHB", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Starting X position of health bars.
         /// </summary>
@@ -1247,7 +1247,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("DragSelectStartingPosX", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Starting Y position of health bars.
         /// </summary>
@@ -1256,7 +1256,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("DragSelectStartingPosY", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Dump.
         /// </summary>
@@ -1265,7 +1265,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Dump", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Edit.
         /// </summary>
@@ -1274,7 +1274,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Edit", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Edit Marker.
         /// </summary>
@@ -1283,7 +1283,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("EditMarker", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to [Emote]: .
         /// </summary>
@@ -1292,7 +1292,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Emote", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Emote Color.
         /// </summary>
@@ -1301,7 +1301,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("EmoteColor", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Enable abbreviated amount values
         ///when amount is or exceeds.
@@ -1311,7 +1311,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("EnableAbbreviatedAmountCountrs", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Enable circle of transparency.
         /// </summary>
@@ -1320,7 +1320,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("EnableCircleTrans", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Enable Counters.
         /// </summary>
@@ -1329,7 +1329,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("EnableCounters", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Enable Death Screen.
         /// </summary>
@@ -1338,7 +1338,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("EnableDeathScreen", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Enable drag-select to open health bars.
         /// </summary>
@@ -1347,7 +1347,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("EnableDragHPBars", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Enable Fast Spells Assign (Ctrl + Alt).
         /// </summary>
@@ -1356,7 +1356,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("EnableFastSpellsAssign", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Enable mousewheel for in game zoom scaling (Ctrl + Scroll).
         /// </summary>
@@ -1365,7 +1365,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("EnableMouseWheelForZoom", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Enable Overhead Spell Format.
         /// </summary>
@@ -1374,7 +1374,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("EnableOverheadSpellFormat", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Enable Overhead Spell Hue.
         /// </summary>
@@ -1383,7 +1383,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("EnableOverheadSpellHue", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Enable pathfinding.
         /// </summary>
@@ -1392,7 +1392,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("EnablePathfinding", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Enemy Color.
         /// </summary>
@@ -1401,7 +1401,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("EnemyColor", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Energy Resistance.
         /// </summary>
@@ -1410,7 +1410,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("EnergyResistance", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Enter Location.
         /// </summary>
@@ -1419,7 +1419,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("EnterLocation", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Marker Name.
         /// </summary>
@@ -1428,7 +1428,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("EnterMarkerName", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Erase.
         /// </summary>
@@ -1437,7 +1437,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Erase", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Experimental.
         /// </summary>
@@ -1446,7 +1446,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Experimental", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Eyedropper Tool.
         /// </summary>
@@ -1455,7 +1455,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("EyedropperTool", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Faster Casting.
         /// </summary>
@@ -1464,7 +1464,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("FasterCasting", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Faster Cast Recovery.
         /// </summary>
@@ -1473,7 +1473,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("FasterCastRecovery", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to F.
         /// </summary>
@@ -1482,7 +1482,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Female", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Filter type [TEST]:.
         /// </summary>
@@ -1491,7 +1491,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("FilterType", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to {0} [{1}].
         /// </summary>
@@ -1500,7 +1500,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("FilterTypeFormatON", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Fire Resistance.
         /// </summary>
@@ -1509,7 +1509,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("FireResistance", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Flip map.
         /// </summary>
@@ -1518,7 +1518,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("FlipMap", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Floors.
         /// </summary>
@@ -1527,7 +1527,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Floors", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Followers.
         /// </summary>
@@ -1536,7 +1536,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Followers", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Fonts.
         /// </summary>
@@ -1545,7 +1545,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Fonts", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Font Style.
         /// </summary>
@@ -1554,7 +1554,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("FontStyle", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Force Unicode in journal.
         /// </summary>
@@ -1563,7 +1563,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ForceUnicodeInJournal", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to - FPS:.
         /// </summary>
@@ -1572,7 +1572,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("FPS", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Reduce FPS when game is inactive.
         /// </summary>
@@ -1581,7 +1581,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("FPSInactive", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Free view.
         /// </summary>
@@ -1590,7 +1590,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("FreeView", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Friend Color.
         /// </summary>
@@ -1599,7 +1599,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("FriendColor", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to GameEffect.
         /// </summary>
@@ -1608,7 +1608,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("GameEffect", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Game Play Window Position: .
         /// </summary>
@@ -1617,7 +1617,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("GamePlayWindowPosition", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Game Play Window Size: .
         /// </summary>
@@ -1626,7 +1626,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("GamePlayWindowSize", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to General.
         /// </summary>
@@ -1635,7 +1635,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("General", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Global Chat.
         /// </summary>
@@ -1644,7 +1644,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("GlobalChat", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to GlobalChat not implemented yet..
         /// </summary>
@@ -1653,7 +1653,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("GlobalChatNotImplementedYet", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Gold.
         /// </summary>
@@ -1662,7 +1662,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Gold", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Go to location.
         /// </summary>
@@ -1671,7 +1671,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("GotoLocation", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Go To Story {0}.
         /// </summary>
@@ -1680,7 +1680,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("GoToStory0", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Show/Hide 8x8 Grid if Zoomed.
         /// </summary>
@@ -1689,7 +1689,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("GridIfZoomed", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Grid loot.
         /// </summary>
@@ -1698,7 +1698,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("GridLoot", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Both.
         /// </summary>
@@ -1707,7 +1707,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("GridLoot_Both", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Grid loot only.
         /// </summary>
@@ -1716,7 +1716,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("GridLoot_GridOnly", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to None.
         /// </summary>
@@ -1725,7 +1725,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("GridLoot_None", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to [Guild]: .
         /// </summary>
@@ -1734,7 +1734,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Guild", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Guild Message Color.
         /// </summary>
@@ -1743,7 +1743,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("GuildMessageColor", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to [Guild][{0}]: {1}.
         /// </summary>
@@ -1752,7 +1752,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("GuildName0Text1", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Harmful Spell Hue.
         /// </summary>
@@ -1761,7 +1761,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("HarmfulSpellHue", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Help.
         /// </summary>
@@ -1770,7 +1770,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Help", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Hide chat gradient.
         /// </summary>
@@ -1779,7 +1779,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("HideChatGradient", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Hide roof tiles.
         /// </summary>
@@ -1788,7 +1788,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("HideRoofTiles", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Hide &quot;Screenshot stored in&quot; message.
         /// </summary>
@@ -1797,7 +1797,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("HideScreenshotStoredInMessage", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Hide vegetation.
         /// </summary>
@@ -1806,7 +1806,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("HideVegetation", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Highlight by state (poisoned, yellow hits, paralyzed).
         /// </summary>
@@ -1815,7 +1815,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("HighlighState", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Highlight container when mouse is over a container gump.
         /// </summary>
@@ -1824,7 +1824,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("HighlightContainerWhenSelected", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Highlight invulnerable.
         /// </summary>
@@ -1833,7 +1833,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("HighlightInvulnerable", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Highlight game objects.
         /// </summary>
@@ -1842,7 +1842,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("HighlightObjects", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Highlight On Use.
         /// </summary>
@@ -1851,7 +1851,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("HighlightOnUse", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Highlight paralyzed.
         /// </summary>
@@ -1860,7 +1860,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("HighlightParalyzed", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Highlight poisoned.
         /// </summary>
@@ -1869,7 +1869,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("HighlightPoisoned", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Highlight red when amount is below.
         /// </summary>
@@ -1878,7 +1878,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("HighlightRedWhenBelow", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Hit Chance Increase.
         /// </summary>
@@ -1887,7 +1887,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("HitChanceIncrease", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Hit Points.
         /// </summary>
@@ -1896,7 +1896,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("HitPoints", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Both.
         /// </summary>
@@ -1905,7 +1905,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("HP_Both", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Line.
         /// </summary>
@@ -1914,7 +1914,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("HP_Line", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to mode:.
         /// </summary>
@@ -1923,7 +1923,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("HP_Mode", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Percentage.
         /// </summary>
@@ -1932,7 +1932,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("HP_Percentage", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Fields: .
         /// </summary>
@@ -1941,7 +1941,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("HPFields", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Normal fields.
         /// </summary>
@@ -1950,7 +1950,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("HPFields_Normal", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Static fields.
         /// </summary>
@@ -1959,7 +1959,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("HPFields_Static", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Tile fields.
         /// </summary>
@@ -1968,7 +1968,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("HPFields_Tile", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Always.
         /// </summary>
@@ -1977,7 +1977,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("HPShow_Always", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Less than 100 %.
         /// </summary>
@@ -1986,7 +1986,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("HPShow_Less", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Smart.
         /// </summary>
@@ -1995,7 +1995,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("HPShow_Smart", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Mobile is dead.
         /// </summary>
@@ -2004,7 +2004,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("HPType_MobileDead", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Mobile out of range.
         /// </summary>
@@ -2013,7 +2013,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("HPType_MobileOOR", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to None.
         /// </summary>
@@ -2022,7 +2022,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("HPType_None", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Recolor container gump by item hue.
         /// </summary>
@@ -2031,7 +2031,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("HueContainerGumps", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Hide alliance chat.
         /// </summary>
@@ -2040,7 +2040,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("IgnoreAllianceMessages", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Hide guild chat.
         /// </summary>
@@ -2049,7 +2049,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("IgnoreGuildMessages", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Add person to ignore list.
         /// </summary>
@@ -2058,7 +2058,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("IgnoreListAddButton", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Ignore List.
         /// </summary>
@@ -2067,7 +2067,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("IgnoreListManager", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Character name.
         /// </summary>
@@ -2076,7 +2076,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("IgnoreListName", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Impossible to define the client version.
         ///Client version: &apos;{0}&apos;.
@@ -2086,7 +2086,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ImpossibleToDefineTheClientVersion0", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to INDEX.
         /// </summary>
@@ -2095,7 +2095,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Index", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Index outbounds when parsing counter bar items.
         /// </summary>
@@ -2104,7 +2104,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("IndexOutOfbounds", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to &lt; ? &gt;.
         /// </summary>
@@ -2113,7 +2113,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Info", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Info Bar.
         /// </summary>
@@ -2122,7 +2122,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("InfoBar", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Innocent Color.
         /// </summary>
@@ -2131,7 +2131,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("InnocentColor", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Intelligence.
         /// </summary>
@@ -2140,7 +2140,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Intelligence", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Invalid location entered: Enter &quot;X Y&quot; or &quot;0°0&apos;N,0°0&apos;W&quot;.
         /// </summary>
@@ -2149,7 +2149,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("InvalidLocation", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Invalid marker name..
         /// </summary>
@@ -2158,7 +2158,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("InvalidMarkerName", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Inventory.
         /// </summary>
@@ -2167,7 +2167,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Inventory", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Invulnerable Color.
         /// </summary>
@@ -2176,7 +2176,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("InvulColor", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to {0} at {1}gp.
         /// </summary>
@@ -2185,7 +2185,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Item0Price1", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Items only.
         /// </summary>
@@ -2194,7 +2194,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ItemsOnly", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Join.
         /// </summary>
@@ -2203,7 +2203,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Join", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Journal.
         /// </summary>
@@ -2212,7 +2212,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Journal", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Key combination already exists..
         /// </summary>
@@ -2221,7 +2221,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("KeyCombinationAlreadyExists", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Ctrl.
         /// </summary>
@@ -2230,7 +2230,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("KeyMod_Ctrl", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to None.
         /// </summary>
@@ -2239,7 +2239,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("KeyMod_None", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Shift.
         /// </summary>
@@ -2248,7 +2248,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("KeyMod_Shift", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Kick.
         /// </summary>
@@ -2257,7 +2257,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Kick", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Label.
         /// </summary>
@@ -2266,7 +2266,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Label", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Land (0x{0:X4})  flags: {1}.
         /// </summary>
@@ -2275,7 +2275,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Land0Flags1", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Latency:.
         /// </summary>
@@ -2284,7 +2284,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Latency", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Leave.
         /// </summary>
@@ -2293,7 +2293,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Leave", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Leave the party.
         /// </summary>
@@ -2302,7 +2302,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("LeaveTheParty", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Light level.
         /// </summary>
@@ -2311,7 +2311,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("LightLevel", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Light Level Setting Type.
         /// </summary>
@@ -2320,7 +2320,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("LightLevelType", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Absolute.
         /// </summary>
@@ -2329,7 +2329,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("LightLevelTypeAbsolute", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Minimum.
         /// </summary>
@@ -2338,7 +2338,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("LightLevelTypeMinimum", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Linear Clamp.
         /// </summary>
@@ -2347,7 +2347,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("LinearClamp", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Loading WorldMap markers...
         /// </summary>
@@ -2356,7 +2356,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("LoadingWorldMapMarkers", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Localisation.
         /// </summary>
@@ -2365,7 +2365,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Localisation", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Lock game window moving/resizing.
         /// </summary>
@@ -2374,7 +2374,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("LockGameWindowMovingResizing", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Login music.
         /// </summary>
@@ -2383,7 +2383,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("LoginMusic", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Log in to Ultima Online.
         /// </summary>
@@ -2392,7 +2392,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("LoginToUO", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Lower Mana Cost.
         /// </summary>
@@ -2401,7 +2401,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("LowerManaCost", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Lower Reagent Cost.
         /// </summary>
@@ -2410,7 +2410,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("LowerReagentCost", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Lower Roof Placement Level.
         /// </summary>
@@ -2419,7 +2419,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("LowerRoofPlacementLevel", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Luck.
         /// </summary>
@@ -2428,7 +2428,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Luck", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Button Editor.
         /// </summary>
@@ -2437,7 +2437,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("MacroButtonEditor", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Do you want
         ///delete it?.
@@ -2447,7 +2447,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("MacroDeleteConfirmation", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Macro name:.
         /// </summary>
@@ -2456,7 +2456,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("MacroName", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Macros.
         /// </summary>
@@ -2465,7 +2465,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Macros", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to M.
         /// </summary>
@@ -2474,7 +2474,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Male", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Mana cost: {0}
         ///Min. Skill: {1}.
@@ -2484,7 +2484,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ManaCost0MinSkill1", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Map.
         /// </summary>
@@ -2493,7 +2493,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Map", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Map Marker Options.
         /// </summary>
@@ -2502,7 +2502,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("MapMarkerOptions", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to WorldMap zones loaded &apos;{0}&apos; .
         /// </summary>
@@ -2511,7 +2511,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("MapZoneFileLoaded", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Show/Hide &apos;{0}&apos;.
         /// </summary>
@@ -2520,7 +2520,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("MapZoneFileName", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to &lt;none&gt;.
         /// </summary>
@@ -2529,7 +2529,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("MapZoneNone", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Grid and Zone Options.
         /// </summary>
@@ -2538,7 +2538,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("MapZoneOptions", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Reload Map Zones.
         /// </summary>
@@ -2547,7 +2547,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("MapZoneReload", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Mark cave tiles.
         /// </summary>
@@ -2556,7 +2556,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("MarkCaveTiles", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Color.
         /// </summary>
@@ -2565,7 +2565,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("MarkerColor", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to MarkerName.
         /// </summary>
@@ -2574,7 +2574,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("MarkerDefName", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to GoTo.
         /// </summary>
@@ -2583,7 +2583,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("MarkerGoTo", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Icon.
         /// </summary>
@@ -2592,7 +2592,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("MarkerIcon", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Name.
         /// </summary>
@@ -2601,7 +2601,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("MarkerName", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Search:.
         /// </summary>
@@ -2610,7 +2610,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("MarkerSearch", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Markers Manager.
         /// </summary>
@@ -2619,7 +2619,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("MarkersManager", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to X.
         /// </summary>
@@ -2628,7 +2628,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("MarkerX", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Y.
         /// </summary>
@@ -2637,7 +2637,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("MarkerY", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Maximum Stats.
         /// </summary>
@@ -2646,7 +2646,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("MaximumStats", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Max Stats.
         /// </summary>
@@ -2655,7 +2655,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("MaxStats", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Minimize.
         /// </summary>
@@ -2664,7 +2664,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Minimize", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Miscellaneous.
         /// </summary>
@@ -2673,7 +2673,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Miscellaneous", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Mobiles and Corpses only.
         /// </summary>
@@ -2682,7 +2682,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("MobilesAndCorpsesOnly", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Mobiles only.
         /// </summary>
@@ -2691,7 +2691,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("MobilesOnly", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Murderer Color.
         /// </summary>
@@ -2700,7 +2700,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("MurdererColor", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Music.
         /// </summary>
@@ -2709,7 +2709,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Music", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Name:.
         /// </summary>
@@ -2718,7 +2718,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Name", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Names &amp; Healthbars.
         /// </summary>
@@ -2727,7 +2727,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("NamesHealthbars", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to NetStats.
         /// </summary>
@@ -2736,7 +2736,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("NetStats", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Neutral Spell Hue.
         /// </summary>
@@ -2745,7 +2745,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("NeutralSpellHue", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to New Group.
         /// </summary>
@@ -2754,7 +2754,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("NewGroup", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to New macro.
         /// </summary>
@@ -2763,7 +2763,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("NewMacro", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Use new target system.
         /// </summary>
@@ -2772,7 +2772,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("NewTargetSystem", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to &gt;&gt;.
         /// </summary>
@@ -2781,7 +2781,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Next", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Next Page.
         /// </summary>
@@ -2790,7 +2790,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("NextPage", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to No city found. Something wrong with the received cities..
         /// </summary>
@@ -2799,7 +2799,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("NoCityFound", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to No map files.
         /// </summary>
@@ -2808,7 +2808,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("NoMapFiles", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to No Name.
         /// </summary>
@@ -2817,7 +2817,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("NoName", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to No one has invited you to be in a party..
         /// </summary>
@@ -2826,7 +2826,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("NoOneHasInvitedYouToBeInAParty", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Note to self: {0}.
         /// </summary>
@@ -2835,7 +2835,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("NoteToSelf0", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Objects alpha fading.
         /// </summary>
@@ -2844,7 +2844,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ObjAlphaFading", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Object Information.
         /// </summary>
@@ -2853,7 +2853,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ObjectInformation", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to OFF.
         /// </summary>
@@ -2862,7 +2862,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("OFF", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to ON.
         /// </summary>
@@ -2871,7 +2871,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ON", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Open Macro Settings.
         /// </summary>
@@ -2880,7 +2880,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("OpenMacroSettings", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to &lt;out of range&gt;.
         /// </summary>
@@ -2889,7 +2889,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("OutOfRange", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to No color for object out of range.
         /// </summary>
@@ -2898,7 +2898,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("OutOfRangeColor", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Show party messages overhead.
         /// </summary>
@@ -2907,7 +2907,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("OverheadPartyMessages", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Override container gump location.
         /// </summary>
@@ -2916,7 +2916,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("OverrideContainerGumpLocation", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Override game font.
         /// </summary>
@@ -2925,7 +2925,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("OverrideGameFont", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to {0} has invited you to join a party..
         /// </summary>
@@ -2934,7 +2934,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("P0HasInvitedYouToParty", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Packet Loss:.
         /// </summary>
@@ -2943,7 +2943,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("PacketLoss", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Paperdoll.
         /// </summary>
@@ -2952,7 +2952,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Paperdoll", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Paralyzed Color.
         /// </summary>
@@ -2961,7 +2961,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ParalyzedColor", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to [Party]: .
         /// </summary>
@@ -2970,7 +2970,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Party", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Party Aura Color.
         /// </summary>
@@ -2979,7 +2979,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("PartyAuraColor", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Party can loot me.
         /// </summary>
@@ -2988,7 +2988,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("PartyCanLootMe", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Party CANNOT loot me.
         /// </summary>
@@ -2997,7 +2997,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("PartyCannotLootMe", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Party Manifest.
         /// </summary>
@@ -3006,7 +3006,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("PartyManifest", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Party Message Color.
         /// </summary>
@@ -3015,7 +3015,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("PartyMessageColor", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to [Party][{0}]: {1}.
         /// </summary>
@@ -3024,7 +3024,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("PartyName0Text1", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Passive.
         /// </summary>
@@ -3033,7 +3033,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Passive", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Password.
         /// </summary>
@@ -3042,7 +3042,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Password", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Permanently delete character &quot;{0}&quot;?.
         /// </summary>
@@ -3051,7 +3051,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("PermanentlyDelete0", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Physical Resistance.
         /// </summary>
@@ -3060,7 +3060,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("PhysicalResistance", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Play Footsteps.
         /// </summary>
@@ -3069,7 +3069,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("PlayFootsteps", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Poisoned Color.
         /// </summary>
@@ -3078,7 +3078,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("PoisonedColor", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Poison Resistance.
         /// </summary>
@@ -3087,7 +3087,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("PoisonResistance", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to &lt;&lt;.
         /// </summary>
@@ -3096,7 +3096,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Prev", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to PreviousPage.
         /// </summary>
@@ -3105,7 +3105,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("PreviousPage", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Primary Ability Icon.
         /// </summary>
@@ -3114,7 +3114,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("PrimaryAbilityIcon", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Query before attack.
         /// </summary>
@@ -3123,7 +3123,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("QueryAttack", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Query before performing beneficial acts on
         ///Murderers, Criminals, Grays (Monsters/Animals).
@@ -3133,7 +3133,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("QueryBeneficialActs", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Query before beneficial criminal action.
         /// </summary>
@@ -3142,7 +3142,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("QueryBeneficialActs_Tooltip", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Raise Roof Placement Level.
         /// </summary>
@@ -3151,7 +3151,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("RaiseRoofPlacementLevel", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Randomize speech hues.
         /// </summary>
@@ -3160,7 +3160,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("RandomizeSpeechHues", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to RE: .
         /// </summary>
@@ -3169,7 +3169,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("RE", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Reagents:.
         /// </summary>
@@ -3178,7 +3178,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Reagents", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Real.
         /// </summary>
@@ -3187,7 +3187,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Real", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Rebuild containers.txt.
         /// </summary>
@@ -3196,7 +3196,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("RebuildContainers", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Relative drag and drop items in containers.
         /// </summary>
@@ -3205,7 +3205,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("RelativeDragAndDropContainers", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Releasing Ctrl Restores Scale.
         /// </summary>
@@ -3214,7 +3214,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ReleasingCtrlRestoresScale", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Reload markers.
         /// </summary>
@@ -3223,7 +3223,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ReloadMarkers", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Remove.
         /// </summary>
@@ -3232,7 +3232,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Remove", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Reproduce sounds and music when ClassicUO is not focused.
         /// </summary>
@@ -3241,7 +3241,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ReproduceSoundsAndMusic", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Reset groups.
         /// </summary>
@@ -3250,7 +3250,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ResetGroups", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Reset maps cache.
         /// </summary>
@@ -3259,7 +3259,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ResetMapsCache", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Resize game window.
         /// </summary>
@@ -3268,7 +3268,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ResizeGameWindow", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Restore.
         /// </summary>
@@ -3277,7 +3277,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Restore", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Restore your design in progress to a design you have previously backed up..
         /// </summary>
@@ -3286,7 +3286,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("RestoreYourDesign", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Revert.
         /// </summary>
@@ -3295,7 +3295,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Revert", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Revert your design in progress to match your currently visible, finalized design..
         /// </summary>
@@ -3304,7 +3304,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("RevertYourDesign", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Roofs.
         /// </summary>
@@ -3313,7 +3313,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Roofs", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Run mouse in a separate thread.
         /// </summary>
@@ -3322,7 +3322,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("RunMouseInASeparateThread", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Sallos easy grab.
         /// </summary>
@@ -3331,7 +3331,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("SallosEasyGrab", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Save Account.
         /// </summary>
@@ -3340,7 +3340,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("SaveAccount", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Save &amp; Close.
         /// </summary>
@@ -3349,7 +3349,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("SaveClose", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Save existing changes and finalize design..
         /// </summary>
@@ -3358,7 +3358,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("SaveExistingChanges", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Save healthbars on logout.
         /// </summary>
@@ -3367,7 +3367,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("SaveHPBarsOnLogout", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Save Journal to file in game folder.
         /// </summary>
@@ -3376,7 +3376,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("SaveJournalToFileInGameFolder", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Scale items inside containers.
         /// </summary>
@@ -3385,7 +3385,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ScaleItemsInsideContainers", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Scale speech delay.
         /// </summary>
@@ -3394,7 +3394,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ScaleSpeechDelay", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Secondary Ability Icon.
         /// </summary>
@@ -3403,7 +3403,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("SecondaryAbilityIcon", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to - Selected: {0}.
         /// </summary>
@@ -3412,7 +3412,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Selected0", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Select which shard to play on:.
         /// </summary>
@@ -3421,7 +3421,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("SelectWhichShardToPlayOn", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to [* SELF *].
         /// </summary>
@@ -3430,7 +3430,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Self", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Send the party a message.
         /// </summary>
@@ -3439,7 +3439,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("SendThePartyAMessage", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Save current settings as defaults for new users.
         /// </summary>
@@ -3448,7 +3448,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("SetAsNewDefault", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Set loot bag.
         /// </summary>
@@ -3457,7 +3457,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("SetLootBag", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Sets light level to max but still renders lights.
         /// </summary>
@@ -3466,7 +3466,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("SetsLightLevelToMax", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Sex.
         /// </summary>
@@ -3475,7 +3475,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Sex", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Shadows.
         /// </summary>
@@ -3484,7 +3484,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Shadows", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Show tree and rock shadows.
         /// </summary>
@@ -3493,7 +3493,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ShadowStatics", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Hold Shift for Context Menus.
         /// </summary>
@@ -3502,7 +3502,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ShiftContext", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Use SHIFT for pathfinding.
         /// </summary>
@@ -3511,7 +3511,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ShiftPathfinding", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Hold Shift to split stack of items.
         /// </summary>
@@ -3520,7 +3520,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ShiftStack", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Shop Gump Size (multiple of 60):.
         /// </summary>
@@ -3529,7 +3529,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ShopGumpSize", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Show all markers.
         /// </summary>
@@ -3538,7 +3538,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ShowAllMarkers", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Show buff duration.
         /// </summary>
@@ -3547,7 +3547,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ShowBuffDuration", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to  - Show Caps.
         /// </summary>
@@ -3556,7 +3556,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ShowCaps", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Show DPS with damage numbers.
         /// </summary>
@@ -3565,7 +3565,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ShowDPSWithDamage", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Show group healthbar.
         /// </summary>
@@ -3574,7 +3574,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ShowGroupHealthbar", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Show group name.
         /// </summary>
@@ -3583,7 +3583,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ShowGroupName", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Show gump for party invites.
         /// </summary>
@@ -3592,7 +3592,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ShowGumpPartyInv", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Show/Hide &apos;{0}&apos;.
         /// </summary>
@@ -3601,7 +3601,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ShowHide0", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Show houses/boats.
         /// </summary>
@@ -3610,7 +3610,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ShowHousesBoats", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Show houses content.
         /// </summary>
@@ -3619,7 +3619,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ShowHousesContent", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Show HP.
         /// </summary>
@@ -3628,7 +3628,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ShowHP", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Show incoming new corpses.
         /// </summary>
@@ -3637,7 +3637,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ShowIncCorpses", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Show incoming new mobiles.
         /// </summary>
@@ -3646,7 +3646,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ShowIncMobiles", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Show Info Bar.
         /// </summary>
@@ -3655,7 +3655,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ShowInfoBar", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Show marker icons.
         /// </summary>
@@ -3664,7 +3664,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ShowMarkerIcons", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Show marker names.
         /// </summary>
@@ -3673,7 +3673,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ShowMarkerNames", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Show mobiles.
         /// </summary>
@@ -3682,7 +3682,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ShowMobiles", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Show mouse coordinates.
         /// </summary>
@@ -3691,7 +3691,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ShowMouseCoordinates", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Show party members.
         /// </summary>
@@ -3700,7 +3700,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ShowPartyMembers", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to  - Show Real.
         /// </summary>
@@ -3709,7 +3709,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ShowReal", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Show sextant coordinates.
         /// </summary>
@@ -3718,7 +3718,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ShowSextantCoordinates", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Inform when skills change by (in tenths).
         /// </summary>
@@ -3727,7 +3727,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ShowSkillsChangedMessageBy", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Inform when stats change.
         /// </summary>
@@ -3736,7 +3736,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ShowStatsChangedMessage", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Show target range indicator.
         /// </summary>
@@ -3762,7 +3762,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ShowYourCoordinates", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Show your healthbar.
         /// </summary>
@@ -3771,7 +3771,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ShowYourHealthbar", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Show your name.
         /// </summary>
@@ -3780,7 +3780,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ShowYourName", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Skip empty corpses.
         /// </summary>
@@ -3789,7 +3789,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("SkipEmptyCorpses", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Smooth boat movements.
         /// </summary>
@@ -3798,7 +3798,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("SmoothBoat", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Smooth doors.
         /// </summary>
@@ -3807,7 +3807,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("SmoothDoors", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Sort by:.
         /// </summary>
@@ -3816,7 +3816,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("SortBy", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Sound.
         /// </summary>
@@ -3825,7 +3825,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Sound", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Sounds.
         /// </summary>
@@ -3834,7 +3834,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Sounds", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to +{0}hr.
         /// </summary>
@@ -3843,7 +3843,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Span0Hours", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Speech.
         /// </summary>
@@ -3852,7 +3852,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Speech", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Speech Color.
         /// </summary>
@@ -3861,7 +3861,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("SpeechColor", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Speech font:.
         /// </summary>
@@ -3870,7 +3870,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("SpeechFont", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Spell Damage Increase.
         /// </summary>
@@ -3879,7 +3879,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("SpellDamageIncrease", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to {power} [{spell}].
         /// </summary>
@@ -3888,7 +3888,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("SpellFormat_Default", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Spell Overhead format: ({power} for powerword - {spell} for spell name).
         /// </summary>
@@ -3897,7 +3897,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("SpellOverheadFormat", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Stairs.
         /// </summary>
@@ -3906,7 +3906,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Stairs", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Stamina.
         /// </summary>
@@ -3915,7 +3915,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Stamina", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Use standard skills gump.
         /// </summary>
@@ -3924,7 +3924,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("StandardSkillGump", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Static (0x{0:X4})  height: {1}  flags: {2}  Alpha: {3}.
         /// </summary>
@@ -3933,7 +3933,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Static0Height1Flags2Alpha3", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Status Gump and Health Bar are mutually exclusive.
         /// </summary>
@@ -3942,7 +3942,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("StatusGumpBarMutuallyExclusive", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Open Health Bar.
         /// </summary>
@@ -3951,7 +3951,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("StatusGumpOpenBar", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Stay active.
         /// </summary>
@@ -3960,7 +3960,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("StayActive", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Story {0} Visibility.
         /// </summary>
@@ -3969,7 +3969,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Store0Visibility", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Store design in progress in a back up buffer, but do not finalize design..
         /// </summary>
@@ -3978,7 +3978,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("StoreDesignInProgress", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Strength.
         /// </summary>
@@ -3987,7 +3987,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Strength", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Style {0}.
         /// </summary>
@@ -3996,7 +3996,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Style0", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Swing Speed Increase.
         /// </summary>
@@ -4005,7 +4005,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("SwingSpeedIncrease", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Sync.
         /// </summary>
@@ -4014,7 +4014,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Sync", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Synchronize design state with server..
         /// </summary>
@@ -4023,7 +4023,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("SynchronizeDesignStateWithServer", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to System Menu.
         /// </summary>
@@ -4032,7 +4032,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("SystemMenu", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Hold TAB key for combat.
         /// </summary>
@@ -4041,7 +4041,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("TabCombat", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Target the container to Grab items into..
         /// </summary>
@@ -4050,7 +4050,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("TargetContainerToGrabItemsInto", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Tell.
         /// </summary>
@@ -4059,7 +4059,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Tell", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to [Tell] [{0}]: .
         /// </summary>
@@ -4068,7 +4068,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Tell0", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to [Tell] []: .
         /// </summary>
@@ -4077,7 +4077,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("TellEmpty", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Terrain shadows level:.
         /// </summary>
@@ -4086,7 +4086,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("TerrainShadowsLevel", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Text alpha fading.
         /// </summary>
@@ -4095,7 +4095,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("TextAlphaFading", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Text color.
         /// </summary>
@@ -4104,7 +4104,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("TextColor", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to TextOverhead type: {0}  hue: 0x{1:X4}.
         /// </summary>
@@ -4113,7 +4113,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("TextOverheadType0Hue1", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to That&apos;s ClassicUO!.
         /// </summary>
@@ -4122,7 +4122,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ThatSClassicUO", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to There is no one in that party slot..
         /// </summary>
@@ -4131,7 +4131,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ThereIsNoOneInThatPartySlot", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to This key combination
         ///already exists. Combination used by: {0}.
@@ -4141,7 +4141,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ThisKeyCombinationAlreadyExists", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to {0}
         ///Time left: {1:00}:{2:00}:{3:00}.
@@ -4151,7 +4151,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("TimeLeft", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Tithing points
         ///Available: .
@@ -4161,7 +4161,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("TithingPointsAvailable", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Title:.
         /// </summary>
@@ -4170,7 +4170,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Title", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to To _customHouseManager.Category.
         /// </summary>
@@ -4179,7 +4179,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("ToCustomHouseManagerCategory", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Tooltip.
         /// </summary>
@@ -4188,7 +4188,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Tooltip", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Tooltip background opacity:.
         /// </summary>
@@ -4197,7 +4197,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("TooltipBackgroundOpacity", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Tooltip font:.
         /// </summary>
@@ -4206,7 +4206,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("TooltipFont", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Tooltip font hue.
         /// </summary>
@@ -4215,7 +4215,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("TooltipFontHue", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Tooltip font!.
         /// </summary>
@@ -4224,7 +4224,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("TooltipFontSelect", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Tooltip zoom:.
         /// </summary>
@@ -4233,7 +4233,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("TooltipZoom", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to TopBarGump already exists!!.
         /// </summary>
@@ -4242,7 +4242,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("TopBarGumpAlreadyExists", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Keep map on top.
         /// </summary>
@@ -4251,7 +4251,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("TopMost", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Total: .
         /// </summary>
@@ -4260,7 +4260,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Total", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Trees to stumps.
         /// </summary>
@@ -4269,7 +4269,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("TreesStumps", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Single-click UI buttons.
         /// </summary>
@@ -4278,7 +4278,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("UIButtonsSingleClick", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Unicode.
         /// </summary>
@@ -4287,7 +4287,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Unicode", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to [UOAM]: .
         /// </summary>
@@ -4296,7 +4296,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("UOAM", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to UOStore.
         /// </summary>
@@ -4305,7 +4305,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("UOStore", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Upkeep Cost: {0}
         ///Mana cost: {0}
@@ -4316,7 +4316,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Upkeep0Mana1MinSkill2", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Use additional buttons to activate chat: ! ; : / \\ , . [ | -.
         /// </summary>
@@ -4325,7 +4325,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("UseAdditionalButtonsToActivateChat", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Use alternative journal.
         /// </summary>
@@ -4334,7 +4334,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("UseAlternateJournal", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Opaque background.
         /// </summary>
@@ -4343,7 +4343,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("UseBlackBackgr", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Use colored lights.
         /// </summary>
@@ -4352,7 +4352,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("UseColoredLights", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Use custom healthbars gump.
         /// </summary>
@@ -4361,7 +4361,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("UseCustomHPBars", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Use large containers gump.
         /// </summary>
@@ -4370,7 +4370,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("UseLargeContainersGump", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Use object (Double click).
         /// </summary>
@@ -4379,7 +4379,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("UseObject", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Use old status gump.
         /// </summary>
@@ -4388,7 +4388,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("UseOldStatusGump", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Use `Shift+Enter` to send message without closing chat.
         /// </summary>
@@ -4397,7 +4397,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("UseShiftEnterToSendMessage", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Use tooltip.
         /// </summary>
@@ -4406,7 +4406,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("UseTooltip", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Use xBR effect [BETA].
         /// </summary>
@@ -4415,7 +4415,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("UseXBREffectBETA", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Video.
         /// </summary>
@@ -4424,7 +4424,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Video", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Walls.
         /// </summary>
@@ -4433,7 +4433,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Walls", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Weapon Damage Increase.
         /// </summary>
@@ -4442,7 +4442,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("WeaponDamageIncrease", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to [Whisper]: .
         /// </summary>
@@ -4451,7 +4451,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Whisper", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Whisper Color.
         /// </summary>
@@ -4460,7 +4460,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("WhisperColor", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Window Toggle.
         /// </summary>
@@ -4469,7 +4469,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("WindowToggle", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to World Map.
         /// </summary>
@@ -4478,7 +4478,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("WorldMap", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Map {0}.
         /// </summary>
@@ -4487,7 +4487,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("WorldMapChangeMap0", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to WorldMap loaded!.
         /// </summary>
@@ -4496,7 +4496,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("WorldMapLoaded", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to WorldMap loading....
         /// </summary>
@@ -4505,7 +4505,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("WorldMapLoading", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to WorldMap markers loaded ({0}).
         /// </summary>
@@ -4514,7 +4514,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("WorldMapMarkersLoaded0", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to [Yell]: .
         /// </summary>
@@ -4523,7 +4523,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("Yell", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Yell Color.
         /// </summary>
@@ -4532,7 +4532,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("YellColor", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You are not in a party..
         /// </summary>
@@ -4541,7 +4541,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("YouAreNotInAParty", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You are not party leader..
         /// </summary>
@@ -4550,7 +4550,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("YouAreNotPartyLeader", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You must have three unique skills chosen!.
         /// </summary>
@@ -4559,7 +4559,7 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("YouMustHaveThreeUniqueSkillsChosen", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Your current channel:.
         /// </summary>
@@ -4568,5 +4568,12 @@ namespace ClassicUO.Resources {
                 return ResourceManager.GetString("YourCurrentChannel", resourceCulture);
             }
         }
+
+        public static string Copy {
+            get {
+                return ResourceManager.GetString("Copy", resourceCulture);
+            }
+        }
+
     }
 }

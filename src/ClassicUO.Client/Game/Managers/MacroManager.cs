@@ -2857,6 +2857,43 @@ namespace ClassicUO.Game.Managers
         public sbyte SubMenuType { get; set; }
 
         public virtual bool HasString() => false;
+
+        /// <summary>
+        /// Deep-clones the current instance
+        /// </summary>
+        /// <returns>A deep clone of the current instance</returns>
+        public MacroObject Clone()
+        {
+            // Find the list's head
+            MacroObject head = this;
+            while (head.Previous is MacroObject p)
+                head = p;
+
+            var map = new Dictionary<MacroObject, MacroObject>();
+            MacroObject current = head;
+            MacroObject prevCopy = null;
+
+            // Then, walk it
+            while (current != null)
+            {
+                var currentCopy = new MacroObject(current.Code, current.SubCode) { SubMenuType = current.SubMenuType };
+                map[current] = currentCopy;
+
+                // Prev copy is the cloned 'Previous' node - we need to link it back this 'this' copy and vice versa
+                if (prevCopy != null)
+                {
+                    prevCopy.Next = currentCopy;
+                    currentCopy.Previous = prevCopy;
+                }
+
+                // Now 'this' becomes the 'Previous' so the next iteration can reference it
+                prevCopy = currentCopy;
+                current = current.Next as MacroObject;
+            }
+
+            // Return the clone corresponding to the original 'this'
+            return map[this];
+        }
     }
 
     public class MacroObjectString : MacroObject

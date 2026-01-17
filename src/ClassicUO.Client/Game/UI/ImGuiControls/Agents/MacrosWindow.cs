@@ -2,14 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Text;
 using ImGuiNET;
 using ClassicUO.Configuration;
 using ClassicUO.Game.Managers;
 using ClassicUO.Input;
-using ClassicUO.Game;
-using ClassicUO.Game.Data;
+using ClassicUO.Resources;
 using ClassicUO.Utility;
+using ClassicUO.Utility.Logging;
 using SDL3;
 
 namespace ClassicUO.Game.UI.ImGuiControls
@@ -96,21 +95,7 @@ namespace ClassicUO.Game.UI.ImGuiControls
             // Add button
             if (ImGui.Button("Add"))
             {
-                string baseName = "New Macro";
-                string macroName = baseName;
-                int counter = 1;
-
-                // Auto-increment if duplicate
-                while (World.Instance.Macros.GetAllMacros().Any(m => m.Name == macroName))
-                {
-                    macroName = $"{baseName} {counter++}";
-                }
-
-                var newMacro = new Macro(macroName);
-                newMacro.Items = new MacroObject(MacroType.None, MacroSubType.MSC_NONE);
-                World.Instance.Macros.PushToBack(newMacro);
-                _selectedMacro = newMacro;
-                MarkDirty();
+                DrawAddMacroContent();
             }
 
             ImGui.SameLine();
@@ -136,6 +121,11 @@ namespace ClassicUO.Game.UI.ImGuiControls
                     MarkDirty();
                 }
             }
+
+            ImGui.SameLine();
+
+            // Copy button
+            DrawCopyMacroButtonAndContent();
 
             ImGui.SameLine();
 
@@ -170,6 +160,95 @@ namespace ClassicUO.Game.UI.ImGuiControls
             ImGui.SameLine();
             ImGui.SetNextItemWidth(150);
             ImGui.InputTextWithHint("##Filter", "Filter...", ref _filterText, 256);
+        }
+
+        /// <summary>
+        /// Draws the "Copy" macro button alongside its contents
+        /// </summary>
+        private void DrawCopyMacroButtonAndContent()
+        {
+            // Capture value to at-least partially mitigate possible future TOCTOU
+            Macro currentMacro = _selectedMacro;
+            if (currentMacro == null)
+            {
+                ImGui.BeginDisabled();
+            }
+
+            if (ImGui.Button(ResGumps.Copy))
+            {
+                DrawCopyMacroContent(currentMacro);
+            }
+
+            if (currentMacro == null)
+            {
+                ImGui.EndDisabled();
+            }
+
+            MarkDirty();
+        }
+
+        /// <summary>
+        /// Draws the content for the "Copy" macro button
+        /// </summary>
+        /// <param name="currentMacro">The macro being copied</param>
+        private void DrawCopyMacroContent(Macro currentMacro)
+        {
+            try
+            {
+                string macroName = GetUniqueMacroName(currentMacro.Name);
+                if (currentMacro.Items is not MacroObject asMacro)
+                {
+                    Log.Error($"\"Items\" field for macro \"{currentMacro.Name}\" is not a MacroObject");
+                    return;
+                }
+
+                var newMacro = new Macro(macroName) { Items = asMacro.Clone() };
+
+                World.Instance.Macros.PushToBack(newMacro);
+                _selectedMacro = newMacro;
+            }
+            catch (Exception e)
+            {
+                Log.Error($"Failed to copy macro \"{currentMacro.Name}\" - {e.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Draws the content for the "Add" macro button
+        /// </summary>
+        private void DrawAddMacroContent()
+        {
+            string macroName = GetUniqueMacroName(ResGumps.NewMacro);
+            var newMacro = new Macro(macroName)
+            {
+                Items = new MacroObject(MacroType.None, MacroSubType.MSC_NONE)
+            };
+
+            World.Instance.Macros.PushToBack(newMacro);
+            _selectedMacro = newMacro;
+            MarkDirty();
+        }
+
+        /// <summary>
+        /// Returns a unique macro name based on the given input
+        /// <br/>
+        /// The given <paramref name="baseName"/> is used as the macro name and a counter
+        /// is appended to it until a 'free' name is found
+        /// </summary>
+        /// <param name="baseName">The macro's base name</param>
+        /// <returns>A name, based on the given <paramref name="baseName"/>, not currently used by any macro</returns>
+        private static string GetUniqueMacroName(string baseName)
+        {
+            string macroName = baseName;
+            int counter = 1;
+
+            // Auto-increment if duplicate
+            while (World.Instance.Macros.GetAllMacros().Any(m => m.Name == macroName))
+            {
+                macroName = $"{baseName} {counter++}";
+            }
+
+            return macroName;
         }
 
         private void DrawMacroList()
