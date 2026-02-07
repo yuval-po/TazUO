@@ -46,7 +46,7 @@ namespace ClassicUO
         public IntPtr ReflectionCmdFn;
     }
 
-    internal unsafe sealed class UnmanagedAssistantHost : IPluginHost
+    public unsafe sealed class UnmanagedAssistantHost : IPluginHost
     {
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         delegate void dOnPluginBindCuoFunctions(IntPtr exportedFuncs);
@@ -318,7 +318,7 @@ namespace ClassicUO
         public void UpdatePlayerPosition(int x, int y, int z) => _updatePlayerPos?.Invoke(x, y, z);
     }
 
-    interface IPluginHost
+    public interface IPluginHost
     {
         public Dictionary<IntPtr, GraphicsResource> GfxResources { get; }
 

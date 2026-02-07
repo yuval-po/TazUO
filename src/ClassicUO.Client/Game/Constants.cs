@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 
 namespace ClassicUO.Game
 {
-    internal static class Constants
+    public static class Constants
     {
         public const int MIN_FPS = 12;
         public const int MAX_FPS = 1000;

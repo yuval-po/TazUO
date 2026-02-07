@@ -11,7 +11,7 @@ namespace ClassicUO.Configuration
 {
     [JsonSourceGenerationOptions(WriteIndented = true, GenerationMode = JsonSourceGenerationMode.Metadata)]
     [JsonSerializable(typeof(Settings), GenerationMode = JsonSourceGenerationMode.Metadata)]
-    sealed partial class SettingsJsonContext : JsonSerializerContext
+    public sealed partial class SettingsJsonContext : JsonSerializerContext
     {
         // horrible fix: https://github.com/ClassicUO/ClassicUO/issues/1663
         public static SettingsJsonContext RealDefault { get; } = new SettingsJsonContext(

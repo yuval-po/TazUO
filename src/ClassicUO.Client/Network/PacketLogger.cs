@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace ClassicUO.Network
 {
-    sealed class PacketLogger
+    public sealed class PacketLogger
     {
         public static PacketLogger Default { get; set; } = new PacketLogger();
         public List<byte> LogPacketID = new();

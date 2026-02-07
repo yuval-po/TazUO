@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework;
 
 namespace ClassicUO.Configuration
 {
-    internal static class ProfileManager
+    public static class ProfileManager
     {
         static ProfileManager()
         {

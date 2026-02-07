@@ -35,7 +35,7 @@ using Mouse = ClassicUO.Input.Mouse;
 
 namespace ClassicUO
 {
-    internal unsafe class GameController : Microsoft.Xna.Framework.Game
+    public unsafe class GameController : Microsoft.Xna.Framework.Game
     {
         private SDL_EventFilter _filter;
 

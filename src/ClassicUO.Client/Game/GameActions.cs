@@ -20,7 +20,7 @@ using static ClassicUO.Network.AsyncNetClient;
 
 namespace ClassicUO.Game;
 
-internal static class GameActions
+public static class GameActions
 {
     public static int LastSpellIndex { get; set; } = 1;
     public static int LastSkillIndex { get; set; } = 1;

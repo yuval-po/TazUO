@@ -16,7 +16,7 @@ using System.IO;
 
 namespace ClassicUO
 {
-    sealed class UltimaOnline
+    public sealed class UltimaOnline
     {
         public Renderer.Animations.Animations Animations { get; private set; }
         public Renderer.Arts.Art Arts { get; private set; }
@@ -197,7 +197,7 @@ namespace ClassicUO
     }
 
 
-    internal static class Client
+    public static class Client
     {
         public static GameController Game { get; private set; }
         public static SQLSettingsManager Settings { get; private set; }
