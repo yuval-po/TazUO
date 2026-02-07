@@ -19,6 +19,7 @@ using ClassicUO.Game.UI.ImGuiControls.Legion;
 using ClassicUO.LegionScripting.PyClasses;
 using ClassicUO.Utility;
 using Microsoft.Scripting;
+using Microsoft.CodeAnalysis.Scripting;
 
 namespace ClassicUO.LegionScripting
 {
@@ -212,7 +213,7 @@ namespace ClassicUO.LegionScripting
                 if (fname == "API.py" || fname.StartsWith("_"))
                     continue;
 
-                if (file.EndsWith(".lscript") || file.EndsWith(".py"))
+                if (file.EndsWith(".lscript") || file.EndsWith(".py") || file.EndsWith(".cs"))
                 {
                     if (loadedScripts.Contains(file))
                         continue;
@@ -383,7 +384,12 @@ namespace ClassicUO.LegionScripting
             if (script.PythonThread == null || !script.PythonThread.IsAlive)
             {
                 script.ReadFromFile();
-                script.PythonThread = new Thread(() => ExecutePythonScript(script));
+
+                // Route to correct executor based on script type
+                if (script.Type == ScriptFile.ScriptType.CSharp)
+                    script.PythonThread = new Thread(() => ExecuteCSharpScript(script));
+                else
+                    script.PythonThread = new Thread(() => ExecutePythonScript(script));
 
                 if(!PyThreads.TryAdd(script.PythonThread.ManagedThreadId, script))
                     PyThreads[script.PythonThread.ManagedThreadId] = script;
@@ -410,6 +416,44 @@ namespace ClassicUO.LegionScripting
             catch (Exception e)
             {
                 ShowScriptError(script, e);
+            }
+
+            MainThreadQueue.EnqueueAction(() => { StopScript(script); });
+        }
+
+        private static void ExecuteCSharpScript(ScriptFile script)
+        {
+            try
+            {
+                script.SetupCSharpScript();
+                script.SetupCSharpGlobals();
+
+                // Execute with cancellation support
+                var task = script.CSharpCompiledScript.RunAsync(
+                    script.CSharpGlobals,
+                    cancellationToken: script.ScopedApi.CancellationToken.Token
+                );
+
+                // Block thread until script completes or is cancelled
+                task.Wait(script.ScopedApi.CancellationToken.Token);
+            }
+            catch (CompilationErrorException e)
+            {
+                ShowCSharpCompilationError(script, e);
+            }
+            catch (AggregateException ae) when (ae.InnerException is OperationCanceledException)
+            {
+                // Script was cancelled via stop button
+            }
+            catch (OperationCanceledException)
+            {
+                // Script was cancelled
+            }
+            catch (ThreadInterruptedException) { }
+            catch (ThreadAbortException) { }
+            catch (Exception e)
+            {
+                ShowCSharpRuntimeError(script, e);
             }
 
             MainThreadQueue.EnqueueAction(() => { StopScript(script); });
@@ -502,6 +546,102 @@ namespace ClassicUO.LegionScripting
             }
         }
 
+        private static void ShowCSharpCompilationError(ScriptFile script, CompilationErrorException e)
+        {
+            GameActions.Print(_world, $"Legion Script '{script.FileName}' has compilation errors.", Constants.HUE_ERROR);
+
+            var errorLocations = new List<ScriptErrorLocation>();
+
+            foreach (var diagnostic in e.Diagnostics)
+            {
+                if (diagnostic.Severity == Microsoft.CodeAnalysis.DiagnosticSeverity.Error)
+                {
+                    var lineSpan = diagnostic.Location.GetLineSpan();
+                    int lineNumber = lineSpan.StartLinePosition.Line + 1;
+
+                    string lineContent = "";
+                    if (TryReadFileLines(script.FullPath, out string[] fileLines))
+                        lineContent = GetContents(fileLines, lineNumber);
+
+                    errorLocations.Add(new ScriptErrorLocation(
+                        script.FileName,
+                        script.FullPath,
+                        lineNumber,
+                        lineContent
+                    ));
+
+                    Log.Warn($"{script.FileName}({lineNumber}): {diagnostic.GetMessage()}");
+                }
+            }
+
+            if (errorLocations.Count > 0)
+            {
+                string errorMsg = string.Join("\n", e.Diagnostics
+                    .Where(d => d.Severity == Microsoft.CodeAnalysis.DiagnosticSeverity.Error)
+                    .Select(d => d.GetMessage()));
+
+                ImGuiManager.AddWindow(new ScriptErrorWindow(
+                    new ScriptErrorDetails(errorMsg, errorLocations, script)
+                ));
+            }
+            else
+            {
+                GameActions.Print(_world, e.Message, Constants.HUE_ERROR);
+            }
+        }
+
+        private static void ShowCSharpRuntimeError(ScriptFile script, Exception e)
+        {
+            GameActions.Print(_world, $"Legion Script '{script.FileName}' encountered a runtime error.", Constants.HUE_ERROR);
+
+            // Unwrap AggregateException if present
+            Exception actualException = e;
+            if (e is AggregateException ae && ae.InnerException != null)
+                actualException = ae.InnerException;
+
+            Log.Warn($"C# Script Error: {actualException}");
+
+            var errorLocations = new List<ScriptErrorLocation>();
+            var stackTrace = new System.Diagnostics.StackTrace(actualException, true);
+
+            foreach (var frame in stackTrace.GetFrames() ?? Array.Empty<System.Diagnostics.StackFrame>())
+            {
+                string fileName = frame.GetFileName();
+                if (string.IsNullOrEmpty(fileName))
+                    continue;
+
+                // Only show frames from the script file
+                if (!fileName.Equals(script.FullPath, StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                int lineNumber = frame.GetFileLineNumber();
+                if (lineNumber <= 0)
+                    continue;
+
+                string lineContent = "";
+                if (TryReadFileLines(fileName, out string[] fileLines))
+                    lineContent = GetContents(fileLines, lineNumber);
+
+                errorLocations.Add(new ScriptErrorLocation(
+                    System.IO.Path.GetFileName(fileName),
+                    fileName,
+                    lineNumber,
+                    lineContent
+                ));
+            }
+
+            if (errorLocations.Count > 0)
+            {
+                ImGuiManager.AddWindow(new ScriptErrorWindow(
+                    new ScriptErrorDetails(actualException.Message, errorLocations, script)
+                ));
+            }
+            else
+            {
+                GameActions.Print(_world, actualException.Message, Constants.HUE_ERROR);
+            }
+        }
+
         public static void StopScript(ScriptFile script)
         {
             if (script == null) return;
@@ -525,7 +665,13 @@ namespace ClassicUO.LegionScripting
             {
                 if (script.PythonThread != null)
                     PyThreads.Remove(script.PythonThread.ManagedThreadId);
-                script.PythonScriptStopped();
+
+                // Route to correct cleanup based on script type
+                if (script.Type == ScriptFile.ScriptType.CSharp)
+                    script.CSharpScriptStopped();
+                else
+                    script.PythonScriptStopped();
+
                 script.PythonThread = null;
             }
         }
