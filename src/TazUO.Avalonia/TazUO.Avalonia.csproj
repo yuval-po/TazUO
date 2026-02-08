@@ -24,6 +24,7 @@
         </PackageReference>
         <PackageReference Include="bodong.Avalonia.PropertyGrid" Version="11.3.11.1" />
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1"/>
+        <PackageReference Include="Grpc.AspNetCore" Version="2.76.0" />
     </ItemGroup>
 
     <ItemGroup>
