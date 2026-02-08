@@ -11,7 +11,7 @@ using FontStashSharp.RichText;
 
 namespace ClassicUO.LegionScripting.PyClasses;
 
-public class PyGumps(API api)
+public class PyGumps(LegionAPI api)
 {
     /// <summary>
     /// Get a blank gump.

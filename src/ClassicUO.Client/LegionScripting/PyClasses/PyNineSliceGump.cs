@@ -8,7 +8,7 @@ namespace ClassicUO.LegionScripting.PyClasses;
 public class PyNineSliceGump : PyBaseControl, IPyGump
 {
     private readonly NineSliceGump _nineSliceGump;
-    private readonly API _api;
+    private readonly LegionAPI _api;
     private object _onResizedCallback;
     public NineSliceGump NineSliceGump => _nineSliceGump;
 
@@ -23,7 +23,7 @@ public class PyNineSliceGump : PyBaseControl, IPyGump
     /// <param name="minWidth">Minimum width</param>
     /// <param name="minHeight">Minimum height</param>
     /// <param name="onResized">Optional callback function called when the gump is resized</param>
-    public PyNineSliceGump(API api, int x, int y, int width, int height, bool resizable = true, int minWidth = 50, int minHeight = 50, object onResized = null)
+    public PyNineSliceGump(LegionAPI api, int x, int y, int width, int height, bool resizable = true, int minWidth = 50, int minHeight = 50, object onResized = null)
         : base(CreateNineSliceGump(api, x, y, width, height, resizable, minWidth, minHeight))
     {
         _nineSliceGump = (NineSliceGump)Control;
@@ -37,7 +37,7 @@ public class PyNineSliceGump : PyBaseControl, IPyGump
         }
     }
 
-    private static NineSliceGump CreateNineSliceGump(API api, int x, int y, int width, int height, bool resizable, int minWidth, int minHeight) => new ModernNineSliceGump(api, x, y, width, height, resizable, minWidth, minHeight);
+    private static NineSliceGump CreateNineSliceGump(LegionAPI api, int x, int y, int width, int height, bool resizable, int minWidth, int minHeight) => new ModernNineSliceGump(api, x, y, width, height, resizable, minWidth, minHeight);
 
     private void SetupResizeCallback()
     {
@@ -118,10 +118,10 @@ public class PyNineSliceGump : PyBaseControl, IPyGump
 /// </summary>
 internal class ModernNineSliceGump : NineSliceGump
 {
-    private readonly API _api;
+    private readonly LegionAPI _api;
     private object _resizeCallback;
 
-    public ModernNineSliceGump(API api, int x, int y, int width, int height, bool resizable, int minWidth, int minHeight)
+    public ModernNineSliceGump(LegionAPI api, int x, int y, int width, int height, bool resizable, int minWidth, int minHeight)
         : base(Game.World.Instance, x, y, width, height, ModernUIConstants.ModernUIPanel, ModernUIConstants.ModernUIPanel_BoderSize, resizable, minWidth, minHeight)
     {
         _api = api;

@@ -5,7 +5,7 @@ using ClassicUO.Game.UI.Controls;
 
 namespace ClassicUO.LegionScripting.PyClasses;
 
-public class PyControlDropDown(Combobox combobox, API api) : PyBaseControl(combobox)
+public class PyControlDropDown(Combobox combobox, LegionAPI api) : PyBaseControl(combobox)
 {
     /// <summary>
     /// Get the selected index of the dropdown. The first entry is 0.

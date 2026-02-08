@@ -130,7 +130,7 @@
 
   <ItemGroup>
     <DocSourceFiles Include="$(ProjectDir)/LegionScripting/PyClasses/*.cs" />
-    <DocSourceFiles Include="$(ProjectDir)/LegionScripting/API.cs" />
+    <DocSourceFiles Include="LegionScripting\LegionAPI.cs" />
   </ItemGroup>
 
   <PropertyGroup>

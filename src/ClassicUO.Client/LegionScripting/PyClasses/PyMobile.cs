@@ -1,6 +1,6 @@
 using ClassicUO.Game.GameObjects;
 using ClassicUO.Game.Managers;
-using static ClassicUO.LegionScripting.API;
+using static ClassicUO.LegionScripting.LegionAPI;
 
 namespace ClassicUO.LegionScripting.PyClasses;
 

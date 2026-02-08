@@ -6,5 +6,5 @@ namespace ClassicUO.LegionScripting;
 /// </summary>
 public class ScriptGlobals
 {
-    public API API { get; set; }
+    public LegionAPI API { get; set; }
 }

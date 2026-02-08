@@ -5,9 +5,9 @@ namespace ClassicUO.LegionScripting.PyClasses;
 public partial class PyEvents
 {
     private readonly ScriptEngine _engine;
-    private readonly API _api;
+    private readonly LegionAPI _api;
 
-    internal PyEvents(ScriptEngine engine, API api)
+    internal PyEvents(ScriptEngine engine, LegionAPI api)
     {
         _engine = engine;
         _api = api;

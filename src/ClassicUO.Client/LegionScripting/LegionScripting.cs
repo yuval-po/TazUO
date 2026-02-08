@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -18,8 +19,9 @@ using ClassicUO.Game.UI;
 using ClassicUO.Game.UI.ImGuiControls.Legion;
 using ClassicUO.LegionScripting.PyClasses;
 using ClassicUO.Utility;
-using Microsoft.Scripting;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Scripting;
+using SourceCodeKind = Microsoft.Scripting.SourceCodeKind;
 
 namespace ClassicUO.LegionScripting
 {
@@ -429,7 +431,7 @@ namespace ClassicUO.LegionScripting
                 script.SetupCSharpGlobals();
 
                 // Execute with cancellation support
-                var task = script.CSharpCompiledScript.RunAsync(
+                Task<ScriptState<object>> task = script.CSharpCompiledScript.RunAsync(
                     script.CSharpGlobals,
                     cancellationToken: script.ScopedApi.CancellationToken.Token
                 );
@@ -552,11 +554,11 @@ namespace ClassicUO.LegionScripting
 
             var errorLocations = new List<ScriptErrorLocation>();
 
-            foreach (var diagnostic in e.Diagnostics)
+            foreach (Diagnostic diagnostic in e.Diagnostics)
             {
                 if (diagnostic.Severity == Microsoft.CodeAnalysis.DiagnosticSeverity.Error)
                 {
-                    var lineSpan = diagnostic.Location.GetLineSpan();
+                    FileLinePositionSpan lineSpan = diagnostic.Location.GetLineSpan();
                     int lineNumber = lineSpan.StartLinePosition.Line + 1;
 
                     string lineContent = "";
@@ -604,7 +606,7 @@ namespace ClassicUO.LegionScripting
             var errorLocations = new List<ScriptErrorLocation>();
             var stackTrace = new System.Diagnostics.StackTrace(actualException, true);
 
-            foreach (var frame in stackTrace.GetFrames() ?? Array.Empty<System.Diagnostics.StackFrame>())
+            foreach (StackFrame frame in stackTrace.GetFrames() ?? Array.Empty<System.Diagnostics.StackFrame>())
             {
                 string fileName = frame.GetFileName();
                 if (string.IsNullOrEmpty(fileName))
@@ -691,8 +693,87 @@ namespace ClassicUO.LegionScripting
                         MainThreadQueue.EnqueueAction(() => { GameActions.Print(_world, "Failed to update the API..", 32); });
                         Log.Error(ex.ToString());
                     }
-
+                    CreateCSScriptingProjFiles();
                 }
             );
+
+        /// <summary>
+        /// Solution for providing a ready-to-go project for players scripting with CS
+        /// </summary>
+        public static void CreateCSScriptingProjFiles()
+        {
+            const string scriptContext = """
+                                   global using static ScriptContext;
+
+                                   using ClassicUO.LegionScripting;
+
+                                   /// <summary>
+                                   /// Provides the global API instance for script IntelliSense.
+                                   /// At runtime, the actual API is injected by TazUO's scripting engine.
+                                   /// </summary>
+                                   public static class ScriptContext
+                                   {
+                                       public static LegionAPI API { get; } = null!;
+                                   }
+                                   """;
+            const string csProj = """
+                                  <Project Sdk="Microsoft.NET.Sdk">
+
+                                    <!--
+                                      This project provides IntelliSense for C# scripts.
+                                      Build errors are EXPECTED and can be ignored - scripts run independently in TazUO.
+                                    -->
+
+                                    <PropertyGroup>
+                                      <TargetFramework>net10.0</TargetFramework>
+                                      <ImplicitUsings>enable</ImplicitUsings>
+                                      <Nullable>disable</Nullable>
+                                      <IsPackable>false</IsPackable>
+                                      <OutputType>Library</OutputType>
+                                      <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+                                      <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+                                    </PropertyGroup>
+
+                                    <!-- Reference game assemblies for API IntelliSense -->
+                                    <ItemGroup>
+                                      <Reference Include="TazUO">
+                                        <HintPath>../TazUO.dll</HintPath>
+                                        <Private>false</Private>
+                                      </Reference>
+                                      <Reference Include="FNA">
+                                        <HintPath>../FNA.dll</HintPath>
+                                        <Private>false</Private>
+                                      </Reference>
+                                    </ItemGroup>
+
+                                    <!-- Include all scripts for IntelliSense (build errors are normal) -->
+                                    <ItemGroup>
+                                      <Compile Include="**/*.cs"/>
+                                    </ItemGroup>
+
+                                    <!-- Common imports for all scripts -->
+                                    <ItemGroup>
+                                      <Using Include="System" />
+                                      <Using Include="System.Linq" />
+                                      <Using Include="System.Collections.Generic" />
+                                      <Using Include="System.Threading.Tasks" />
+                                      <Using Include="ClassicUO.LegionScripting" />
+                                      <Using Include="ClassicUO.LegionScripting.PyClasses" />
+                                      <Using Include="ScriptContext" Static="true" />
+                                    </ItemGroup>
+
+                                  </Project>
+                                  """;
+
+            try
+            {
+                File.WriteAllText(Path.Combine(CUOEnviroment.ExecutablePath, "LegionScripts", "_ScriptContext.cs"), scriptContext);
+                File.WriteAllText(Path.Combine(CUOEnviroment.ExecutablePath, "LegionScripts", "LegionScripts.csproj"), csProj);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.ToString());
+            }
+        }
     }
 }

@@ -24,7 +24,7 @@ public class ScriptFile
     public Thread PythonThread;
     public ScriptEngine PythonEngine;
     public ScriptScope PythonScope;
-    public API ScopedApi;
+    public LegionAPI ScopedApi;
     public ScriptType Type;
     public Script<object> CSharpCompiledScript;
     public ScriptGlobals CSharpGlobals;
@@ -134,7 +134,7 @@ public class ScriptFile
     public void SetupPythonScope()
     {
         PythonScope = PythonEngine.CreateScope();
-        var api = new API(PythonEngine);
+        var api = new LegionAPI(PythonEngine);
         ScopedApi = api;
         PythonEngine.GetBuiltinModule().SetVariable("API", api);
     }
@@ -157,12 +157,12 @@ public class ScriptFile
             return;
 
         // Configure script options with assemblies and imports
-        var options = ScriptOptions.Default
+        ScriptOptions options = ScriptOptions.Default
             .WithReferences(
-                typeof(object).Assembly,                              // System
+                typeof(object).Assembly,                             // System
                 typeof(System.Linq.Enumerable).Assembly,             // System.Linq
-                typeof(System.Collections.Generic.List<>).Assembly,  // System.Collections.Generic
-                typeof(API).Assembly,                                 // ClassicUO.Client
+                typeof(List<>).Assembly,                             // System.Collections.Generic
+                typeof(LegionAPI).Assembly,                          // ClassicUO.Client
                 typeof(Microsoft.Xna.Framework.Vector3).Assembly     // Microsoft.Xna.Framework
             )
             .WithImports(
@@ -187,7 +187,7 @@ public class ScriptFile
 
     public void SetupCSharpGlobals()
     {
-        var api = new API(null); // C# scripts pass null engine
+        var api = new LegionAPI(null); // C# scripts pass null engine
         ScopedApi = api;
         CSharpGlobals = new ScriptGlobals { API = api };
     }

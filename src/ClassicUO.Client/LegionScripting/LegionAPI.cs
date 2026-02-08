@@ -12,7 +12,6 @@ using ClassicUO.Game.Data;
 using ClassicUO.Game.GameObjects;
 using ClassicUO.Game.Managers;
 using ClassicUO.Game.Managers.Structs;
-using ClassicUO.Game.Scenes;
 using ClassicUO.Game.UI.Controls;
 using ClassicUO.Game.UI.Gumps;
 using ClassicUO.LegionScripting.PyClasses;
@@ -32,11 +31,11 @@ namespace ClassicUO.LegionScripting
     /// <summary>
     /// Python scripting access point
     /// </summary>
-    public class API : IDisposable
+    public class LegionAPI : IDisposable
     {
         private volatile bool disposed = false;
 
-        public API(ScriptEngine engine)
+        public LegionAPI(ScriptEngine engine)
         {
             this.engine = engine;
             Events = new PyEvents(engine, this);

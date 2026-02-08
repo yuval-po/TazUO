@@ -7,18 +7,18 @@ namespace ClassicUO.UnitTests.Game.LegionScript;
 
 public class ApiTests
 {
-    private API api;
+    private LegionAPI api;
 
     /// <summary>
     /// Unit tests for various LegionScript APIs
     ///
-    /// Currently, in test mode, the <see cref="API"/> class is 'un-reachable' from the outside (uses a new World instance)
+    /// Currently, in test mode, the <see cref="LegionAPI"/> class is 'un-reachable' from the outside (uses a new World instance)
     /// so not everything is testable
     /// </summary>
     public ApiTests()
     {
         Client.UnitTestingActive = true;
-        api = new API(Python.CreateEngine());
+        api = new LegionAPI(Python.CreateEngine());
     }
     
     [Fact]
