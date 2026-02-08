@@ -1,5 +1,5 @@
 namespace ClassicUO.Ipc;
 
-public interface ICoreToUiMessage { }
+public interface ICoreToUiMessage : IIpcConnector {}
 
 public record ShowSettingsMessage : ICoreToUiMessage;

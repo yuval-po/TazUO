@@ -7,14 +7,13 @@ using Avalonia.Controls;
 using Avalonia.Threading;
 using ClassicUO.Ipc;
 using ClassicUO.Utility.Logging;
-using TazUO.Avalonia;
 using TazUO.Avalonia.Views;
 
-namespace TazUO.Host;
+namespace TazUO.Avalonia;
 
 public class AvaloniaUiHost
 {
-    private AppBuilder _appBuilder;
+    private readonly AppBuilder _appBuilder;
 
     private readonly Dictionary<Type, Window> _windows = new();
 
@@ -28,12 +27,6 @@ public class AvaloniaUiHost
     {
         ArgumentNullException.ThrowIfNull(ipc);
         _ipc = ipc;
-    }
-
-    public void Init()
-    {
-        if (_appBuilder != null)
-            return;
 
         _appBuilder = AppBuilder.Configure<TazUi>()
             .UsePlatformDetect()
@@ -41,9 +34,13 @@ public class AvaloniaUiHost
             .LogToTrace();
     }
 
-    public void Start() => _appBuilder.StartWithClassicDesktopLifetime([]);
+    public void Start()
+    {
+        StartIpcListener();
+        _appBuilder.StartWithClassicDesktopLifetime([]);
+    }
 
-    public async Task StartIpcListener()
+    private async Task StartIpcListener()
     {
         while (!_stopEvent.IsSet)
             try

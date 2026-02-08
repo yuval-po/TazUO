@@ -4,7 +4,6 @@
     <OutputType>WinExe</OutputType>
     <ApplicationIcon>cuoicon.ico</ApplicationIcon>
     <AssemblyName>TazUO</AssemblyName>
-    <RootNamespace>ClassicUO</RootNamespace>
     <AssemblyVersion>4.16.34</AssemblyVersion>
     <FileVersion>4.16.34</FileVersion>
     <PackageProjectUrl>https://github.com/PlayTazUO/TazUO</PackageProjectUrl>

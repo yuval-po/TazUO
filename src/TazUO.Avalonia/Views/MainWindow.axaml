@@ -16,6 +16,4 @@
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
-    <views:SettingsWindow/>
-
 </Window>

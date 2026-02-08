@@ -14,12 +14,17 @@ public class TazUi : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
-        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        switch (ApplicationLifetime)
         {
-            // Avoid duplicate validations from both Avalonia and the CommunityToolkit.
-            // More info: https://docs.avaloniaui.net/docs/guides/development-guides/data-validation#manage-validationplugins
-            DisableAvaloniaDataAnnotationValidation();
-            desktop.MainWindow = new MainWindow { DataContext = new MainWindowViewModel() };
+            case IClassicDesktopStyleApplicationLifetime desktop:
+                // Avoid duplicate validations from both Avalonia and the CommunityToolkit.
+                // More info: https://docs.avaloniaui.net/docs/guides/development-guides/data-validation#manage-validationplugins
+                DisableAvaloniaDataAnnotationValidation();
+                desktop.MainWindow = new MainWindow { DataContext = new MainWindowViewModel() };
+                break;
+            case ISingleViewApplicationLifetime singleView:
+                singleView.MainView = new MainWindow { DataContext = new MainWindowViewModel() };
+                break;
         }
 
         base.OnFrameworkInitializationCompleted();

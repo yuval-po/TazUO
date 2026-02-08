@@ -41,7 +41,7 @@ namespace ClassicUO.Network
                 Task connectTask = _socket.ConnectAsync(ip, port);
                 var timeoutTask = Task.Delay(TimeSpan.FromSeconds(timeoutS), _cancellationTokenSource.Token); // set your timeout here
 
-                Task completedTask = await Task.WhenAny(connectTask, timeoutTask);
+                Task completedTask = await Task.WhenAny(timeoutTask, connectTask);
 
                 if (completedTask == timeoutTask)
                 {

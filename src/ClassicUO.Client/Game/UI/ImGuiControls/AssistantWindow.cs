@@ -1,3 +1,4 @@
+using ClassicUO.Ipc;
 using ImGuiNET;
 
 namespace ClassicUO.Game.UI.ImGuiControls
@@ -10,6 +11,7 @@ namespace ClassicUO.Game.UI.ImGuiControls
         private FiltersTabContent _filtersTab;
         private ItemDatabaseTabContent _itemDatabaseTab;
         private MacrosTabContent _macrosTab;
+        private static bool _settingsOpened;
 
         private AssistantWindow() : base("Legion Assistant")
         {
@@ -21,6 +23,8 @@ namespace ClassicUO.Game.UI.ImGuiControls
             _filtersTab = new FiltersTabContent();
             _itemDatabaseTab = new ItemDatabaseTabContent();
             _macrosTab = new MacrosTabContent();
+            if (!_settingsOpened)
+                Client.Ipc.Send.TryWrite(new ShowSettingsMessage());
         }
 
         public override void DrawContent()

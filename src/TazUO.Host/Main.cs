@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
+using ClassicUO;
 using ClassicUO.Configuration;
 using ClassicUO.Game;
 using ClassicUO.Game.Managers;
@@ -18,19 +19,20 @@ using ClassicUO.Utility.Logging;
 using Microsoft.Xna.Framework.Graphics;
 using SDL3;
 
-namespace ClassicUO;
+namespace TazUO.Host;
 
 internal static class Bootstrap
 {
-    [UnmanagedCallersOnly(EntryPoint = "Initialize", CallConvs = new[] { typeof(CallConvCdecl) })]
+    private static AvaloniaUiHost _uiHost;
+    private static UiCoreIpc _ipc = new();
+    private static Thread _avaloniaThread;
+
+    [UnmanagedCallersOnly(EntryPoint = "Initialize", CallConvs = [typeof(CallConvCdecl)])]
     private static unsafe void Initialize(IntPtr* argv, int argc, HostBindings* hostSetup)
     {
         string[] args = new string[argc];
         for (int i = 0; i < argc; i++)
             args[i] = Marshal.PtrToStringAnsi(argv[i]);
-
-        var uiHost = new AvaloniaUiHost();
-        uiHost.Init();
 
         var assistantHost = new UnmanagedAssistantHost(hostSetup);
         Boot(assistantHost, args);
@@ -174,9 +176,22 @@ internal static class Bootstrap
                     break;
             }
 
-            Client.Run(pluginHost);
+
+            _ipc = new UiCoreIpc();
+            _avaloniaThread = new Thread(() =>
+                {
+                    _uiHost = new AvaloniaUiHost(_ipc.Ui);
+                    _uiHost.Init();
+                    _uiHost.Start();
+                    _uiHost.StartIpcListener().Wait();
+                }
+            ) { Name = "AVALONIA_UI_THREAD" };
+            _avaloniaThread.Start();
+
+            Client.Run(pluginHost, _ipc.Core);
         }
 
+        _uiHost.StopIpcListener();
         Log.Trace("Closing...");
     }
 

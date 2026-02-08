@@ -13,6 +13,7 @@ using SDL3;
 using System;
 using System.Diagnostics;
 using System.IO;
+using ClassicUO.Ipc;
 
 namespace ClassicUO
 {
@@ -203,9 +204,13 @@ namespace ClassicUO
         public static SQLSettingsManager Settings { get; private set; }
         public static bool UnitTestingActive;
 
-        public static void Run(IPluginHost pluginHost)
+        public static IIpcHost<ICoreToUiMessage, IUiToCoreMessage> Ipc { get; private set; }
+
+        public static void Run(IPluginHost pluginHost, IIpcHost<ICoreToUiMessage, IUiToCoreMessage> ipcHost)
         {
             Debug.Assert(Game == null);
+            ArgumentNullException.ThrowIfNull(ipcHost);
+            Ipc = ipcHost;
 
             Log.Trace("Running game...");
 
