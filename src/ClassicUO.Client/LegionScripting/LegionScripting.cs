@@ -432,7 +432,7 @@ namespace ClassicUO.LegionScripting
 
                 // Execute with cancellation support
                 Task<ScriptState<object>> task = script.CSharpCompiledScript.RunAsync(
-                    script.CSharpGlobals,
+                    new object(),
                     cancellationToken: script.ScopedApi.CancellationToken.Token
                 );
 

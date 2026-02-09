@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using ClassicUO.Game;
@@ -27,7 +28,6 @@ public class ScriptFile
     public LegionAPI ScopedApi;
     public ScriptType Type;
     public Script<object> CSharpCompiledScript;
-    public ScriptGlobals CSharpGlobals;
 
     public bool IsPlaying => PythonThread != null;
 
@@ -160,9 +160,9 @@ public class ScriptFile
         ScriptOptions options = ScriptOptions.Default
             .WithReferences(
                 typeof(object).Assembly,                             // System
-                typeof(System.Linq.Enumerable).Assembly,             // System.Linq
+                typeof(Enumerable).Assembly,                         // System.Linq
                 typeof(List<>).Assembly,                             // System.Collections.Generic
-                typeof(LegionAPI).Assembly,                          // ClassicUO.Client
+                typeof(LegionAPI).Assembly,                          // ClassicUO.LegionScripting
                 typeof(Microsoft.Xna.Framework.Vector3).Assembly     // Microsoft.Xna.Framework
             )
             .WithImports(
@@ -174,12 +174,12 @@ public class ScriptFile
                 "ClassicUO.LegionScripting.PyClasses"
             );
 
+        // Roslyn limits script globals to the bottom frame which is means the API has to be force-fed down the class/script hierarchy.
+        // To work around that, we can inject an ugly 'using' that effectively does the same work by exposing the LegionAPI instance via a static class/field
+        string code = string.Concat($"using static ClassicUO.LegionScripting.{nameof(CsLegionApiHost)};\n", FileContentsJoined);
+
         // Compile the script
-        CSharpCompiledScript = CSharpScript.Create<object>(
-            FileContentsJoined,
-            options,
-            typeof(ScriptGlobals)
-        );
+        CSharpCompiledScript = CSharpScript.Create<object>(code, options, typeof(object));
 
         // Pre-compile to catch compilation errors early
         CSharpCompiledScript.Compile();
@@ -189,15 +189,13 @@ public class ScriptFile
     {
         var api = new LegionAPI(null); // C# scripts pass null engine
         ScopedApi = api;
-        CSharpGlobals = new ScriptGlobals { API = api };
+        CsLegionApiHost.Current.Value = api;
     }
 
     public void CSharpScriptStopped()
     {
         ScopedApi?.CloseGumps();
         ScopedApi?.Dispose();
-
-        CSharpGlobals = null;
         ScopedApi = null;
 
         // Clear compilation cache if module caching disabled
