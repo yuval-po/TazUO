@@ -34,11 +34,31 @@ namespace ClassicUO.LegionScripting
     /// </summary>
     public class LegionAPI : IDisposable
     {
+        #region Members
+
         internal readonly ConcurrentBag<Gump> _gumps = [];
-        private volatile bool _disposed = false;
+        private readonly Queue<Action> _scheduledCallbacks = new();
+        private static readonly ConcurrentDictionary<string, object> _sharedVars = new();
+        private readonly ConcurrentDictionary<string, object> _hotkeyCallbacks = new();
+        private readonly ConcurrentDictionary<string, bool> _pressedKeys = new();
+
+        private ConcurrentBag<uint> _ignoreList = [];
+        private ConcurrentQueue<PyJournalEntry> _journalEntries = new();
+        internal readonly World World = Client.UnitTestingActive ? new World() : Client.Game.UO.World;
+        private Item _backpack;
+        private bool _keyboardHooked = false;
+        private readonly System.Threading.Lock _hookLock = new();
+
+        private volatile bool _disposed;
+
+        #endregion
+
+        #region Accessors
 
         public  ICallbackChannel CallbackChannel { get; }
         public EventSinkApi Events { get; }
+
+        #endregion
 
         public LegionAPI(ICallbackChannel callbackChannel)
         {
@@ -48,23 +68,18 @@ namespace ClassicUO.LegionScripting
             Gumps = new PyGumps(this);
         }
 
-        #region Python Callback Queue
-
-        private readonly Queue<Action> scheduledCallbacks = new();
-        private static readonly ConcurrentDictionary<string, object> sharedVars = new();
-        private readonly ConcurrentDictionary<string, object> hotkeyCallbacks = new();
-        private readonly ConcurrentDictionary<string, bool> pressedKeys = new();
+        #region Callback Queue
 
         private void ScheduleCallbackActions(Action[] actions)
         {
-            lock (scheduledCallbacks)
+            lock (_scheduledCallbacks)
             {
                 foreach (Action action in actions)
-                    scheduledCallbacks.Enqueue(action);
+                    _scheduledCallbacks.Enqueue(action);
 
-                while (scheduledCallbacks.Count > 100)
+                while (_scheduledCallbacks.Count > 100)
                 {
-                    scheduledCallbacks.Dequeue(); //Limit callback counts
+                    _scheduledCallbacks.Dequeue(); //Limit callback counts
                     GameActions.Print(World, "Python Scripting Error: Too many callbacks registered!");
                 }
             }
@@ -108,10 +123,10 @@ namespace ClassicUO.LegionScripting
             {
                 Action next = null;
 
-                lock (scheduledCallbacks)
+                lock (_scheduledCallbacks)
                 {
-                    if (scheduledCallbacks.Count > 0)
-                        next = scheduledCallbacks.Dequeue();
+                    if (_scheduledCallbacks.Count > 0)
+                        next = _scheduledCallbacks.Dequeue();
                 }
 
                 if (next != null)
@@ -123,24 +138,19 @@ namespace ClassicUO.LegionScripting
 
         #endregion
 
-        private ConcurrentBag<uint> ignoreList = new();
-        private ConcurrentQueue<PyJournalEntry> journalEntries = new();
-        internal World World = Client.UnitTestingActive ? new World() : Client.Game.UO.World;
-        private Item backpack;
-        private PyPlayer player;
-        private bool keyboardHooked = false;
-        private readonly object hookLock = new object();
+        #region Key Hooking
+
 
         private void EnsureKeyboardHook()
         {
-            lock (hookLock)
+            lock (_hookLock)
             {
-                if (keyboardHooked) return;
+                if (_keyboardHooked) return;
 
                 CUOKeyboard.KeyDownEvent += OnKeyDown;
                 CUOKeyboard.KeyUpEvent += OnKeyUp;
 
-                keyboardHooked = true;
+                _keyboardHooked = true;
             }
         }
 
@@ -148,7 +158,7 @@ namespace ClassicUO.LegionScripting
         {
             if (_disposed) return;
 
-            if (pressedKeys.TryAdd(hotkey, true) && hotkeyCallbacks.TryGetValue(hotkey, out object callback))
+            if (_pressedKeys.TryAdd(hotkey, true) && _hotkeyCallbacks.TryGetValue(hotkey, out object callback))
             {
                 ScheduleCallback(callback);
             }
@@ -158,27 +168,29 @@ namespace ClassicUO.LegionScripting
         {
             if (_disposed) return;
 
-            pressedKeys.TryRemove(hotkey, out _);
+            _pressedKeys.TryRemove(hotkey, out _);
         }
+
+        #endregion
 
         public void Dispose()
         {
             if (_disposed) return;
             _disposed = true;
 
-            if (keyboardHooked)
+            if (_keyboardHooked)
             {
                 CUOKeyboard.KeyDownEvent -= OnKeyDown;
                 CUOKeyboard.KeyUpEvent -= OnKeyUp;
-                keyboardHooked = false;
+                _keyboardHooked = false;
             }
 
-            hotkeyCallbacks.Clear();
-            pressedKeys.Clear();
+            _hotkeyCallbacks.Clear();
+            _pressedKeys.Clear();
 
         }
 
-        public ConcurrentQueue<PyJournalEntry> JournalEntries => journalEntries;
+        public ConcurrentQueue<PyJournalEntry> JournalEntries => _journalEntries;
 
         #region Properties
 
@@ -189,10 +201,10 @@ namespace ClassicUO.LegionScripting
         {
             get
             {
-                if (backpack == null)
-                    backpack = MainThreadQueue.InvokeOnMainThread(() => World.Player.Backpack);
+                if (_backpack == null)
+                    _backpack = MainThreadQueue.InvokeOnMainThread(() => World.Player.Backpack);
 
-                return backpack;
+                return _backpack;
             }
         }
 
@@ -204,10 +216,8 @@ namespace ClassicUO.LegionScripting
         {
             get
             {
-                if (player == null)
-                    player = MainThreadQueue.InvokeOnMainThread(() => new PyPlayer(World.Player));
-
-                return player;
+                field ??= MainThreadQueue.InvokeOnMainThread(() => new PyPlayer(World.Player));
+                return field;
             }
         }
 
@@ -336,11 +346,11 @@ namespace ClassicUO.LegionScripting
             string normalized = CUOKeyboard.NormalizeKeyString(key);
             if (!CallbackChannel.CanInvoke(callback))
             {
-                hotkeyCallbacks.TryRemove(normalized, out _);
+                _hotkeyCallbacks.TryRemove(normalized, out _);
                 return;
             }
             EnsureKeyboardHook();
-            hotkeyCallbacks[normalized] = callback;
+            _hotkeyCallbacks[normalized] = callback;
         }
 
         /// <summary>
@@ -352,7 +362,7 @@ namespace ClassicUO.LegionScripting
         /// </summary>
         /// <param name="name">Name of the var</param>
         /// <param name="value">Value, can be a number, text, or *most* other objects too.</param>
-        public void SetSharedVar(string name, object value) => sharedVars[name] = value;
+        public void SetSharedVar(string name, object value) => _sharedVars[name] = value;
 
         /// <summary>
         /// Get the value of a shared variable.
@@ -367,7 +377,7 @@ namespace ClassicUO.LegionScripting
         /// <returns></returns>
         public object GetSharedVar(string name)
         {
-            if (sharedVars.TryGetValue(name, out object v))
+            if (_sharedVars.TryGetValue(name, out object v))
                 return v;
             return null;
         }
@@ -380,7 +390,7 @@ namespace ClassicUO.LegionScripting
         /// ```
         /// </summary>
         /// <param name="name">Name of the var</param>
-        public void RemoveSharedVar(string name) => sharedVars.TryRemove(name, out _);
+        public void RemoveSharedVar(string name) => _sharedVars.TryRemove(name, out _);
 
         /// <summary>
         /// Clear all shared vars.
@@ -389,7 +399,7 @@ namespace ClassicUO.LegionScripting
         /// API.ClearSharedVars()
         /// ```
         /// </summary>
-        public void ClearSharedVars() => sharedVars.Clear();
+        public void ClearSharedVars() => _sharedVars.Clear();
 
         /// <summary>
         /// Close all gumps created by the API unless marked to remain open.
@@ -1240,7 +1250,7 @@ namespace ClassicUO.LegionScripting
 
                     foreach (Item i in result)
                     {
-                        if (i.Amount >= minamount && !ignoreList.Contains(i))
+                        if (i.Amount >= minamount && !_ignoreList.Contains(i))
                         {
                             Found = i.Serial;
                             return new PyItem(i);
@@ -1430,7 +1440,7 @@ namespace ClassicUO.LegionScripting
 
                 foreach (Item i in result)
                 {
-                    if (!ignoreList.Contains(i))
+                    if (!_ignoreList.Contains(i))
                     {
                         if (skipQueue)
                             GameActions.DoubleClick(World, i);
@@ -1467,7 +1477,7 @@ namespace ClassicUO.LegionScripting
         /// ```
         /// </summary>
         /// <param name="serial">The item/mobile serial</param>
-        public void IgnoreObject(uint serial) => ignoreList.Add(serial);
+        public void IgnoreObject(uint serial) => _ignoreList.Add(serial);
 
         /// <summary>
         /// Removes an item or mobile from your ignore list.
@@ -1477,7 +1487,7 @@ namespace ClassicUO.LegionScripting
         /// ```
         /// </summary>
         /// <param name="serial">The item/mobile serial</param>
-        public void UnIgnoreObject(uint serial) => ignoreList = new ConcurrentBag<uint>(ignoreList.Where(s => s != serial));
+        public void UnIgnoreObject(uint serial) => _ignoreList = new ConcurrentBag<uint>(_ignoreList.Where(s => s != serial));
 
         /// <summary>
         /// Clears the ignore list. Allowing functions to see those items again.
@@ -1486,7 +1496,7 @@ namespace ClassicUO.LegionScripting
         /// API.ClearIgnoreList()
         /// ```
         /// </summary>
-        public void ClearIgnoreList() => ignoreList = new();
+        public void ClearIgnoreList() => _ignoreList = new();
 
         /// <summary>
         /// Check if a serial is on the ignore list.
@@ -1498,7 +1508,7 @@ namespace ClassicUO.LegionScripting
         /// </summary>
         /// <param name="serial"></param>
         /// <returns>True if on the ignore list.</returns>
-        public bool OnIgnoreList(uint serial) => ignoreList.Contains(serial);
+        public bool OnIgnoreList(uint serial) => _ignoreList.Contains(serial);
 
         /// <summary>
         /// Attempt to pathfind to a location.  This will fail with large distances.
@@ -2898,7 +2908,7 @@ namespace ClassicUO.LegionScripting
                     newQueue.Enqueue(je);
                 }
 
-                Interlocked.Exchange(ref journalEntries, newQueue);
+                Interlocked.Exchange(ref _journalEntries, newQueue);
             }
         }
 

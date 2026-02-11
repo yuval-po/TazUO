@@ -187,7 +187,7 @@ public class ScriptFile
 
     public void SetupCSharpGlobals()
     {
-        var api = new LegionAPI(null); // C# scripts pass null engine
+        var api = new LegionAPI(new CSharpCallbackChannel());
         ScopedApi = api;
         CsLegionApiHost.Current.Value = api;
     }
