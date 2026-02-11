@@ -23,17 +23,16 @@ public class EventSourceGenerator : IIncrementalGenerator
         // Find methods with the attribute
         var methodsWithAttribute = context.SyntaxProvider
             .CreateSyntaxProvider(
-                static (s, _) => WithExceptionHandling(() => IsSyntaxTargetForGeneration(s)),
-                static (ctx, _) => WithExceptionHandling(() => GetSemanticTargetForGeneration(ctx)))
+                static (s, _) => IsSyntaxTargetForGeneration(s),
+                static (ctx, _) => GetSemanticTargetForGeneration(ctx))
             .Where(static m => m is not null);
 
         // Combine with compilation
-        var compilationAndMethods =
-            WithExceptionHandling(() => context.CompilationProvider.Combine(methodsWithAttribute.Collect()));
+        var compilationAndMethods = context.CompilationProvider.Combine(methodsWithAttribute.Collect());
 
         // Generate the source
         context.RegisterSourceOutput(compilationAndMethods,
-            static (spc, source) => WithExceptionHandling(() => Execute(source.Left, source.Right, spc)));
+            static (spc, source) => Execute(source.Left, source.Right, spc));
     }
 
     private static bool IsSyntaxTargetForGeneration(SyntaxNode node)
@@ -124,23 +123,20 @@ public class EventSourceGenerator : IIncrementalGenerator
 
     private static void Execute(Compilation _, IEnumerable<ApiEventInfo> methods, SourceProductionContext context)
     {
-        WithExceptionHandling(() =>
+        var methodsArray = methods.ToArray() ?? [];
+        var methodsByClass = methodsArray.GroupBy(m => (m.Namespace, m.ClassName));
+
+        var template = GetTemplate("ApiCallbackDispatcher.hbs");
+        var handlebars = Handlebars.Create();
+        handlebars.RegisterHelper("TrimOnPrefix", TrimOnPrefix);
+        var compiledTemplate = handlebars.Compile(template);
+
+        foreach (var group in methodsByClass)
         {
-            var methodsArray = methods.ToArray() ?? [];
-            var methodsByClass = methodsArray.GroupBy(m => (m.Namespace, m.ClassName));
-
-            var template = GetTemplate("ApiCallbackDispatcher.hbs");
-            var handlebars = Handlebars.Create();
-            handlebars.RegisterHelper("TrimOnPrefix", TrimOnPrefix);
-            var compiledTemplate = handlebars.Compile(template);
-
-            foreach (var group in methodsByClass)
-            {
-                var templateCtx = CreateContext(group);
-                var source = compiledTemplate(templateCtx);
-                context.AddSource($"{group.Key.ClassName}.Api.g.cs", SourceText.From(source, Encoding.UTF8));
-            }
-        });
+            var templateCtx = CreateContext(group);
+            var source = compiledTemplate(templateCtx);
+            context.AddSource($"{group.Key.ClassName}.Api.g.cs", SourceText.From(source, Encoding.UTF8));
+        }
     }
 
     private static void TrimOnPrefix(
@@ -191,46 +187,6 @@ public class EventSourceGenerator : IIncrementalGenerator
 
         using var streamReader = new StreamReader(stream, Encoding.UTF8);
         return streamReader.ReadToEnd();
-    }
-
-    private static void WithExceptionHandling(Action action)
-    {
-        try
-        {
-            action();
-        }
-        catch (Exception e)
-        {
-            Log(e.Message);
-            throw;
-        }
-    }
-
-    private static T WithExceptionHandling<T>(Func<T> action)
-    {
-        try
-        {
-            return action();
-        }
-        catch (Exception e)
-        {
-            Log(e.Message);
-            throw;
-        }
-    }
-
-    private static void Log(string msg)
-    {
-        try
-        {
-#pragma warning disable RS1035
-            File.AppendAllText(Path.Combine("/mnt/7e91759c-6dd7-4c99-8d38-e6422452a469/git/TazUO/eventgen.log"),
-                $"[{DateTime.UtcNow}] {msg}" + "\n");
-#pragma warning restore RS1035
-        }
-        catch
-        {
-        }
     }
 }
 
