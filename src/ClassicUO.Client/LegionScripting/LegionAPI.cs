@@ -17,6 +17,7 @@ using ClassicUO.Game.UI.Gumps;
 using ClassicUO.LegionScripting.PyClasses;
 using ClassicUO.Network;
 using ClassicUO.Utility;
+using ClassicUO.Utility.Logging;
 using IronPython.Runtime;
 using Microsoft.Scripting.Hosting;
 using Microsoft.Scripting.Utils;
@@ -33,18 +34,19 @@ namespace ClassicUO.LegionScripting
     /// </summary>
     public class LegionAPI : IDisposable
     {
-        private volatile bool disposed = false;
+        internal readonly ConcurrentBag<Gump> _gumps = [];
+        private volatile bool _disposed = false;
 
-        public LegionAPI(ScriptEngine engine)
+        public  ICallbackChannel CallbackChannel { get; }
+        public EventSinkApi Events { get; }
+
+        public LegionAPI(ICallbackChannel callbackChannel)
         {
-            this.engine = engine;
-            Events = new PyEvents(engine, this);
+            ArgumentNullException.ThrowIfNull(callbackChannel);
+            CallbackChannel = callbackChannel;
+            Events = new EventSinkApi(this);
             Gumps = new PyGumps(this);
         }
-
-        internal ScriptEngine engine;
-
-        internal ConcurrentBag<Gump> gumps = new();
 
         #region Python Callback Queue
 
@@ -53,11 +55,12 @@ namespace ClassicUO.LegionScripting
         private readonly ConcurrentDictionary<string, object> hotkeyCallbacks = new();
         private readonly ConcurrentDictionary<string, bool> pressedKeys = new();
 
-        internal void ScheduleCallback(Action action)
+        private void ScheduleCallbackActions(Action[] actions)
         {
             lock (scheduledCallbacks)
             {
-                scheduledCallbacks.Enqueue(action);
+                foreach (Action action in actions)
+                    scheduledCallbacks.Enqueue(action);
 
                 while (scheduledCallbacks.Count > 100)
                 {
@@ -67,23 +70,28 @@ namespace ClassicUO.LegionScripting
             }
         }
 
-        internal void ScheduleCallback(object callback, params object[] args)
+        internal void ScheduleCallbacks(object[] callbacks, params object[] args)
         {
-            if (callback == null || !engine.Operations.IsCallable(callback))
-                return;
+            var wrappedCallbacks = new Action[callbacks.Length];
+            for (int i = 0; i < callbacks.Length; i++)
+                wrappedCallbacks[i] = WrapScriptCallback(callbacks[i], args);
+            ScheduleCallbackActions(wrappedCallbacks);
+        }
 
-            ScheduleCallback(() =>
+        internal void ScheduleCallback(object callback, params object[] args) => ScheduleCallbackActions([WrapScriptCallback(callback, args)]);
+
+        private Action WrapScriptCallback(object callback, params object[] args) =>
+            () =>
             {
                 try
                 {
-                    engine.Operations.Invoke(callback, args);
+                    CallbackChannel.Invoke(callback, args);
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Script callback error: {ex}");
+                    Log.Warn($"Script callback error: {ex}");
                 }
-            });
-        }
+            };
 
         /// <summary>
         /// Use this when you need to wait for players to click buttons.
@@ -138,7 +146,7 @@ namespace ClassicUO.LegionScripting
 
         private void OnKeyDown(string hotkey)
         {
-            if (disposed) return;
+            if (_disposed) return;
 
             if (pressedKeys.TryAdd(hotkey, true) && hotkeyCallbacks.TryGetValue(hotkey, out object callback))
             {
@@ -148,15 +156,15 @@ namespace ClassicUO.LegionScripting
 
         private void OnKeyUp(string hotkey)
         {
-            if (disposed) return;
+            if (_disposed) return;
 
             pressedKeys.TryRemove(hotkey, out _);
         }
 
         public void Dispose()
         {
-            if (disposed) return;
-            disposed = true;
+            if (_disposed) return;
+            _disposed = true;
 
             if (keyboardHooked)
             {
@@ -247,8 +255,6 @@ namespace ClassicUO.LegionScripting
         /// </summary>
         public static PyProfile Profile = new();
 
-        public PyEvents Events;
-
         public PyGumps Gumps;
 
         /// <summary>
@@ -327,20 +333,13 @@ namespace ClassicUO.LegionScripting
             if (string.IsNullOrEmpty(key))
                 return;
 
-            if (engine == null || engine.Operations == null)
-            {
-                return;
-            }
-
             string normalized = CUOKeyboard.NormalizeKeyString(key);
-            EnsureKeyboardHook();
-
-            if (callback == null || !engine.Operations.IsCallable(callback))
+            if (!CallbackChannel.CanInvoke(callback))
             {
                 hotkeyCallbacks.TryRemove(normalized, out _);
                 return;
             }
-
+            EnsureKeyboardHook();
             hotkeyCallbacks[normalized] = callback;
         }
 
@@ -398,7 +397,7 @@ namespace ClassicUO.LegionScripting
         public void CloseGumps()
         {
             int c = 0;
-            while (gumps.TryTake(out Gump g))
+            while (_gumps.TryTake(out Gump g))
             {
                 if (g is { IsDisposed: false })
                     MainThreadQueue.EnqueueAction(() => DisposeGump(g));

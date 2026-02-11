@@ -18,13 +18,13 @@ public class ApiTests
     public ApiTests()
     {
         Client.UnitTestingActive = true;
-        api = new LegionAPI(Python.CreateEngine());
+        api = new LegionAPI(new PythonCallbackChannel(Python.CreateEngine()));
     }
     
     [Fact]
     public void CurrentAbilityNames_Returns_Empty_String_When_No_Player()
     {
-        // Basically check this doesn't crash when player mobile is gone
+        // Basically check this doesn't crash when the player mobile is gone
         Assert.Empty(api.CurrentAbilityNames());
     }
 

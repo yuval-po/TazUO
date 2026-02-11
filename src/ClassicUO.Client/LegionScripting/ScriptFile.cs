@@ -134,7 +134,7 @@ public class ScriptFile
     public void SetupPythonScope()
     {
         PythonScope = PythonEngine.CreateScope();
-        var api = new LegionAPI(PythonEngine);
+        var api = new LegionAPI(new PythonCallbackChannel(PythonEngine));
         ScopedApi = api;
         PythonEngine.GetBuiltinModule().SetVariable("API", api);
     }

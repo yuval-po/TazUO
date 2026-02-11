@@ -19,7 +19,7 @@ public class PyGumpsTests
             Client.UnitTestingActive = true;
             // Arrange
             ScriptEngine engine = Python.CreateEngine();
-            var api = new LegionAPI(engine);
+            var api = new LegionAPI(new PythonCallbackChannel(engine));
 
             // Act
             PyBaseGump result = api.Gumps.CreateGump();
@@ -36,7 +36,7 @@ public class PyGumpsTests
 
             // Arrange
             ScriptEngine engine = Python.CreateEngine();
-            var api = new LegionAPI(engine);
+            var api = new LegionAPI(new PythonCallbackChannel(engine));
 
             // Act
             PyBaseGump result = api.Gumps.CreateGump();
@@ -56,7 +56,7 @@ public class PyGumpsTests
 
             // Arrange
             ScriptEngine engine = Python.CreateEngine();
-            var api = new LegionAPI(engine);
+            var api = new LegionAPI(new PythonCallbackChannel(engine));
 
             // Act
             PyBaseGump result = api.Gumps.CreateGump(acceptMouseInput: false);
@@ -75,7 +75,7 @@ public class PyGumpsTests
 
             // Arrange
             ScriptEngine engine = Python.CreateEngine();
-            var api = new LegionAPI(engine);
+            var api = new LegionAPI(new PythonCallbackChannel(engine));
 
             // Act
             PyBaseGump result = api.Gumps.CreateGump(canMove: false);
@@ -94,16 +94,16 @@ public class PyGumpsTests
 
             // Arrange
             ScriptEngine engine = Python.CreateEngine();
-            var api = new LegionAPI(engine);
-            int initialCount = api.gumps.Count;
+            var api = new LegionAPI(new PythonCallbackChannel(engine));
+            int initialCount = api._gumps.Count;
 
             // Act
             PyBaseGump result = api.Gumps.CreateGump(keepOpen: false);
 
             // Assert
             Gump gump = ((IPyGump)result).Gump;
-            api.gumps.Should().Contain(gump);
-            api.gumps.Count.Should().Be(initialCount + 1);
+            api._gumps.Should().Contain(gump);
+            api._gumps.Count.Should().Be(initialCount + 1);
         }
 
         [Fact]
@@ -113,16 +113,16 @@ public class PyGumpsTests
 
             // Arrange
             ScriptEngine engine = Python.CreateEngine();
-            var api = new LegionAPI(engine);
-            int initialCount = api.gumps.Count;
+            var api = new LegionAPI(new PythonCallbackChannel(engine));
+            int initialCount = api._gumps.Count;
 
             // Act
             PyBaseGump result = api.Gumps.CreateGump(keepOpen: true);
 
             // Assert
             Gump gump = ((IPyGump)result).Gump;
-            api.gumps.Should().NotContain(gump);
-            api.gumps.Count.Should().Be(initialCount);
+            api._gumps.Should().NotContain(gump);
+            api._gumps.Count.Should().Be(initialCount);
         }
 
         [Fact]
@@ -132,7 +132,7 @@ public class PyGumpsTests
 
             // Arrange
             ScriptEngine engine = Python.CreateEngine();
-            var api = new LegionAPI(engine);
+            var api = new LegionAPI(new PythonCallbackChannel(engine));
 
             // Act
             PyBaseGump result = api.Gumps.CreateGump(
@@ -147,7 +147,7 @@ public class PyGumpsTests
             gump.AcceptMouseInput.Should().BeFalse();
             gump.CanMove.Should().BeFalse();
             gump.WantUpdateSize.Should().BeTrue();
-            api.gumps.Should().NotContain(gump);
+            api._gumps.Should().NotContain(gump);
         }
 
         [Fact]
@@ -157,7 +157,7 @@ public class PyGumpsTests
 
             // Arrange
             ScriptEngine engine = Python.CreateEngine();
-            var api = new LegionAPI(engine);
+            var api = new LegionAPI(new PythonCallbackChannel(engine));
 
             // Act
             PyBaseGump result1 = api.Gumps.CreateGump();

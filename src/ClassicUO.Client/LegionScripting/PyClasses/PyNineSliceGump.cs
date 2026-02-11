@@ -140,7 +140,7 @@ internal class ModernNineSliceGump : NineSliceGump
                 {
                     try
                     {
-                        _api.engine.Operations.Invoke(_resizeCallback);
+                        _api.CallbackChannel.Invoke(_resizeCallback);
                     }
                     catch (Exception ex)
                     {

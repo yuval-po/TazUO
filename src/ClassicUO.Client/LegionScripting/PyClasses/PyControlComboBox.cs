@@ -43,9 +43,7 @@ public class PyControlDropDown(Combobox combobox, LegionAPI api) : PyBaseControl
     /// <returns>Returns this control so methods can be chained.</returns>
     public PyControlDropDown OnDropDownOptionSelected(object onSelectionChanged)
     {
-        if (!VerifyIntegrity() || onSelectionChanged == null || api == null) return this;
-
-        if (!api.engine.Operations.IsCallable(onSelectionChanged))
+        if (!VerifyIntegrity() || onSelectionChanged == null || api == null || !api.CallbackChannel.CanInvoke(onSelectionChanged))
             return this;
 
         combobox.OnOptionSelected += (_, selectedIndex) =>
@@ -54,7 +52,7 @@ public class PyControlDropDown(Combobox combobox, LegionAPI api) : PyBaseControl
             {
                 try
                 {
-                    api.engine.Operations.Invoke(onSelectionChanged, selectedIndex);
+                    api.CallbackChannel.Invoke(onSelectionChanged, selectedIndex);
                 }
                 catch (Exception ex)
                 {

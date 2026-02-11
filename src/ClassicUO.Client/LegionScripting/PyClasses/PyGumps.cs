@@ -39,7 +39,7 @@ public class PyGumps(LegionAPI api)
         PyBaseGump pyGump = new(g);
 
         if (!keepOpen)
-            api.gumps.Add(g);
+            api._gumps.Add(g);
 
         return pyGump;
     }
@@ -440,7 +440,7 @@ public class PyGumps(LegionAPI api)
     /// <returns>Returns the control so methods can be chained.</returns>
     public object AddControlOnClick(object control, object onClick, bool leftOnly = true)
     {
-        if (control == null || onClick == null || !api.engine.Operations.IsCallable(onClick))
+        if (control == null || onClick == null || !api.CallbackChannel.CanInvoke(onClick))
             return control;
 
         Control wControl = null;
@@ -465,7 +465,7 @@ public class PyGumps(LegionAPI api)
                 {
                     try
                     {
-                        api.engine.Operations.Invoke(onClick);
+                        api.CallbackChannel.Invoke(onClick);
                     }
                     catch (Exception ex)
                     {
@@ -499,7 +499,7 @@ public class PyGumps(LegionAPI api)
     /// <returns></returns>
     public PyBaseControl AddControlOnDisposed(PyBaseControl control, object onDispose)
     {
-        if (control == null || onDispose == null || control.Control == null || !api.engine.Operations.IsCallable(onDispose))
+        if (control == null || onDispose == null || control.Control == null || !api.CallbackChannel.CanInvoke(onDispose))
             return control;
 
         control.Control.Disposed += (_, _) =>
@@ -509,7 +509,7 @@ public class PyGumps(LegionAPI api)
                 {
                     try
                     {
-                        api.engine.Operations.Invoke(onDispose);
+                        api.CallbackChannel.Invoke(onDispose);
                     }
                     catch
                     {

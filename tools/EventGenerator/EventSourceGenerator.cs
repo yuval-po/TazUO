@@ -1,200 +1,262 @@
+using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using HandlebarsDotNet;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 
 namespace EventGenerator;
 
+using ClassMethodsGroup = IGrouping<(string Namespace, string ClassName), ApiEventInfo>;
+
 [Generator]
 public class EventSourceGenerator : IIncrementalGenerator
 {
+    private static readonly Dictionary<string, INamedTypeSymbol> _qualifiedTypeToSymbol = new();
+
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        // Add the attribute source
-        context.RegisterPostInitializationOutput(ctx => ctx.AddSource(
-            "GenApiEventAttribute.g.cs",
-            SourceText.From(AttributeSource, Encoding.UTF8)));
-
         // Find methods with the attribute
-        IncrementalValuesProvider<MethodInfo> methodsWithAttribute = context.SyntaxProvider
+        var methodsWithAttribute = context.SyntaxProvider
             .CreateSyntaxProvider(
-                predicate: static (s, _) => IsSyntaxTargetForGeneration(s),
-                transform: static (ctx, _) => GetSemanticTargetForGeneration(ctx))
+                static (s, _) => WithExceptionHandling(() => IsSyntaxTargetForGeneration(s)),
+                static (ctx, _) => WithExceptionHandling(() => GetSemanticTargetForGeneration(ctx)))
             .Where(static m => m is not null);
 
         // Combine with compilation
-        IncrementalValueProvider<(Compilation Left, ImmutableArray<MethodInfo> Right)> compilationAndMethods = context.CompilationProvider.Combine(methodsWithAttribute.Collect());
+        var compilationAndMethods =
+            WithExceptionHandling(() => context.CompilationProvider.Combine(methodsWithAttribute.Collect()));
 
         // Generate the source
         context.RegisterSourceOutput(compilationAndMethods,
-            static (spc, source) => Execute(source.Left, source.Right, spc));
+            static (spc, source) => WithExceptionHandling(() => Execute(source.Left, source.Right, spc)));
     }
 
-    static bool IsSyntaxTargetForGeneration(SyntaxNode node) => node is MethodDeclarationSyntax m && m.AttributeLists.Count > 0;
-
-    static MethodInfo GetSemanticTargetForGeneration(GeneratorSyntaxContext context)
+    private static bool IsSyntaxTargetForGeneration(SyntaxNode node)
     {
-        var methodDeclaration = (MethodDeclarationSyntax)context.Node;
-        ISymbol methodSymbol = context.SemanticModel.GetDeclaredSymbol(methodDeclaration);
+        return node is EventFieldDeclarationSyntax { AttributeLists.Count: > 0 };
+    }
 
-        if (methodSymbol == null)
-            return null;
+    private static ApiEventInfo GetSemanticTargetForGeneration(GeneratorSyntaxContext context)
+    {
+        var eventFieldDecl = (EventFieldDeclarationSyntax)context.Node;
+        var (nsName, className) = AssertGetNamespaceAndClassName(eventFieldDecl);
 
-        foreach (AttributeData attributeData in methodSymbol.GetAttributes())
+        foreach (var attrList in eventFieldDecl.AttributeLists)
         {
-            if (attributeData.AttributeClass?.Name != "GenApiEventAttribute")
+            var apiAttr = attrList.Attributes.FirstOrDefault(attr => attr.Name.GetText().ToString() == "ApiEvent");
+            if (apiAttr == null)
                 continue;
 
-            if (attributeData.ConstructorArguments.Length != 1)
+            var varDecl = attrList.Parent?.ChildNodes()?.FirstOrDefault(c => c is VariableDeclarationSyntax);
+
+            var declarator = varDecl?.ChildNodes().FirstOrDefault(c => c is VariableDeclaratorSyntax);
+            if (declarator == null)
                 continue;
 
-            string eventName = attributeData.ConstructorArguments[0].Value?.ToString();
-            if (string.IsNullOrEmpty(eventName))
+            var eventName = declarator.GetText().ToString().Trim();
+            if (string.IsNullOrWhiteSpace(eventName))
                 continue;
 
             // Get the event args type from EventSink
-            string eventArgsType = GetEventArgsType(context.SemanticModel.Compilation, eventName);
+            var eventArgsType = GetEventArgsType(
+                context.SemanticModel.Compilation,
+                "ClassicUO.Game.Managers.EventSink",
+                eventName
+            );
+
             if (string.IsNullOrEmpty(eventArgsType))
                 continue;
 
-            return new MethodInfo
+            return new ApiEventInfo
             {
-                MethodName = methodSymbol.Name,
                 EventName = eventName,
                 EventArgsType = eventArgsType,
-                ClassName = methodSymbol.ContainingType.Name,
-                Namespace = methodSymbol.ContainingNamespace.ToDisplayString()
+                ClassName = className,
+                Namespace = nsName
             };
         }
 
         return null;
     }
 
-    static string GetEventArgsType(Compilation compilation, string eventName)
+    private static (string Namespace, string ClassName) AssertGetNamespaceAndClassName(
+        EventFieldDeclarationSyntax eventFieldDecl)
     {
-        INamedTypeSymbol eventSinkType = compilation.GetTypeByMetadataName("ClassicUO.Game.Managers.EventSink");
-        if (eventSinkType == null)
+        var parentClass = (ClassDeclarationSyntax)eventFieldDecl.Parent;
+
+        if (parentClass == null)
+            throw new InvalidOperationException("Failed to determine parent class during code generation");
+
+        var parentClassName = parentClass.Identifier.Text;
+
+        return parentClass.Parent switch
+        {
+            FileScopedNamespaceDeclarationSyntax ns => (ns.Name.ToString(), parentClassName),
+            NamespaceDeclarationSyntax ns => (ns.Name.ToString(), parentClassName),
+            _ => throw new InvalidOperationException("Failed to determine namespace during code generation")
+        };
+    }
+
+    private static string GetEventArgsType(
+        Compilation compilation,
+        string sourceClassFullyQualifiedName,
+        string eventName
+    )
+    {
+        if (!_qualifiedTypeToSymbol.TryGetValue(sourceClassFullyQualifiedName, out var namedSymbol))
+        {
+            namedSymbol = compilation.GetTypeByMetadataName(sourceClassFullyQualifiedName);
+            _qualifiedTypeToSymbol.Add(sourceClassFullyQualifiedName, namedSymbol);
+        }
+
+        var eventMember = namedSymbol?.GetMembers(eventName).OfType<IEventSymbol>().FirstOrDefault();
+        if (eventMember?.Type is not INamedTypeSymbol { IsGenericType: true } namedType)
             return "object";
 
-        IEventSymbol eventMember = eventSinkType.GetMembers(eventName).OfType<IEventSymbol>().FirstOrDefault();
-        if (eventMember == null)
-            return "object";
-
-        if (eventMember.Type is INamedTypeSymbol namedType && namedType.IsGenericType)
-        {
-            ITypeSymbol typeArg = namedType.TypeArguments.FirstOrDefault();
-            return typeArg?.ToDisplayString() ?? "object";
-        }
-
-        return "object";
+        var typeArg = namedType.TypeArguments.FirstOrDefault();
+        return typeArg?.ToDisplayString() ?? "object";
     }
 
-    static void Execute(Compilation compilation, IEnumerable<MethodInfo> methods, SourceProductionContext context)
+    private static void Execute(Compilation _, IEnumerable<ApiEventInfo> methods, SourceProductionContext context)
     {
-        if (methods == null || !methods.Any())
-            return;
-
-        IEnumerable<IGrouping<(string Namespace, string ClassName), MethodInfo>> methodsByClass = methods.GroupBy(m => (m.Namespace, m.ClassName));
-
-        foreach (IGrouping<(string Namespace, string ClassName), MethodInfo> group in methodsByClass)
+        WithExceptionHandling(() =>
         {
-            string source = GeneratePartialClass(group.Key.Namespace, group.Key.ClassName, group.ToList());
-            context.AddSource($"{group.Key.ClassName}.Events.g.cs", SourceText.From(source, Encoding.UTF8));
+            var methodsArray = methods.ToArray() ?? [];
+            var methodsByClass = methodsArray.GroupBy(m => (m.Namespace, m.ClassName));
+
+            var template = GetTemplate("ApiCallbackDispatcher.hbs");
+            var handlebars = Handlebars.Create();
+            handlebars.RegisterHelper("TrimOnPrefix", TrimOnPrefix);
+            var compiledTemplate = handlebars.Compile(template);
+
+            foreach (var group in methodsByClass)
+            {
+                var templateCtx = CreateContext(group);
+                var source = compiledTemplate(templateCtx);
+                context.AddSource($"{group.Key.ClassName}.Api.g.cs", SourceText.From(source, Encoding.UTF8));
+            }
+        });
+    }
+
+    private static void TrimOnPrefix(
+        EncodedTextWriter output,
+        Context _,
+        Arguments arguments
+    )
+    {
+        if (arguments.Length != 1 || arguments[0] is not string)
+            throw new ArgumentException("TrimOnPrefix helper requires exactly one string parameter");
+
+        var asStr = (string)arguments[0];
+        if (asStr.StartsWith("On", StringComparison.InvariantCultureIgnoreCase))
+            asStr = asStr.Substring(2);
+        output.WriteSafeString(asStr);
+    }
+
+    private static TemplateContext CreateContext(ClassMethodsGroup flatInfos)
+    {
+        var methodArray = flatInfos.ToArray();
+        var methods = methodArray.Select(m => new EventInfoSlim
+        {
+            Name = m.EventName,
+            EventArgsType = m.EventArgsType
+        }).ToArray();
+
+        var genClass = new GeneratedClassSlim
+        {
+            Name = $"{flatInfos.Key.ClassName}Api",
+            Namespace = flatInfos.Key.Namespace,
+            GeneratedFromClassName = flatInfos.Key.ClassName,
+            Events = methods.ToArray()
+        };
+
+        return new TemplateContext { Classes = [genClass] };
+    }
+
+    private static string GetTemplate(string templateName)
+    {
+        var info = Assembly.GetExecutingAssembly().GetName();
+        var name = info.Name;
+        using var stream = Assembly
+            .GetExecutingAssembly()
+            .GetManifestResourceStream($"{name}.Templates.{templateName}");
+
+        if (stream == null)
+            throw new InvalidDataException("Could not obtain resource stream during code emission");
+
+        using var streamReader = new StreamReader(stream, Encoding.UTF8);
+        return streamReader.ReadToEnd();
+    }
+
+    private static void WithExceptionHandling(Action action)
+    {
+        try
+        {
+            action();
+        }
+        catch (Exception e)
+        {
+            Log(e.Message);
+            throw;
         }
     }
 
-    static string GeneratePartialClass(string namespaceName, string className, List<MethodInfo> methods)
+    private static T WithExceptionHandling<T>(Func<T> action)
     {
-        var sb = new StringBuilder();
-
-        sb.AppendLine("using System;");
-        sb.AppendLine("using ClassicUO.Game.Managers;");
-        sb.AppendLine();
-        sb.AppendLine($"namespace {namespaceName};");
-        sb.AppendLine();
-        sb.AppendLine($"public partial class {className}");
-        sb.AppendLine("{");
-
-        // Generate fields
-        foreach (MethodInfo method in methods)
+        try
         {
-            string fieldName = GetFieldName(method.EventName);
-            sb.AppendLine($"    private EventHandler<{method.EventArgsType}> {fieldName};");
+            return action();
         }
-
-        if (methods.Count > 0)
-            sb.AppendLine();
-
-        // Generate complete method implementations
-        foreach (MethodInfo method in methods)
+        catch (Exception e)
         {
-            string fieldName = GetFieldName(method.EventName);
-            string unsubscribeMethodName = $"Unsubscribe{method.EventName}";
-
-            sb.AppendLine($"    public partial void {method.MethodName}(object callback)");
-            sb.AppendLine($"    {{");
-            sb.AppendLine($"        {unsubscribeMethodName}();");
-            sb.AppendLine();
-            sb.AppendLine($"        if (callback == null || !_engine.Operations.IsCallable(callback))");
-            sb.AppendLine($"            return;");
-            sb.AppendLine();
-            sb.AppendLine($"        {fieldName} = (sender, arg) =>");
-            sb.AppendLine($"        {{");
-            sb.AppendLine($"            _api?.ScheduleCallback(callback, arg);");
-            sb.AppendLine($"        }};");
-            sb.AppendLine();
-            sb.AppendLine($"        EventSink.{method.EventName} += {fieldName};");
-            sb.AppendLine($"    }}");
-            sb.AppendLine();
-
-            // Generate unsubscribe method
-            sb.AppendLine($"    private void {unsubscribeMethodName}()");
-            sb.AppendLine($"    {{");
-            sb.AppendLine($"        if ({fieldName} != null)");
-            sb.AppendLine($"        {{");
-            sb.AppendLine($"            EventSink.{method.EventName} -= {fieldName};");
-            sb.AppendLine($"            {fieldName} = null;");
-            sb.AppendLine($"        }}");
-            sb.AppendLine($"    }}");
-
-            if (method != methods.Last())
-                sb.AppendLine();
+            Log(e.Message);
+            throw;
         }
-
-        sb.AppendLine("}");
-
-        return sb.ToString();
     }
 
-    static string GetFieldName(string eventName) => $"_{char.ToLower(eventName[0])}{eventName.Substring(1)}Handler";
-
-    private const string AttributeSource = @"
-using System;
-
-namespace ClassicUO.LegionScripting.PyClasses
-{
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
-    internal class GenApiEventAttribute : Attribute
+    private static void Log(string msg)
     {
-        public string EventName { get; }
-
-        public GenApiEventAttribute(string eventName)
+        try
         {
-            EventName = eventName;
+#pragma warning disable RS1035
+            File.AppendAllText(Path.Combine("/mnt/7e91759c-6dd7-4c99-8d38-e6422452a469/git/TazUO/eventgen.log"),
+                $"[{DateTime.UtcNow}] {msg}" + "\n");
+#pragma warning restore RS1035
+        }
+        catch
+        {
         }
     }
 }
-";
 
-    class MethodInfo
-    {
-        public string MethodName { get; set; }
-        public string EventName { get; set; }
-        public string EventArgsType { get; set; }
-        public string ClassName { get; set; }
-        public string Namespace { get; set; }
-    }
+internal class TemplateContext
+{
+    public GeneratedClassSlim[] Classes { get; set; }
+}
+
+internal class GeneratedClassSlim
+{
+    public string Name { get; set; }
+    public string Namespace { get; set; }
+    public string GeneratedFromClassName { get; set; }
+    public EventInfoSlim[] Events { get; set; }
+}
+
+internal class EventInfoSlim
+{
+    public string Name { get; set; }
+    public string EventArgsType { get; set; }
+}
+
+internal class ApiEventInfo
+{
+    public string EventName { get; set; }
+    public string EventArgsType { get; set; }
+    public string ClassName { get; set; }
+    public string Namespace { get; set; }
 }
