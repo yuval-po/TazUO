@@ -175,8 +175,12 @@ namespace ClassicUO.LegionScripting
 
         public void Dispose()
         {
-            if (_disposed) return;
+            if (_disposed)
+                return;
+
             _disposed = true;
+
+            Events.Dispose();
 
             if (_keyboardHooked)
             {
@@ -187,7 +191,6 @@ namespace ClassicUO.LegionScripting
 
             _hotkeyCallbacks.Clear();
             _pressedKeys.Clear();
-
         }
 
         public ConcurrentQueue<PyJournalEntry> JournalEntries => _journalEntries;

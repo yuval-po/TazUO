@@ -13,7 +13,7 @@ using Microsoft.CodeAnalysis.Scripting;
 
 namespace ClassicUO.LegionScripting;
 
-public class ScriptFile
+public class ScriptFile : IDisposable
 {
     public string Path;
     public string FileName;
@@ -38,6 +38,7 @@ public class ScriptFile
     }
 
     private World World;
+    private bool _disposed;
 
     public ScriptFile(World world, string path, string fileName)
     {
@@ -201,5 +202,19 @@ public class ScriptFile
         // Clear compilation cache if module caching disabled
         if (LegionScripting.LScriptSettings.DisableModuleCache)
             CSharpCompiledScript = null;
+    }
+
+    public void Dispose()
+    {
+        if (_disposed)
+            return;
+
+        if (Type == ScriptType.Python)
+            PythonScriptStopped();
+        else
+            CSharpScriptStopped();
+
+        GC.SuppressFinalize(this);
+        _disposed = true;
     }
 }
