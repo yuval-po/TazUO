@@ -14,12 +14,11 @@ using ClassicUO.Game.Managers;
 using ClassicUO.Game.Managers.Structs;
 using ClassicUO.Game.UI.Controls;
 using ClassicUO.Game.UI.Gumps;
-using ClassicUO.LegionScripting.PyClasses;
+using ClassicUO.LegionScripting.ApiClasses;
 using ClassicUO.Network;
 using ClassicUO.Utility;
 using ClassicUO.Utility.Logging;
 using IronPython.Runtime;
-using Microsoft.Scripting.Hosting;
 using Microsoft.Scripting.Utils;
 using Microsoft.Xna.Framework;
 using Control = ClassicUO.Game.UI.Controls.Control;
@@ -43,7 +42,7 @@ namespace ClassicUO.LegionScripting
         private readonly ConcurrentDictionary<string, bool> _pressedKeys = new();
 
         private ConcurrentBag<uint> _ignoreList = [];
-        private ConcurrentQueue<PyJournalEntry> _journalEntries = new();
+        private ConcurrentQueue<ApiJournalEntry> _journalEntries = new();
         internal readonly World World = Client.UnitTestingActive ? new World() : Client.Game.UO.World;
         private Item _backpack;
         private bool _keyboardHooked = false;
@@ -56,7 +55,11 @@ namespace ClassicUO.LegionScripting
         #region Accessors
 
         public  ICallbackChannel CallbackChannel { get; }
+
+        // ReSharper disable once MemberCanBePrivate.Global - Used by user scripts
         public EventSinkApi Events { get; }
+
+        public LegionApiConfig Config { get; } = new();
 
         #endregion
 
@@ -65,7 +68,7 @@ namespace ClassicUO.LegionScripting
             ArgumentNullException.ThrowIfNull(callbackChannel);
             CallbackChannel = callbackChannel;
             Events = new EventSinkApi(this);
-            Gumps = new PyGumps(this);
+            Gumps = new ApiUiGump(this);
         }
 
         #region Callback Queue
@@ -77,10 +80,18 @@ namespace ClassicUO.LegionScripting
                 foreach (Action action in actions)
                     _scheduledCallbacks.Enqueue(action);
 
-                while (_scheduledCallbacks.Count > 100)
+                if (_scheduledCallbacks.Count <= Config.MaxCallbackCount)
+                    return;
+
+                GameActions.Print(
+                    World,
+                    $"Scripting Warning: Too many callbacks registered! Dropping the {Config.MaxCallbackCount - _scheduledCallbacks.Count} oldest callbacks",
+                    Constants.HUE_WARN
+                );
+
+                while (_scheduledCallbacks.Count > Config.MaxCallbackCount)
                 {
                     _scheduledCallbacks.Dequeue(); //Limit callback counts
-                    GameActions.Print(World, "Python Scripting Error: Too many callbacks registered!");
                 }
             }
         }
@@ -193,7 +204,7 @@ namespace ClassicUO.LegionScripting
             _pressedKeys.Clear();
         }
 
-        public ConcurrentQueue<PyJournalEntry> JournalEntries => _journalEntries;
+        public ConcurrentQueue<ApiJournalEntry> JournalEntries => _journalEntries;
 
         #region Properties
 
@@ -215,11 +226,11 @@ namespace ClassicUO.LegionScripting
         /// <summary>
         /// Returns the player character object
         /// </summary>
-        public PyPlayer Player
+        public ApiPlayer Player
         {
             get
             {
-                field ??= MainThreadQueue.InvokeOnMainThread(() => new PyPlayer(World.Player));
+                field ??= MainThreadQueue.InvokeOnMainThread(() => new ApiPlayer(World.Player));
                 return field;
             }
         }
@@ -266,9 +277,9 @@ namespace ClassicUO.LegionScripting
         /// <summary>
         /// Access useful player settings.
         /// </summary>
-        public static PyProfile Profile = new();
+        public static ApiUserProfile Profile = new();
 
-        public PyGumps Gumps;
+        public ApiUiGump Gumps;
 
         /// <summary>
         /// Check if the script has been requested to stop.
@@ -468,7 +479,7 @@ namespace ClassicUO.LegionScripting
         /// ```
         /// </summary>
         /// <returns>The item that was in your hand</returns>
-        public PyItem ClearLeftHand() => MainThreadQueue.InvokeOnMainThread
+        public ApiItem ClearLeftHand() => MainThreadQueue.InvokeOnMainThread
         (() =>
             {
                 Item i = World.Player.FindItemByLayer(Layer.OneHanded);
@@ -478,7 +489,7 @@ namespace ClassicUO.LegionScripting
                     Item bp = World.Player.Backpack;
                     ObjectActionQueue.Instance.Enqueue(new MoveRequest(i, bp).ToObjectActionQueueItem(), ActionPriority.MoveItem);
                     Found = i.Serial;
-                    return new PyItem(i);
+                    return new ApiItem(i);
                 }
 
                 Found = 0;
@@ -497,7 +508,7 @@ namespace ClassicUO.LegionScripting
         ///  ```
         /// </summary>
         /// <returns>The item that was in your hand</returns>
-        public PyItem ClearRightHand() => MainThreadQueue.InvokeOnMainThread
+        public ApiItem ClearRightHand() => MainThreadQueue.InvokeOnMainThread
         (() =>
             {
                 Item i = World.Player.FindItemByLayer(Layer.TwoHanded);
@@ -507,7 +518,7 @@ namespace ClassicUO.LegionScripting
                     Item bp = World.Player.Backpack;
                     ObjectActionQueue.Instance.Enqueue(new MoveRequest(i, bp).ToObjectActionQueueItem(), ActionPriority.MoveItem);
                     Found = i.Serial;
-                    return new PyItem(i);
+                    return new ApiItem(i);
                 }
 
                 Found = 0;
@@ -610,7 +621,7 @@ namespace ClassicUO.LegionScripting
         /// Retrieve the current open menu's (uses the latest MenuGump) menu item descriptions.
         /// Useful when menu IDs change every time (e.g., Tracking skill).
         /// </summary>
-        /// <returns>List of <see cref="PyMenuItem"/> containing Index, Name, Graphic and Hue values for each menu item</returns>
+        /// <returns>List of <see cref="ApiUiMenuItem"/> containing Index, Name, Graphic and Hue values for each menu item</returns>
         public PythonList MenuItemsCurrent() => MainThreadQueue.InvokeOnMainThread<PythonList>
         (() =>
             {
@@ -622,7 +633,7 @@ namespace ClassicUO.LegionScripting
                     return [];
 
                 PythonList items = [];
-                items.AddRange(menu.MenuItemsMetadata.Select(mim => new PyMenuItem(mim.Index, mim.Name, mim.Graphic, mim.Hue)));
+                items.AddRange(menu.MenuItemsMetadata.Select(mim => new ApiUiMenuItem(mim.Index, mim.Name, mim.Graphic, mim.Hue)));
                 return items;
             }
         );
@@ -1214,14 +1225,14 @@ namespace ClassicUO.LegionScripting
         /// </summary>
         /// <param name="serial">The serial</param>
         /// <returns>The item object</returns>
-        public PyItem FindItem(uint serial) => MainThreadQueue.InvokeOnMainThread(() =>
+        public ApiItem FindItem(uint serial) => MainThreadQueue.InvokeOnMainThread(() =>
         {
             Item i = World.Items.Get(serial);
 
             if (i != null)
             {
                 Found = i.Serial;
-                return new PyItem(i);
+                return new ApiItem(i);
             }
 
             Found = 0;
@@ -1245,7 +1256,7 @@ namespace ClassicUO.LegionScripting
         /// <param name="hue">Hue of item</param>
         /// <param name="minamount">Only match if item stack is at least this much</param>
         /// <returns>Returns the first item found that matches</returns>
-        public PyItem FindType(uint graphic, uint container = uint.MaxValue, ushort range = ushort.MaxValue, ushort hue = ushort.MaxValue, ushort minamount = 0) =>
+        public ApiItem FindType(uint graphic, uint container = uint.MaxValue, ushort range = ushort.MaxValue, ushort hue = ushort.MaxValue, ushort minamount = 0) =>
             MainThreadQueue.InvokeOnMainThread
             (() =>
                 {
@@ -1256,7 +1267,7 @@ namespace ClassicUO.LegionScripting
                         if (i.Amount >= minamount && !_ignoreList.Contains(i))
                         {
                             Found = i.Serial;
-                            return new PyItem(i);
+                            return new ApiItem(i);
                         }
                     }
 
@@ -1280,17 +1291,17 @@ namespace ClassicUO.LegionScripting
         /// <param name="hue">Hue of item</param>
         /// <param name="minamount">Only match if item stack is at least this much</param>
         /// <returns></returns>
-        public PyItem[] FindTypeAll(uint graphic, uint container = uint.MaxValue, ushort range = ushort.MaxValue, ushort hue = ushort.MaxValue, ushort minamount = 0) =>
+        public ApiItem[] FindTypeAll(uint graphic, uint container = uint.MaxValue, ushort range = ushort.MaxValue, ushort hue = ushort.MaxValue, ushort minamount = 0) =>
             MainThreadQueue.InvokeOnMainThread
                 (() =>
                 {
                     Item[] list = Utility.FindItems(graphic, uint.MaxValue, uint.MaxValue, container, hue, range)
                         .Where(i => !OnIgnoreList(i) && i.Amount >= minamount).ToArray();
 
-                    List<PyItem> result = new();
+                    List<ApiItem> result = new();
                     foreach (Item item in list)
                     {
-                        result.Add(new PyItem(item));
+                        result.Add(new ApiItem(item));
                     }
 
                     return result.ToArray();
@@ -1309,7 +1320,7 @@ namespace ClassicUO.LegionScripting
         /// <param name="layer">The layer to check, see https://github.com/PlayTazUO/TazUO/blob/main/src/ClassicUO.Client/Game/Data/Layers.cs</param>
         /// <param name="serial">Optional, if not set it will check yourself, otherwise it will check the mobile requested</param>
         /// <returns>The item if it exists</returns>
-        public PyItem FindLayer(string layer, uint serial = uint.MaxValue) => MainThreadQueue.InvokeOnMainThread
+        public ApiItem FindLayer(string layer, uint serial = uint.MaxValue) => MainThreadQueue.InvokeOnMainThread
         (() =>
             {
                 Found = 0;
@@ -1323,7 +1334,7 @@ namespace ClassicUO.LegionScripting
                     if (item != null)
                     {
                         Found = item.Serial;
-                        return new PyItem(item);
+                        return new ApiItem(item);
                     }
                 }
 
@@ -1347,7 +1358,7 @@ namespace ClassicUO.LegionScripting
         public PythonList GetItemsOnGround(int distance = int.MaxValue, uint graphic = uint.MaxValue) =>
             MainThreadQueue.InvokeOnMainThread(() =>
             {
-                var resultList = new List<PyItem>();
+                var resultList = new List<ApiItem>();
 
                 foreach (Item item in World.Items.Values)
                 {
@@ -1362,14 +1373,14 @@ namespace ClassicUO.LegionScripting
                     if (graphic != uint.MaxValue && item.Graphic != graphic)
                         continue;
 
-                    resultList.Add(new PyItem(item));
+                    resultList.Add(new ApiItem(item));
                 }
 
                 if (resultList.Count == 0)
                     return null;
 
                 var pythonList = new PythonList();
-                foreach (PyItem item in resultList)
+                foreach (ApiItem item in resultList)
                 {
                     pythonList.Add(item);
                 }
@@ -1392,20 +1403,20 @@ namespace ClassicUO.LegionScripting
         /// <param name="container"></param>
         /// <param name="recursive">Search sub containers also?</param>
         /// <returns>A list of items in the container</returns>
-        public PyItem[] ItemsInContainer(uint container, bool recursive = false) => MainThreadQueue.InvokeOnMainThread(() =>
+        public ApiItem[] ItemsInContainer(uint container, bool recursive = false) => MainThreadQueue.InvokeOnMainThread(() =>
         {
             if (!recursive)
             {
                 Item[] list = Utility.FindItems(parentContainer: container).ToArray();
-                List<PyItem> result = new();
+                List<ApiItem> result = new();
                 foreach (Item item in list)
                 {
-                    result.Add(new PyItem(item));
+                    result.Add(new ApiItem(item));
                 }
                 return result.ToArray();
             }
 
-            List<PyItem> results = new();
+            List<ApiItem> results = new();
             Stack<uint> containers = new();
             containers.Push(container);
 
@@ -1415,7 +1426,7 @@ namespace ClassicUO.LegionScripting
 
                 foreach (Item item in Utility.FindItems(parentContainer: current))
                 {
-                    results.Add(new PyItem(item));
+                    results.Add(new ApiItem(item));
                     containers.Push(item.Serial);
                 }
             }
@@ -1949,13 +1960,13 @@ namespace ClassicUO.LegionScripting
         /// If the timeout expires without a selection, the method returns <c>null</c>.
         /// </param>
         /// <returns>
-        /// Returns a Python wrapper (<see cref="PyGameObject"/>) for the selected target:
+        /// Returns a Python wrapper (<see cref="ApiGameObject"/>) for the selected target:
         /// <list type="bullet">
-        ///   <item><description><see cref="PyMobile"/> if a mobile (e.g. NPC, player) is targeted</description></item>
-        ///   <item><description><see cref="PyItem"/> if an item is targeted</description></item>
-        ///   <item><description><see cref="PyStatic"/> if a static tile (e.g. tree, building) is targeted</description></item>
-        ///   <item><description><see cref="PyMulti"/> if a multi tile (e.g. a player house, boat) is targeted</description></item>
-        ///   <item><description><see cref="PyLand"/> if a land tile (e.g. a base map tile at a coordinate) is targeted</description></item>
+        ///   <item><description><see cref="ApiMobile"/> if a mobile (e.g. NPC, player) is targeted</description></item>
+        ///   <item><description><see cref="ApiItem"/> if an item is targeted</description></item>
+        ///   <item><description><see cref="ApiStatic"/> if a static tile (e.g. tree, building) is targeted</description></item>
+        ///   <item><description><see cref="ApiMulti"/> if a multi tile (e.g. a player house, boat) is targeted</description></item>
+        ///   <item><description><see cref="ApiLand"/> if a land tile (e.g. a base map tile at a coordinate) is targeted</description></item>
         ///   <item><description><c>null</c> if no valid target was selected within the timeout</description></item>
         /// </list>
         /// </returns>
@@ -1969,7 +1980,7 @@ namespace ClassicUO.LegionScripting
         ///     API.SysMsg("No target selected.")
         /// </code>
         /// </example>
-        public PyGameObject RequestAnyTarget(double timeout = 5)
+        public ApiGameObject RequestAnyTarget(double timeout = 5)
         {
             DateTime expire = DateTime.Now.AddSeconds(timeout);
             MainThreadQueue.InvokeOnMainThread(() =>
@@ -1985,7 +1996,7 @@ namespace ClassicUO.LegionScripting
                     continue;
                 }
 
-                return MainThreadQueue.InvokeOnMainThread<PyGameObject>(() =>
+                return MainThreadQueue.InvokeOnMainThread<ApiGameObject>(() =>
                 {
                     LastTargetInfo info = World.TargetManager.LastTargetInfo;
                     if (info.IsEntity)
@@ -1993,12 +2004,12 @@ namespace ClassicUO.LegionScripting
                         if (SerialHelper.IsMobile(info.Serial))
                         {
                             Mobile mobile = World.Mobiles.Get(info.Serial);
-                            return mobile is null ? null : new PyMobile(mobile);
+                            return mobile is null ? null : new ApiMobile(mobile);
                         }
                         else
                         {
                             Item item = World.Items.Get(info.Serial);
-                            return item is null ? null : new PyItem(item);
+                            return item is null ? null : new ApiItem(item);
                         }
                     }
 
@@ -2006,8 +2017,8 @@ namespace ClassicUO.LegionScripting
                     {
                         return World.GetStaticOrMulti(info.Graphic, info.X, info.Y, info.Z) switch
                         {
-                            Static @static => new PyStatic(@static),
-                            Multi multi => new PyMulti(multi),
+                            Static @static => new ApiStatic(@static),
+                            Multi multi => new ApiMulti(multi),
                             _ => null
                         };
                     }
@@ -2015,7 +2026,7 @@ namespace ClassicUO.LegionScripting
                     if (info.IsLand)
                     {
                         var land = World.Map.GetTile(info.X, info.Y) as Land;
-                        return land is null ? null : new PyLand(land);
+                        return land is null ? null : new ApiLand(land);
                     }
 
                     return null;
@@ -2757,7 +2768,7 @@ namespace ClassicUO.LegionScripting
             if (string.IsNullOrEmpty(msg))
                 return false;
 
-            foreach (PyJournalEntry je in JournalEntries.ToArray())
+            foreach (ApiJournalEntry je in JournalEntries.ToArray())
             {
                 if (je.Disposed) continue;
 
@@ -2796,7 +2807,7 @@ namespace ClassicUO.LegionScripting
             if (msgs == null || msgs.Count == 0)
                 return false;
 
-            foreach (PyJournalEntry je in JournalEntries.ToArray())
+            foreach (ApiJournalEntry je in JournalEntries.ToArray())
             {
                 if (je.Disposed) continue;
 
@@ -2843,7 +2854,7 @@ namespace ClassicUO.LegionScripting
 
             bool checkMatches = !string.IsNullOrEmpty(matchingText);
 
-            foreach (PyJournalEntry je in JournalEntries)
+            foreach (ApiJournalEntry je in JournalEntries)
             {
                 if (je.Time < cutoff || je.Disposed)
                     continue;
@@ -2892,9 +2903,9 @@ namespace ClassicUO.LegionScripting
             }
             else
             {
-                ConcurrentQueue<PyJournalEntry> newQueue = new();
+                ConcurrentQueue<ApiJournalEntry> newQueue = new();
 
-                foreach (PyJournalEntry je in JournalEntries.ToArray())
+                foreach (ApiJournalEntry je in JournalEntries.ToArray())
                 {
                     if (matchingEntries.StartsWith("$") && RegexHelper.GetRegex(matchingEntries.Substring(1)).IsMatch(je.Text))
                     {
@@ -3010,7 +3021,7 @@ namespace ClassicUO.LegionScripting
         /// <param name="scanType"></param>
         /// <param name="maxDistance"></param>
         /// <returns></returns>
-        public PyEntity NearestEntity(ScanType scanType, int maxDistance = 10) => MainThreadQueue.InvokeOnMainThread
+        public ApiEntity NearestEntity(ScanType scanType, int maxDistance = 10) => MainThreadQueue.InvokeOnMainThread
         (() =>
             {
                 Found = 0;
@@ -3021,7 +3032,7 @@ namespace ClassicUO.LegionScripting
                 if (e != null && e.Distance <= maxDistance)
                 {
                     Found = e.Serial;
-                    return new PyEntity(e);
+                    return new ApiEntity(e);
                 }
 
                 return null;
@@ -3043,7 +3054,7 @@ namespace ClassicUO.LegionScripting
         /// <param name="notoriety">List of notorieties</param>
         /// <param name="maxDistance"></param>
         /// <returns></returns>
-        public PyMobile NearestMobile(IList<Notoriety> notoriety, int maxDistance = 10)
+        public ApiMobile NearestMobile(IList<Notoriety> notoriety, int maxDistance = 10)
         {
             Found = 0;
 
@@ -3064,7 +3075,7 @@ namespace ClassicUO.LegionScripting
                     if (mob != null)
                     {
                         Found = mob.Serial;
-                        return new PyMobile(mob);
+                        return new ApiMobile(mob);
                     }
 
                     return null;
@@ -3085,7 +3096,7 @@ namespace ClassicUO.LegionScripting
         /// </summary>
         /// <param name="distance"></param>
         /// <returns></returns>
-        public PyItem NearestCorpse(int distance = 3) => MainThreadQueue.InvokeOnMainThread(() =>
+        public ApiItem NearestCorpse(int distance = 3) => MainThreadQueue.InvokeOnMainThread(() =>
         {
             Found = 0;
             Item c = Utility.FindNearestCorpsePython(distance, this);
@@ -3093,7 +3104,7 @@ namespace ClassicUO.LegionScripting
             if (c != null)
             {
                 Found = c.Serial;
-                return new PyItem(c);
+                return new ApiItem(c);
             }
 
             return null;
@@ -3113,7 +3124,7 @@ namespace ClassicUO.LegionScripting
         /// <param name="notoriety">List of notorieties</param>
         /// <param name="maxDistance"></param>
         /// <returns></returns>
-        public PyMobile[] NearestMobiles(IList<Notoriety> notoriety, int maxDistance = 10) => MainThreadQueue.BubblingInvokeOnMainThread
+        public ApiMobile[] NearestMobiles(IList<Notoriety> notoriety, int maxDistance = 10) => MainThreadQueue.BubblingInvokeOnMainThread
         (() =>
             {
                 if (notoriety == null || notoriety.Count == 0)
@@ -3126,7 +3137,7 @@ namespace ClassicUO.LegionScripting
                      ((Notoriety)(byte)m.NotorietyFlag) && m.Distance <= maxDistance && !OnIgnoreList(m)
                 ).OrderBy(m => m.Distance).ToArray();
 
-                return list.Select(m => new PyMobile(m)).ToArray();
+                return list.Select(m => new ApiMobile(m)).ToArray();
             }
         );
 
@@ -3143,7 +3154,7 @@ namespace ClassicUO.LegionScripting
         /// </summary>
         /// <param name="serial"></param>
         /// <returns>The mobile or null</returns>
-        public PyMobile FindMobile(uint serial) => MainThreadQueue.InvokeOnMainThread(() =>
+        public ApiMobile FindMobile(uint serial) => MainThreadQueue.InvokeOnMainThread(() =>
         {
             Found = 0;
 
@@ -3152,7 +3163,7 @@ namespace ClassicUO.LegionScripting
             if (mob != null)
             {
                 Found = mob.Serial;
-                return new PyMobile(mob);
+                return new ApiMobile(mob);
             }
 
             return null;
@@ -3176,7 +3187,7 @@ namespace ClassicUO.LegionScripting
         /// <param name="distance">Optional maximum distance from player</param>
         /// <param name="notoriety">Optional list of notoriety flags to filter by</param>
         /// <returns></returns>
-        public PyMobile[] GetAllMobiles(ushort? graphic = null, int? distance = null, IList<Notoriety> notoriety = null) => MainThreadQueue.BubblingInvokeOnMainThread(() =>
+        public ApiMobile[] GetAllMobiles(ushort? graphic = null, int? distance = null, IList<Notoriety> notoriety = null) => MainThreadQueue.BubblingInvokeOnMainThread(() =>
         {
             IEnumerable<Mobile> mobiles = World.Mobiles.Values.AsEnumerable();
 
@@ -3192,7 +3203,7 @@ namespace ClassicUO.LegionScripting
                 mobiles = mobiles.Where(m => requestedNotoriety.Contains((Notoriety)(byte)m.NotorietyFlag));
             }
 
-            return mobiles.Select(m => new PyMobile(m)).ToArray();
+            return mobiles.Select(m => new ApiMobile(m)).ToArray();
         });
 
         /// <summary>
@@ -3207,7 +3218,7 @@ namespace ClassicUO.LegionScripting
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns>A GameObject of that location.</returns>
-        public PyGameObject GetTile(int x, int y) => MainThreadQueue.InvokeOnMainThread(() => { return new PyGameObject(World.Map.GetTile(x, y)); });
+        public ApiGameObject GetTile(int x, int y) => MainThreadQueue.InvokeOnMainThread(() => { return new ApiGameObject(World.Map.GetTile(x, y)); });
 
         /// <summary>
         /// Gets all static objects at a specific position (x, y coordinates).
@@ -3221,12 +3232,12 @@ namespace ClassicUO.LegionScripting
         /// </summary>
         /// <param name="x">X coordinate</param>
         /// <param name="y">Y coordinate</param>
-        /// <returns>List of PyStatic objects at the specified position</returns>
-        public List<PyStatic> GetStaticsAt(int x, int y) => MainThreadQueue.InvokeOnMainThread(() =>
+        /// <returns>List of ApiStatic objects at the specified position</returns>
+        public List<ApiStatic> GetStaticsAt(int x, int y) => MainThreadQueue.InvokeOnMainThread(() =>
         {
-            var statics = new List<PyStatic>();
+            var statics = new List<ApiStatic>();
 
-            if (World.Map is null) return new List<PyStatic>();
+            if (World.Map is null) return new List<ApiStatic>();
 
             Game.Map.Chunk chunk = World.Map.GetChunk(x, y, false);
 
@@ -3238,7 +3249,7 @@ namespace ClassicUO.LegionScripting
                 {
                     if (obj is Static staticObj)
                     {
-                        statics.Add(new PyStatic(staticObj));
+                        statics.Add(new ApiStatic(staticObj));
                     }
                     obj = obj.TNext;
                 }
@@ -3263,12 +3274,12 @@ namespace ClassicUO.LegionScripting
         /// <param name="y1">Starting Y coordinate</param>
         /// <param name="x2">Ending X coordinate</param>
         /// <param name="y2">Ending Y coordinate</param>
-        /// <returns>List of PyStatic objects within the specified area</returns>
-        public List<PyStatic> GetStaticsInArea(int x1, int y1, int x2, int y2) => MainThreadQueue.InvokeOnMainThread(() =>
+        /// <returns>List of ApiStatic objects within the specified area</returns>
+        public List<ApiStatic> GetStaticsInArea(int x1, int y1, int x2, int y2) => MainThreadQueue.InvokeOnMainThread(() =>
         {
-            var statics = new List<PyStatic>();
+            var statics = new List<ApiStatic>();
 
-            if (World.Map is null) return new List<PyStatic>();
+            if (World.Map is null) return new List<ApiStatic>();
 
             // Ensure coordinates are in correct order
             int minX = Math.Min(x1, x2);
@@ -3290,7 +3301,7 @@ namespace ClassicUO.LegionScripting
                         {
                             if (obj is Static staticObj)
                             {
-                                statics.Add(new PyStatic(staticObj));
+                                statics.Add(new ApiStatic(staticObj));
                             }
                             obj = obj.TNext;
                         }
@@ -3313,12 +3324,12 @@ namespace ClassicUO.LegionScripting
         /// </summary>
         /// <param name="x">X coordinate</param>
         /// <param name="y">Y coordinate</param>
-        /// <returns>List of PyMulti objects at the specified position</returns>
-        public List<PyMulti> GetMultisAt(int x, int y) => MainThreadQueue.InvokeOnMainThread(() =>
+        /// <returns>List of ApiMulti objects at the specified position</returns>
+        public List<ApiMulti> GetMultisAt(int x, int y) => MainThreadQueue.InvokeOnMainThread(() =>
         {
-            var multis = new List<PyMulti>();
+            var multis = new List<ApiMulti>();
 
-            if (World.Map is null) return new List<PyMulti>();
+            if (World.Map is null) return new List<ApiMulti>();
 
             // Check server-side houses for Multi components
             if (World.HouseManager != null)
@@ -3328,7 +3339,7 @@ namespace ClassicUO.LegionScripting
                     IEnumerable<Multi> houseMultis = house.GetMultiAt(x, y);
                     foreach (Multi houseMulti in houseMultis)
                     {
-                        multis.Add(new PyMulti(houseMulti));
+                        multis.Add(new ApiMulti(houseMulti));
                     }
                 }
             }
@@ -3351,12 +3362,12 @@ namespace ClassicUO.LegionScripting
         /// <param name="y1">Starting Y coordinate</param>
         /// <param name="x2">Ending X coordinate</param>
         /// <param name="y2">Ending Y coordinate</param>
-        /// <returns>List of PyMulti objects within the specified area</returns>
-        public List<PyMulti> GetMultisInArea(int x1, int y1, int x2, int y2) => MainThreadQueue.InvokeOnMainThread(() =>
+        /// <returns>List of ApiMulti objects within the specified area</returns>
+        public List<ApiMulti> GetMultisInArea(int x1, int y1, int x2, int y2) => MainThreadQueue.InvokeOnMainThread(() =>
         {
-            var multis = new List<PyMulti>();
+            var multis = new List<ApiMulti>();
 
-            if (World.Map is null) return new List<PyMulti>();
+            if (World.Map is null) return new List<ApiMulti>();
 
             // Ensure coordinates are in correct order
             int minX = Math.Min(x1, x2);
@@ -3376,7 +3387,7 @@ namespace ClassicUO.LegionScripting
                             IEnumerable<Multi> houseMultis = house.GetMultiAt(x, y);
                             foreach (Multi houseMulti in houseMultis)
                             {
-                                multis.Add(new PyMulti(houseMulti));
+                                multis.Add(new ApiMulti(houseMulti));
                             }
                         }
                     }
@@ -3469,7 +3480,7 @@ namespace ClassicUO.LegionScripting
         /// <summary>
         /// Use API.Gumps.CreateGump instead
         /// </summary>
-        public PyBaseGump CreateGump(bool acceptMouseInput = true, bool canMove = true, bool keepOpen = false) => Gumps.CreateGump(acceptMouseInput, canMove, keepOpen);
+        public ApiUiBaseGump CreateGump(bool acceptMouseInput = true, bool canMove = true, bool keepOpen = false) => Gumps.CreateGump(acceptMouseInput, canMove, keepOpen);
         /// <summary>
         /// Use API.Gumps.AddGump instead
         /// </summary>
@@ -3477,66 +3488,66 @@ namespace ClassicUO.LegionScripting
         /// <summary>
         /// Use API.Gumps.CreateGumpCheckbox instead.
         /// </summary>
-        public PyCheckbox CreateGumpCheckbox(string text = "", ushort hue = 0, bool isChecked = false) => Gumps.CreateGumpCheckbox(text, hue, isChecked);
+        public ApiUiCheckbox CreateGumpCheckbox(string text = "", ushort hue = 0, bool isChecked = false) => Gumps.CreateGumpCheckbox(text, hue, isChecked);
         /// <summary>
         /// Use API.Gumps.CreateGumpLabel instead.
         /// </summary>
-        public PyLabel CreateGumpLabel(string text, ushort hue = 996) => Gumps.CreateGumpLabel(text, hue);
+        public ApiUiLabel CreateGumpLabel(string text, ushort hue = 996) => Gumps.CreateGumpLabel(text, hue);
         /// <summary>
         /// Use API.Gumps.CreateGumpColorBox instead.
         /// </summary>
-        public PyAlphaBlendControl CreateGumpColorBox(float opacity = 0.7f, string color = "#000000") => Gumps.CreateGumpColorBox(opacity, color);
+        public ApiUiAlphaBlendControl CreateGumpColorBox(float opacity = 0.7f, string color = "#000000") => Gumps.CreateGumpColorBox(opacity, color);
         /// <summary>
         /// Use API.Gumps.CreateGumpItemPic instead.
         /// </summary>
-        public PyResizableStaticPic CreateGumpItemPic(uint graphic, int width, int height) => Gumps.CreateGumpItemPic(graphic, width, height);
+        public ApiUiResizableStaticPic CreateGumpItemPic(uint graphic, int width, int height) => Gumps.CreateGumpItemPic(graphic, width, height);
         /// <summary>
         /// Use API.Gumps.CreateGumpButton instead.
         /// </summary>
-        public PyButton CreateGumpButton(string text = "", ushort hue = 996, ushort normal = 0x00EF, ushort pressed = 0x00F0, ushort hover = 0x00EE)
+        public ApiUiButton CreateGumpButton(string text = "", ushort hue = 996, ushort normal = 0x00EF, ushort pressed = 0x00F0, ushort hover = 0x00EE)
             => Gumps.CreateGumpButton(text, hue, normal, pressed, hover);
         /// <summary>
         /// Use API.Gumps.CreateSimpleButton instead.
         /// </summary>
-        public PyNiceButton CreateSimpleButton(string text, int width, int height) => Gumps.CreateSimpleButton(text, width, height);
+        public ApiUiNiceButton CreateSimpleButton(string text, int width, int height) => Gumps.CreateSimpleButton(text, width, height);
         /// <summary>
         /// Use API.Gumps.CreateGumpRadioButton instead.
         /// </summary>
-        public PyRadioButton CreateGumpRadioButton(string text = "", int group = 0, ushort inactive = 0x00D0, ushort active = 0x00D1, ushort hue = 0xFFFF, bool isChecked = false)
+        public ApiUiRadioButton CreateGumpRadioButton(string text = "", int group = 0, ushort inactive = 0x00D0, ushort active = 0x00D1, ushort hue = 0xFFFF, bool isChecked = false)
             => Gumps.CreateGumpRadioButton(text, group, inactive, active, hue, isChecked);
         /// <summary>
         /// Use API.Gumps.CreateGumpTextBox instead.
         /// </summary>
-        public PyTTFTextInputField CreateGumpTextBox(string text = "", int width = 200, int height = 30, bool multiline = false)
+        public ApiUiTtfTextInputField CreateGumpTextBox(string text = "", int width = 200, int height = 30, bool multiline = false)
             => Gumps.CreateGumpTextBox(text, width, height, multiline);
         /// <summary>
         /// Use API.Gumps.CreateGumpTTFLabel instead.
         /// </summary>
-        public PyTextBox CreateGumpTTFLabel
+        public ApiUiTextBox CreateGumpTTFLabel
             (string text, float size, string color = "#FFFFFF", string font = TrueTypeLoader.EMBEDDED_FONT, string aligned = "left", int maxWidth = 0, bool applyStroke = false)
             => Gumps.CreateGumpTTFLabel(text, size, color, font, aligned, maxWidth, applyStroke);
         /// <summary>
         /// Use API.Gumps.CreateGumpSimpleProgressBar instead.
         /// </summary>
-        public PySimpleProgressBar CreateGumpSimpleProgressBar
+        public ApiUiSimpleProgressBar CreateGumpSimpleProgressBar
             (int width, int height, string backgroundColor = "#616161", string foregroundColor = "#212121", int value = 100, int max = 100)
             => Gumps.CreateGumpSimpleProgressBar(width, height, backgroundColor, foregroundColor, value, max);
         /// <summary>
         /// Use API.Gumps.CreateGumpScrollArea instead.
         /// </summary>
-        public PyScrollArea CreateGumpScrollArea(int x, int y, int width, int height) => Gumps.CreateGumpScrollArea(x, y, width, height);
+        public ApiUiScrollArea CreateGumpScrollArea(int x, int y, int width, int height) => Gumps.CreateGumpScrollArea(x, y, width, height);
         /// <summary>
         /// Use API.Gumps.CreateGumpPic instead.
         /// </summary>
-        public PyGumpPic CreateGumpPic(ushort graphic, int x = 0, int y = 0, ushort hue = 0) => Gumps.CreateGumpPic(graphic, x, y, hue);
+        public ApiUiGumpPic CreateGumpPic(ushort graphic, int x = 0, int y = 0, ushort hue = 0) => Gumps.CreateGumpPic(graphic, x, y, hue);
         /// <summary>
         /// Use API.Gumps.CreateDropDown instead.
         /// </summary>
-        public PyControlDropDown CreateDropDown(int width, IList<string> items, int selectedIndex = 0) => Gumps.CreateDropDown(width, items, selectedIndex);
+        public ApiUiControlDropDown CreateDropDown(int width, IList<string> items, int selectedIndex = 0) => Gumps.CreateDropDown(width, items, selectedIndex);
         /// <summary>
         /// Use API.Gumps.CreateModernGump instead.
         /// </summary>
-        public PyNineSliceGump CreateModernGump(int x, int y, int width, int height, bool resizable = true, int minWidth = 50, int minHeight = 50, object onResized = null) => new PyNineSliceGump(this, x, y, width, height, resizable, minWidth, minHeight, onResized);
+        public ApiUiNineSliceGump CreateModernGump(int x, int y, int width, int height, bool resizable = true, int minWidth = 50, int minHeight = 50, object onResized = null) => new ApiUiNineSliceGump(this, x, y, width, height, resizable, minWidth, minHeight, onResized);
         /// <summary>
         /// Use API.Gumps.AddControlOnClick instead.
         /// </summary>
@@ -3544,7 +3555,7 @@ namespace ClassicUO.LegionScripting
         /// <summary>
         /// Use API.Gumps.AddControlOnDisposed instead.
         /// </summary>
-        public PyBaseControl AddControlOnDisposed(PyBaseControl control, object onDispose) => Gumps.AddControlOnDisposed(control, onDispose);
+        public ApiUiBaseControl AddControlOnDisposed(ApiUiBaseControl control, object onDispose) => Gumps.AddControlOnDisposed(control, onDispose);
 
         #endregion
 

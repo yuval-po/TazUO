@@ -2,7 +2,7 @@
 using ClassicUO.Common;
 using ClassicUO.Game.Data;
 using ClassicUO.Game.GameObjects;
-using ClassicUO.LegionScripting.PyClasses;
+using ClassicUO.LegionScripting.ApiClasses;
 using Microsoft.Xna.Framework;
 
 namespace ClassicUO.Game.Managers;

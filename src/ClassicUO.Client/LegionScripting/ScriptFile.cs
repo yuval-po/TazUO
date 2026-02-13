@@ -172,7 +172,7 @@ public class ScriptFile : IDisposable
                 "System.Collections.Generic",
                 "System.Threading.Tasks",
                 "ClassicUO.LegionScripting",
-                "ClassicUO.LegionScripting.PyClasses"
+                "ClassicUO.LegionScripting.ApiClasses"
             );
 
         // Roslyn limits script globals to the bottom frame which is means the API has to be force-fed down the class/script hierarchy.

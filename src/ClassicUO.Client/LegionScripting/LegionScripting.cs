@@ -17,7 +17,7 @@ using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using ClassicUO.Game.UI;
 using ClassicUO.Game.UI.ImGuiControls.Legion;
-using ClassicUO.LegionScripting.PyClasses;
+using ClassicUO.LegionScripting.ApiClasses;
 using ClassicUO.Utility;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Scripting;
@@ -161,7 +161,7 @@ namespace ClassicUO.LegionScripting
 
             foreach (ScriptFile script in RunningScripts)
             {
-                script?.ScopedApi?.JournalEntries.Enqueue(new PyJournalEntry(e));
+                script?.ScopedApi?.JournalEntries.Enqueue(new ApiJournalEntry(e));
 
                 while (script?.ScopedApi?.JournalEntries.Count > ProfileManager.CurrentProfile.MaxJournalEntries) script.ScopedApi?.JournalEntries.TryDequeue(out _);
             }
@@ -758,7 +758,7 @@ namespace ClassicUO.LegionScripting
                                       <Using Include="System.Collections.Generic" />
                                       <Using Include="System.Threading.Tasks" />
                                       <Using Include="ClassicUO.LegionScripting" />
-                                      <Using Include="ClassicUO.LegionScripting.PyClasses" />
+                                      <Using Include="ClassicUO.LegionScripting.ApiClasses" />
                                       <Using Include="ScriptContext" Static="true" />
                                     </ItemGroup>
 
