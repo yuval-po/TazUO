@@ -118,6 +118,13 @@ namespace ClassicUO.LegionScripting
                 catch (Exception ex)
                 {
                     Log.Warn($"Script callback error: {ex}");
+                    // This may be spammy use needs to know if something's wrong.
+                    // Ideally, this should bubble up to terminate the script.
+                    GameActions.Print(
+                        World,
+                        $"Script callback failed: {ex.Message}",
+                        Constants.HUE_WARN
+                    );
                 }
             };
 

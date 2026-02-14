@@ -461,19 +461,7 @@ public class ApiUiGump(LegionAPI api)
             if (leftOnly && e.Button != MouseButtonType.Left)
                 return;
 
-            api?.ScheduleCallback
-            (() =>
-                {
-                    try
-                    {
-                        api.CallbackChannel.Invoke(onClick);
-                    }
-                    catch (Exception ex)
-                    {
-                        GameActions.Print($"Script callback error: {ex}", Constants.HUE_ERROR);
-                    }
-                }
-            );
+            api?.ScheduleCallback(onClick);
         };
 
         return control;
@@ -503,23 +491,7 @@ public class ApiUiGump(LegionAPI api)
         if (control == null || onDispose == null || control.Control == null || !api.CallbackChannel.CanInvoke(onDispose))
             return control;
 
-        control.Control.Disposed += (_, _) =>
-        {
-            api?.ScheduleCallback
-            (() =>
-                {
-                    try
-                    {
-                        api.CallbackChannel.Invoke(onDispose);
-                    }
-                    catch
-                    {
-                        // ignored
-                    }
-                }
-            );
-        };
-
+        control.Control.Disposed += (_, _) => api?.ScheduleCallback(onDispose);
         return control;
     }
 }
