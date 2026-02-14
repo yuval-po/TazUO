@@ -18,8 +18,6 @@ using ClassicUO.LegionScripting.ApiClasses;
 using ClassicUO.Network;
 using ClassicUO.Utility;
 using ClassicUO.Utility.Logging;
-using IronPython.Runtime;
-using Microsoft.Scripting.Utils;
 using Microsoft.Xna.Framework;
 using Control = ClassicUO.Game.UI.Controls.Control;
 using Label = ClassicUO.Game.UI.Controls.Label;
@@ -631,19 +629,15 @@ namespace ClassicUO.LegionScripting
         /// Useful when menu IDs change every time (e.g., Tracking skill).
         /// </summary>
         /// <returns>List of <see cref="ApiUiMenuItem"/> containing Index, Name, Graphic and Hue values for each menu item</returns>
-        public PythonList MenuItemsCurrent() => MainThreadQueue.InvokeOnMainThread<PythonList>
+        public IList<ApiUiMenuItem> MenuItemsCurrent() => MainThreadQueue.InvokeOnMainThread
         (() =>
             {
-                MenuGump menu = UIManager.Gumps
+                return UIManager.Gumps
                     .OfType<MenuGump>()
-                    .LastOrDefault(g => !g.IsDisposed && g.IsVisible);
-
-                if (menu is null)
-                    return [];
-
-                PythonList items = [];
-                items.AddRange(menu.MenuItemsMetadata.Select(mim => new ApiUiMenuItem(mim.Index, mim.Name, mim.Graphic, mim.Hue)));
-                return items;
+                    .LastOrDefault(g => !g.IsDisposed && g.IsVisible)
+                    ?.MenuItemsMetadata
+                    ?.Select(mim => new ApiUiMenuItem(mim.Index, mim.Name, mim.Graphic, mim.Hue))
+                    ?.ToList() ?? [];
             }
         );
 
@@ -944,15 +938,9 @@ namespace ClassicUO.LegionScripting
         /// ```
         /// </summary>
         /// <returns>Returns a list of outfit names for use with Dress(outfitname)</returns>
-        public PythonList GetAvailableDressOutfits() => MainThreadQueue.InvokeOnMainThread(() =>
+        public IList<string> GetAvailableDressOutfits() => MainThreadQueue.InvokeOnMainThread(() =>
         {
-            PythonList list = new();
-            foreach (DressConfig config in DressAgentManager.Instance.CurrentPlayerConfigs)
-            {
-                list.Add(config.Name);
-            }
-
-            return list;
+            return DressAgentManager.Instance?.CurrentPlayerConfigs?.Select((cfg) => cfg.Name)?.ToList() ?? [];
         });
 
         /// <summary>
@@ -1362,9 +1350,9 @@ namespace ClassicUO.LegionScripting
         /// </summary>
         /// <param name="distance">Optional max distance to search (default: no limit)</param>
         /// <param name="graphic">Optional graphic/type filter (default: no filter)</param>
-        /// <param name="IsOSI">If true, looks for items in container with uint.MaxValue serial (OSI standard)</param>
-        /// <returns>PythonList of items on ground, or null if none found</returns>
-        public PythonList GetItemsOnGround(int distance = int.MaxValue, uint graphic = uint.MaxValue) =>
+        /// <param name="IsOSI">If true, looks for items in a container with uint.MaxValue serial (OSI standard)</param>
+        /// <returns>A list of items on ground, or null if none found</returns>
+        public IList<ApiItem> GetItemsOnGround(int distance = int.MaxValue, uint graphic = uint.MaxValue) =>
             MainThreadQueue.InvokeOnMainThread(() =>
             {
                 var resultList = new List<ApiItem>();
@@ -1385,16 +1373,7 @@ namespace ClassicUO.LegionScripting
                     resultList.Add(new ApiItem(item));
                 }
 
-                if (resultList.Count == 0)
-                    return null;
-
-                var pythonList = new PythonList();
-                foreach (ApiItem item in resultList)
-                {
-                    pythonList.Add(item);
-                }
-
-                return pythonList;
+                return resultList.Count > 0 ? resultList : null;
             });
 
         /// <summary>
@@ -1700,29 +1679,21 @@ namespace ClassicUO.LegionScripting
         /// <param name="z"></param>
         /// <param name="distance">Distance away from goal to stop.</param>
         /// <returns>Returns a list of positions to reach the goal. Returns null if cannot find path.</returns>
-        public PythonList GetPath(int x, int y, int z = int.MinValue, int distance = 1) => MainThreadQueue.InvokeOnMainThread(() =>
-        {
-            if (z == int.MinValue)
-                z = World.Map.GetTileZ(x, y);
-
-            List<(int X, int Y, int Z)> path = World.Player.Pathfinder.GetPathTo(x, y, z, distance);
-            if (path is null)
+        public IList<ApiPoint3D> GetPath(int x, int y, int z = int.MinValue, int distance = 1) =>
+            MainThreadQueue.InvokeOnMainThread(() =>
             {
-                return null;
-            }
+                if (z == int.MinValue)
+                    z = World.Map.GetTileZ(x, y);
 
-            var pythonList = new PythonList();
-            foreach ((int X, int Y, int Z) p in path)
-            {
-                var tuple = new PythonTuple(new object[] { p.X, p.Y, p.Z });
-                pythonList.Add(tuple);
-            }
+                List<(int X, int Y, int Z)> path = World.Player.Pathfinder.GetPathTo(x, y, z, distance);
 
-            return pythonList;
-        });
+                return path is null
+                    ? null
+                    : new List<ApiPoint3D>(path.Select(p => new ApiPoint3D { X = p.X, Y = p.Y, Z = p.Z }));
+            });
 
         /// <summary>
-        /// Automatically follow a mobile. This is different than pathfinding. This will continune to follow the mobile.
+        /// Automatically follow a mobile. This is different from pathfinding. This will continue to follow the mobile.
         /// Example:
         /// ```py
         /// mob = API.NearestMobile([API.Notoriety.Gray, API.Notoriety.Criminal], 7)
@@ -2623,20 +2594,12 @@ namespace ClassicUO.LegionScripting
         );
 
         /// <summary>
-        /// Gets all currently open server-side gumps.
+        ///     Gets all currently open server-side gumps.
         /// </summary>
-        /// <returns>A PythonList containing all open server gumps, or null if none are open</returns>
-        public PythonList GetAllGumps() => MainThreadQueue.InvokeOnMainThread<PythonList>(() =>
-        {
-            Gump[] serverGumps = UIManager.Gumps.Where(g => g.ServerSerial > 0).ToArray();
+        /// <returns>A list containing all open server gumps, or null if none are open</returns>
+        public IList<Gump> GetAllGumps() =>
+            MainThreadQueue.InvokeOnMainThread(() => UIManager.Gumps.Where(g => g.ServerSerial > 0).ToList());
 
-            if (!serverGumps.Any())
-                return null;
-
-            PythonList list = new();
-            list.AddRange(serverGumps);
-            return list;
-        });
 
         /// <summary>
         /// Wait for a server-side gump.
@@ -2855,9 +2818,9 @@ namespace ClassicUO.LegionScripting
         /// <param name="seconds"></param>
         /// <param name="matchingText">Only add if text matches</param>
         /// <returns>A list of JournalEntry's</returns>
-        public PythonList GetJournalEntries(double seconds, string matchingText = "")
+        public IList<ApiJournalEntry> GetJournalEntries(double seconds, string matchingText = "")
         {
-            var entries = new PythonList();
+            var entries = new List<ApiJournalEntry>();
 
             DateTime cutoff = DateTime.Now - TimeSpan.FromSeconds(seconds);
 
@@ -2868,28 +2831,17 @@ namespace ClassicUO.LegionScripting
                 if (je.Time < cutoff || je.Disposed)
                     continue;
 
-                if (!checkMatches)
-                {
-                    entries.Add(je);
-                    continue;
-                }
-
-                if (matchingText.StartsWith("$") && RegexHelper.GetRegex(matchingText.Substring(1)).IsMatch(je.Text))
+                if (!checkMatches || (matchingText.StartsWith("$") && RegexHelper.GetRegex(matchingText[1..]).IsMatch(je.Text)))
                 {
                     entries.Add(je);
                     continue;
                 }
 
                 if (je.Text.Contains(matchingText))
-                {
                     entries.Add(je);
-                }
             }
 
-            if (entries.Count > 0)
-                return entries;
-
-            return null;
+            return entries.Count > 0 ? entries : null;
         }
 
         /// <summary>
@@ -3458,7 +3410,7 @@ namespace ClassicUO.LegionScripting
         /// ```
         /// </summary>
         /// <returns>Array of serials representing all friends</returns>
-        public PythonList GetAllFriends() => MainThreadQueue.InvokeOnMainThread(() => FriendsListManager.Instance.GetAllFriends());
+        public IList<uint> GetAllFriends() => MainThreadQueue.InvokeOnMainThread(() => FriendsListManager.Instance.GetAllFriends());
 
         #endregion
 
@@ -3471,9 +3423,9 @@ namespace ClassicUO.LegionScripting
         /// Note that members may not always have an associated Mobile.
         /// </summary>
         /// <returns>A list of party member serials</returns>
-        public PythonList GetPartyMemberSerials() => MainThreadQueue.InvokeOnMainThread(() =>
+        public IList<uint> GetPartyMemberSerials() => MainThreadQueue.InvokeOnMainThread(() =>
         {
-            PythonList members = [];
+            var members = new List<uint>();
             foreach (PartyMember member in World?.Party?.Members ?? [])
             {
                 if (member != null && member.Serial != 0 && member.Serial != World?.Player?.Serial)
