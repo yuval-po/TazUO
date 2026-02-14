@@ -486,7 +486,7 @@ You can now type `-updateapi` in game to download the latest API.py file.
  Useful when menu IDs change every time (e.g., Tracking skill).
 
 
-**Return Type:** `PythonList`
+**Return Type:** `IList<ApiUiMenuItem>`
 
 ---
 
@@ -763,7 +763,7 @@ You can now type `-updateapi` in game to download the latest API.py file.
  ```
 
 
-**Return Type:** `PythonList`
+**Return Type:** `IList<string>`
 
 ---
 
@@ -1165,7 +1165,7 @@ You can now type `-updateapi` in game to download the latest API.py file.
 | `distance` | `int` | ✅ Yes | Optional max distance to search (default: no limit) |
 | `graphic` | `uint` | ✅ Yes | Optional graphic/type filter (default: no filter) |
 
-**Return Type:** `PythonList`
+**Return Type:** `IList<ApiItem>`
 
 ---
 
@@ -1413,13 +1413,13 @@ You can now type `-updateapi` in game to download the latest API.py file.
 | `z` | `int` | ✅ Yes |  |
 | `distance` | `int` | ✅ Yes | Distance away from goal to stop. |
 
-**Return Type:** `PythonList`
+**Return Type:** `IList<ApiPoint3D>`
 
 ---
 
 ### AutoFollow
 `(mobile)`
- Automatically follow a mobile. This is different than pathfinding. This will continune to follow the mobile.
+ Automatically follow a mobile. This is different from pathfinding. This will continue to follow the mobile.
  Example:
  ```py
  mob = API.NearestMobile([API.Notoriety.Gray, API.Notoriety.Criminal], 7)
@@ -2115,10 +2115,10 @@ You can now type `-updateapi` in game to download the latest API.py file.
 
 ### GetAllGumps
 
- Gets all currently open server-side gumps.
+     Gets all currently open server-side gumps.
 
 
-**Return Type:** `PythonList`
+**Return Type:** `IList<Gump>`
 
 ---
 
@@ -2298,7 +2298,7 @@ You can now type `-updateapi` in game to download the latest API.py file.
 | `seconds` | `double` | ❌ No |  |
 | `matchingText` | `string` | ✅ Yes | Only add if text matches |
 
-**Return Type:** `PythonList`
+**Return Type:** `IList<ApiJournalEntry>`
 
 ---
 
@@ -2747,7 +2747,7 @@ You can now type `-updateapi` in game to download the latest API.py file.
  ```
 
 
-**Return Type:** `PythonList`
+**Return Type:** `IList<uint>`
 
 ---
 
@@ -2759,7 +2759,7 @@ You can now type `-updateapi` in game to download the latest API.py file.
  Note that members may not always have an associated Mobile.
 
 
-**Return Type:** `PythonList`
+**Return Type:** `IList<uint>`
 
 ---
 
