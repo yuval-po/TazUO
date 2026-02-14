@@ -1,285 +1,4 @@
-class Buff:
-    ""
-    Graphic: int = None
-    Text: str = None
-    Timer: int = None
-    Type = None
-    Title: str = None
-
-class PyLand(PyGameObject):
-    ""
-    __class__: str = None
-
-class PyMulti(PyGameObject):
-    ""
-    __class__: str = None
-
-class PyProfile:
-    ""
-    CharacterName: str = None
-    ServerName: str = None
-    LootBagSerial: int = None
-    FavoriteBagSerial: int = None
-    MoveItemDelay: int = None
-    AutoLootEnabled: bool = None
-
-class PyAlphaBlendControl(PyBaseControl):
-    ""
-    Hue: int = None
-    Alpha: float = None
-    BaseColorR: int = None
-    BaseColorG: int = None
-    BaseColorB: int = None
-    BaseColorA: int = None
-
-    def SetBaseColor(self, r: "int", g: "int", b: "int", a: "int" = 255) -> None:
-        """
-         Sets the base color of the alpha blend control using RGBA values (0-255)
-        
-        """
-        pass
-
-class PyBaseControl:
-    ""
-    CanMove: bool = None
-    IsVisible: bool = None
-    IsDisposed: bool = None
-
-    def Add(self, childControl: "Any") -> None:
-        """
-         Adds a child control to this control. Works with gumps too (gump.Add(control)).
-         Used in python API
-        
-        """
-        pass
-
-    def GetX(self) -> "int":
-        """
-         Returns the control's X position.
-         Used in python API
-        
-        """
-        pass
-
-    def GetY(self) -> "int":
-        """
-         Returns the control's Y position.
-         Used in python API
-        
-        """
-        pass
-
-    def SetX(self, x: "int") -> "PyBaseControl":
-        """
-         Sets the control's X position.
-         Used in python API
-        
-        """
-        pass
-
-    def SetY(self, y: "int") -> "PyBaseControl":
-        """
-         Sets the control's Y position.
-         Used in python API
-        
-        """
-        pass
-
-    def SetPos(self, x: "int", y: "int") -> "PyBaseControl":
-        """
-         Sets the control's X and Y positions.
-         Used in python API
-        
-        """
-        pass
-
-    def GetWidth(self) -> "int":
-        pass
-
-    def GetHeight(self) -> "int":
-        pass
-
-    def SetWidth(self, width: "int") -> "PyBaseControl":
-        """
-         Sets the control's width.
-         Used in python API
-        
-        """
-        pass
-
-    def SetHeight(self, height: "int") -> "PyBaseControl":
-        """
-         Sets the control's height.
-         Used in python API
-        
-        """
-        pass
-
-    def SetRect(self, x: "int", y: "int", width: "int", height: "int") -> "PyBaseControl":
-        """
-         Sets the control's position and size in one operation.
-         Used in python API
-        
-        """
-        pass
-
-    def CenterXInViewPort(self) -> "PyBaseControl":
-        """
-         Centers a GUMP horizontally in the viewport. Only works on Gump instances.
-         Used in python API
-        
-        """
-        pass
-
-    def CenterYInViewPort(self) -> "PyBaseControl":
-        """
-         Centers a GUMP vertically in the viewport. Only works on Gump instances.
-         Used in python API
-        
-        """
-        pass
-
-    def GetAlpha(self) -> "float":
-        """
-         Returns the control's Alpha value.
-         Used in python API
-        
-        """
-        pass
-
-    def SetAlpha(self, alpha: "float") -> "PyBaseControl":
-        """
-         Sets the control's Alpha value.
-         Used in python API
-        
-        """
-        pass
-
-    def Clear(self) -> "PyBaseControl":
-        """
-         Clears all child controls from this control.
-         Used in python API
-        
-        """
-        pass
-
-    def Dispose(self) -> None:
-        """
-         Close/Destroy the control
-        
-        """
-        pass
-
-class PyBaseGump(PyBaseControl, IPyGump):
-    ""
-    IsDisposed: bool = None
-    PacketGumpText: str = None
-    CanCloseWithRightClick: bool = None
-    LayerOrder = None
-    Gump: PyBaseGump = None
-
-    def SetInScreen(self) -> None:
-        """
-         Ensures the gump is fully visible within the screen boundaries.
-         Adjusts the gump's position if it extends beyond the screen edges.
-         Used in python API
-        
-        """
-        pass
-
-    def CenterYInScreen(self) -> None:
-        """
-         Centers the gump vertically within the entire screen.
-         This accounts for the full screen dimensions, including all UI elements.
-         Used in python API
-        
-        """
-        pass
-
-    def CenterXInScreen(self) -> None:
-        """
-         Centers the gump horizontally within the entire screen.
-         This accounts for the full screen dimensions, including all UI elements.
-         Used in python API
-        
-        """
-        pass
-
-class PyButton(PyBaseControl):
-    ""
-    ButtonID: int = None
-    IsClicked: bool = None
-    ButtonAction: int = None
-    ToPage: int = None
-    ButtonGraphicNormal: int = None
-    ButtonGraphicPressed: int = None
-    ButtonGraphicOver: int = None
-    Hue: int = None
-    FontCenter: bool = None
-    ContainsByBounds: bool = None
-
-    def HasBeenClicked(self) -> "bool":
-        pass
-
-class PyCheckbox(PyBaseControl):
-    ""
-    IsChecked: bool = None
-    Text: str = None
-
-    def GetIsChecked(self) -> "bool":
-        """
-         Gets the checked state of the checkbox.
-         Used in python API
-        
-        """
-        pass
-
-    def SetIsChecked(self, isChecked: "bool") -> None:
-        """
-         Sets the checked state of the checkbox.
-         Used in python API
-        
-        """
-        pass
-
-    def GetText(self) -> "str":
-        """
-         Gets the text label displayed next to the checkbox.
-         Used in python API
-        
-        """
-        pass
-
-class PyControlDropDown(PyBaseControl):
-    ""
-
-    def GetSelectedIndex(self) -> "int":
-        """
-         Get the selected index of the dropdown. The first entry is 0.
-        
-        """
-        pass
-
-    def OnDropDownOptionSelected(self, onSelectionChanged: "Any") -> "PyControlDropDown":
-        """
-         Add an onSelectionChanged callback to this dropdown control.
-         The callback function will receive the selected index as a parameter.
-         Example:
-         ```py
-         def on_select(index):
-           API.SysMsg(f"Selected index: {index}")
-        
-         dropdown = API.Gumps.CreateDropDown(100, ["first", "second", "third"], 0)
-         dropdown.OnDropDownOptionSelected(on_select)
-        
-         while True:
-           API.ProcessCallbacks()
-         ```
-        
-        """
-        pass
-
-class PyEntity(PyGameObject):
+class ApiEntity(ApiGameObject):
     ""
     Name: str = None
     __class__: str = None
@@ -301,68 +20,7 @@ class PyEntity(PyGameObject):
         """
         pass
 
-class PyEvents:
-    ""
-
-    def OnPlayerHitsChanged(self, callback: "Any") -> None:
-        """
-         Subscribe to player hits changed event. Callback receives the new hits value as an integer.
-         Example:
-         ```py
-         def on_hits_changed(new_hits):
-           API.SysMsg(f"Player hits changed to: {new_hits}")
-         API.Events.OnPlayerHitsChanged(on_hits_changed)
-         while not API.StopRequested:
-           API.ProcessCallbacks()
-           API.Pause(0.25)
-         ```
-        
-        """
-        pass
-
-    def OnBuffAdded(self, callback: "Any") -> None:
-        """
-         Called when a buff is added to your char. Callback receives a Buff object.
-        
-        """
-        pass
-
-    def OnBuffRemoved(self, callback: "Any") -> None:
-        """
-         Called when a buff is removed from your char. Callback receives a Buff object.
-        
-        """
-        pass
-
-    def OnPlayerDeath(self, callback: "Any") -> None:
-        """
-         Called when the player dies. Callback receives your characters serial.
-        
-        """
-        pass
-
-    def OnOpenContainer(self, callback: "Any") -> None:
-        """
-         Called when a container is opened. Callback receives the container serial.
-        
-        """
-        pass
-
-    def OnPlayerMoved(self, callback: "Any") -> None:
-        """
-         Called when the player moves. Callback receives a PositionChangedArgs object with .NewLocation available in the object.
-        
-        """
-        pass
-
-    def OnItemCreated(self, callback: "Any") -> None:
-        """
-         Called when a new item is created. Callback receives the item serial.
-        
-        """
-        pass
-
-class PyGameObject:
+class ApiGameObject:
     ""
     Impassible: bool = None
     X: int = None
@@ -392,7 +50,7 @@ class PyGameObject:
         """
         pass
 
-    def HasLineOfSightFrom(self, observer: "PyGameObject" = None) -> "bool":
+    def HasLineOfSightFrom(self, observer: "Any" = None) -> "bool":
         """
          Determines if there is line of sight from the specified observer to this object.
          If no observer is specified, it defaults to the player.
@@ -416,323 +74,7 @@ class PyGameObject:
         """
         pass
 
-class PyGumpPic(PyBaseControl):
-    ""
-    Graphic: int = None
-    Hue: int = None
-    IsPartialHue: bool = None
-    ContainsByBounds: bool = None
-
-class PyGumps:
-    ""
-
-    def CreateGump(self, acceptMouseInput: "bool" = True, canMove: "bool" = True, keepOpen: "bool" = False) -> "PyBaseGump":
-        """
-         Get a blank gump.
-         Example:
-         ```py
-         g = API.CreateGump()
-         g.SetRect(100, 100, 200, 200)
-         g.Add(API.CreateGumpLabel("Hello World!"))
-         API.AddGump(g)
-         ```
-        
-        """
-        pass
-
-    def CreateModernGump(self, x: "int", y: "int", width: "int", height: "int", resizable: "bool" = True, minWidth: "int" = 50, minHeight: "int" = 50, onResized: "Any" = None) -> "PyNineSliceGump":
-        """
-         Creates a modern nine-slice gump using ModernUIConstants for consistent styling.
-         The gump uses the standard modern UI panel texture and border size internally.
-        
-        """
-        pass
-
-    def AddGump(self, g: "Any") -> None:
-        """
-         Add a gump to the players screen.
-         Example:
-         ```py
-         g = API.CreateGump()
-         g.SetRect(100, 100, 200, 200)
-         g.Add(API.CreateGumpLabel("Hello World!"))
-         API.AddGump(g)
-         ```
-        
-        """
-        pass
-
-    def CreateGumpCheckbox(self, text: "str" = "", hue: "int" = 0, isChecked: "bool" = False) -> "PyCheckbox":
-        """
-         Create a checkbox for gumps.
-          Example:
-         ```py
-         g = API.CreateGump()
-         g.SetRect(100, 100, 200, 200)
-         cb = API.CreateGumpCheckbox("Check me?!")
-         g.Add(cb)
-         API.AddGump(g)
-        
-         API.SysMsg("Checkbox checked: " + str(cb.IsChecked))
-         ```
-        
-        """
-        pass
-
-    def CreateGumpLabel(self, text: "str", hue: "int" = 996) -> "PyLabel":
-        """
-         Create a label for a gump.
-         Example:
-         ```py
-         g = API.CreateGump()
-         g.SetRect(100, 100, 200, 200)
-         g.Add(API.CreateGumpLabel("Hello World!"))
-         API.AddGump(g)
-         ```
-        
-        """
-        pass
-
-    def CreateGumpColorBox(self, opacity: "float" = 0.7, color: "str" = "#000000") -> "PyAlphaBlendControl":
-        """
-         Get a transparent color box for gumps.
-         Example:
-         ```py
-         g = API.CreateGump()
-         g.SetRect(100, 100, 200, 200)
-         cb = API.CreateGumpColorBox(0.5, "#000000")
-         cb.SetWidth(200)
-         cb.SetHeight(200)
-         g.Add(cb)
-         API.AddGump(g)
-         ```
-        
-        """
-        pass
-
-    def CreateGumpItemPic(self, graphic: "int", width: "int", height: "int") -> "PyResizableStaticPic":
-        """
-         Create a picture of an item.
-         Example:
-         ```py
-         g = API.CreateGump()
-         g.SetRect(100, 100, 200, 200)
-         g.Add(API.CreateGumpItemPic(0x0E78, 50, 50))
-         API.AddGump(g)
-         ```
-        
-        """
-        pass
-
-    def CreateGumpButton(self, text: "str" = "", hue: "int" = 996, normal: "int" = 0x00EF, pressed: "int" = 0x00F0, hover: "int" = 0x00EE) -> "PyButton":
-        """
-         Create a button for gumps.
-         Example:
-         ```py
-         g = API.CreateGump()
-         g.SetRect(100, 100, 200, 200)
-         button = API.CreateGumpButton("Click Me!")
-         g.Add(button)
-         API.AddGump(g)
-        
-         while True:
-           API.SysMsg("Button currently clicked?: " + str(button.IsClicked))
-           API.SysMsg("Button clicked since last check?: " + str(button.HasBeenClicked()))
-           API.Pause(0.2)
-         ```
-        
-        """
-        pass
-
-    def CreateSimpleButton(self, text: "str", width: "int", height: "int") -> "PyNiceButton":
-        """
-         Create a simple button, does not use graphics.
-         Example:
-         ```py
-         g = API.CreateGump()
-         g.SetRect(100, 100, 200, 200)
-         button = API.CreateSimpleButton("Click Me!", 100, 20)
-         g.Add(button)
-         API.AddGump(g)
-         ```
-        
-        """
-        pass
-
-    def CreateGumpRadioButton(self, text: "str" = "", group: "int" = 0, inactive: "int" = 0x00D0, active: "int" = 0x00D1, hue: "int" = 0xFFFF, isChecked: "bool" = False) -> "PyRadioButton":
-        """
-         Create a radio button for gumps, use group numbers to only allow one item to be checked at a time.
-         Example:
-         ```py
-         g = API.CreateGump()
-         g.SetRect(100, 100, 200, 200)
-         rb = API.CreateGumpRadioButton("Click Me!", 1)
-         g.Add(rb)
-         API.AddGump(g)
-         API.SysMsg("Radio button checked?: " + str(rb.IsChecked))
-         ```
-        
-        """
-        pass
-
-    def CreateGumpTextBox(self, text: "str" = "", width: "int" = 200, height: "int" = 30, multiline: "bool" = False) -> "PyTTFTextInputField":
-        """
-         Create a text area control.
-         Example:
-         ```py
-         w = 500
-         h = 600
-        
-         gump = API.CreateGump(True, True)
-         gump.SetWidth(w)
-         gump.SetHeight(h)
-         gump.CenterXInViewPort()
-         gump.CenterYInViewPort()
-        
-         bg = API.CreateGumpColorBox(0.7, "#D4202020")
-         bg.SetWidth(w)
-         bg.SetHeight(h)
-        
-         gump.Add(bg)
-        
-         textbox = API.CreateGumpTextBox("Text example", w, h, True)
-        
-         gump.Add(textbox)
-        
-         API.AddGump(gump)
-         ```
-        
-        """
-        pass
-
-    def CreateGumpTTFLabel(self, text: "str", size: "float", color: "str" = "#FFFFFF", font: "str" = TrueTypeLoader.EMBEDDED_FONT, aligned: "str" = "let", maxWidth: "int" = 0, applyStroke: "bool" = False) -> "PyTextBox":
-        """
-         Create a TTF label with advanced options.
-         Example:
-         ```py
-         gump = API.CreateGump()
-         gump.SetRect(100, 100, 200, 200)
-        
-         ttflabel = API.CreateGumpTTFLabel("Example label", 25, "#F100DD", "alagard")
-         ttflabel.SetRect(10, 10, 180, 30)
-         gump.Add(ttflabel)
-        
-         API.AddGump(gump) #Add the gump to the players screen
-         ```
-        
-        """
-        pass
-
-    def CreateGumpSimpleProgressBar(self, width: "int", height: "int", backgroundColor: "str" = "#616161", foregroundColor: "str" = "#212121", value: "int" = 100, max: "int" = 100) -> "PySimpleProgressBar":
-        """
-         Create a progress bar. Can be updated as needed with `bar.SetProgress(current, max)`.
-         Example:
-         ```py
-         gump = API.CreateGump()
-         gump.SetRect(100, 100, 400, 200)
-        
-         pb = API.CreateGumpSimpleProgressBar(400, 200)
-         gump.Add(pb)
-        
-         API.AddGump(gump)
-        
-         cur = 0
-         max = 100
-        
-         while True:
-           pb.SetProgress(cur, max)
-           if cur >= max:
-           break
-           cur += 1
-           API.Pause(0.5)
-         ```
-        
-        """
-        pass
-
-    def CreateGumpScrollArea(self, x: "int", y: "int", width: "int", height: "int") -> "PyScrollArea":
-        """
-         Create a scrolling area, add and position controls to it directly.
-         Example:
-         ```py
-         sa = API.CreateGumpScrollArea(0, 60, 200, 140)
-         gump.Add(sa)
-        
-         for i in range(10):
-             label = API.CreateGumpTTFLabel(f"Label {i + 1}", 20, "#FFFFFF", "alagard")
-             label.SetRect(5, i * 20, 180, 20)
-             sa.Add(label)
-         ```
-        
-        """
-        pass
-
-    def CreateGumpPic(self, graphic: "int", x: "int" = 0, y: "int" = 0, hue: "int" = 0) -> "PyGumpPic":
-        """
-         Create a gump pic(Use this for gump art, not item art)
-         Example:
-         ```py
-         gumpPic = API.CreateGumpPic(0xafb)
-         gump.Add(gumpPic)
-        
-        """
-        pass
-
-    def CreateTiledGumpPic(self, graphic: "int", width: "int", height: "int", hue: "int" = 0) -> "Any":
-        """
-         Create a gump pic that tiles(repeats) (Use this for gump art, not item art)
-         Example:
-         ```py
-         gumpPic = API.CreateTiledGumpPic(0xafb, 100, 100)
-         gump.Add(gumpPic)
-        
-        """
-        pass
-
-    def CreateDropDown(self, width: "int", items: "list[str]", selectedIndex: "int" = 0) -> "PyControlDropDown":
-        """
-         Creates a dropdown control (combobox) with the specified width and items.
-        
-        """
-        pass
-
-    def AddControlOnClick(self, control: "Any", onClick: "Any", leftOnly: "bool" = True) -> "Any":
-        """
-         Add an onClick callback to a control.
-         Example:
-         ```py
-         def myfunc:
-           API.SysMsg("Something clicked!")
-         bg = API.CreateGumpColorBox(0.7, "#D4202020")
-         API.AddControlOnClick(bg, myfunc)
-         while True:
-           API.ProcessCallbacks()
-         ```
-        
-        """
-        pass
-
-    def AddControlOnDisposed(self, control: "PyBaseControl", onDispose: "Any") -> "PyBaseControl":
-        """
-         Add onDispose(Closed) callback to a control.
-         Example:
-         ```py
-         def onClose():
-             API.Stop()
-        
-         gump = API.CreateGump()
-         gump.SetRect(100, 100, 200, 200)
-        
-         bg = API.CreateGumpColorBox(opacity=0.7, color="#000000")
-         gump.Add(bg.SetRect(0, 0, 200, 200))
-        
-         API.AddControlOnDisposed(gump, onClose)
-         ```
-        
-        """
-        pass
-
-class PyItem(PyEntity):
+class ApiItem(ApiEntity):
     ""
     Amount: int = None
     Opened: bool = None
@@ -752,7 +94,7 @@ class PyItem(PyEntity):
         """
         pass
 
-    def GetContainerGump(self) -> "PyBaseControl":
+    def GetContainerGump(self) -> "Any":
         """
          If this item is a container ( item.IsContainer ) and is open, this will return the grid container or container gump for it.
         
@@ -767,7 +109,7 @@ class PyItem(PyEntity):
         """
         pass
 
-class PyItemData:
+class ApiItemData:
     ""
     Flags = None
     Weight: int = None
@@ -802,7 +144,7 @@ class PyItemData:
     IsMultiMovable: bool = None
     IsWindow: bool = None
 
-class PyJournalEntry:
+class ApiJournalEntry:
     ""
     Hue: int = None
     Name: str = None
@@ -812,36 +154,11 @@ class PyJournalEntry:
     MessageType = None
     Disposed: bool = None
 
-class PyLabel(PyBaseControl):
+class ApiLand(ApiGameObject):
     ""
-    Text: str = None
-    Hue: int = None
-
-class PyMenuItem:
-    ""
-    Index: int = None
-    Name: str = None
-    Graphic: int = None
-    Hue: int = None
     __class__: str = None
 
-    def ToString(self) -> "str":
-        """
-         Returns a readable string representation of the menu item.
-         Used when printing or converting the object to a string in Python scripts.
-        
-        """
-        pass
-
-    def __repr__(self) -> "str":
-        """
-         Returns a detailed string representation of the object.
-         This string is used by Python’s built-in <c>repr()</c> function.
-        
-        """
-        pass
-
-class PyMobile(PyEntity):
+class ApiMobile(ApiEntity):
     ""
     X: int = None
     Y: int = None
@@ -862,8 +179,8 @@ class PyMobile(PyEntity):
     IsYellowHits: bool = None
     Notoriety: Notoriety = None
     InWarMode: bool = None
-    Backpack: PyItem = None
-    Mount: PyItem = None
+    Backpack = None
+    Mount = None
     __class__: str = None
 
     def NameAndProps(self, wait: "bool" = False, timeout: "int" = 10) -> "str":
@@ -874,91 +191,11 @@ class PyMobile(PyEntity):
         """
         pass
 
-class PyNiceButton(PyBaseControl):
+class ApiMulti(ApiGameObject):
     ""
-    ButtonParameter: int = None
-    IsSelectable: bool = None
-    IsSelected: bool = None
-    DisplayBorder: bool = None
-    AlwaysShowBackground: bool = None
-    Text: str = None
-    TextHue: int = None
-    BackgroundHue: int = None
+    __class__: str = None
 
-    def SetText(self, text: "str") -> None:
-        pass
-
-    def SetBackgroundHue(self, hue: "int") -> None:
-        pass
-
-    def SetBackgroundColor(self, r: "int | None", g: "int | None", b: "int | None", a: "int | None" = 255) -> None:
-        """
-         Sets the background color of the button. Pass null to clear.
-        
-        """
-        pass
-
-    def ClearBackgroundColor(self) -> None:
-        """
-         Clears the background color of the button.
-        
-        """
-        pass
-
-class PyNineSliceGump(PyBaseControl, IPyGump):
-    ""
-    NineSliceGump = None
-    Gump: PyBaseGump = None
-
-    def GetHue(self) -> "int":
-        """
-         Gets the current hue of the nine-slice gump
-        
-        """
-        pass
-
-    def SetHue(self, hue: "int") -> None:
-        """
-         Sets the hue of the nine-slice gump
-        
-        """
-        pass
-
-    def GetResizable(self) -> "bool":
-        """
-         Gets whether the gump is resizable
-        
-        """
-        pass
-
-    def SetResizable(self, resizable: "bool") -> None:
-        """
-         Sets whether the gump is resizable
-        
-        """
-        pass
-
-    def GetBorderSize(self) -> "int":
-        """
-         Gets the border size of the nine-slice
-        
-        """
-        pass
-
-    def SetBorderSize(self, borderSize: "int") -> None:
-        """
-         Sets the border size of the nine-slice
-        
-        """
-        pass
-
-class ModernNineSliceGump(NineSliceGump):
-    ""
-
-    def SetResizeCallback(self, callback: "Any") -> None:
-        pass
-
-class PyPlayer(PyMobile):
+class ApiPlayer(ApiMobile):
     ""
     X: int = None
     Y: int = None
@@ -1020,7 +257,714 @@ class PyPlayer(PyMobile):
     InWarMode: bool = None
     __class__: str = None
 
-class PyRadioButton(PyCheckbox):
+class ApiPoint3D:
+    ""
+    X: int = None
+    Y: int = None
+    Z: int = None
+
+class ApiSoundEntry:
+    ""
+    ID: int = None
+    X: int = None
+    Y: int = None
+    Time: datetime = None
+
+class ApiStatic(ApiGameObject):
+    ""
+    IsImpassible: bool = None
+    IsTree: bool = None
+    IsVegetation: bool = None
+    IsCave: bool = None
+    Name: str = None
+    __class__: str = None
+
+class ApiUiAlphaBlendControl(ApiUiBaseControl):
+    ""
+    Hue: int = None
+    Alpha: float = None
+    BaseColorR: int = None
+    BaseColorG: int = None
+    BaseColorB: int = None
+    BaseColorA: int = None
+
+    def SetBaseColor(self, r: "int", g: "int", b: "int", a: "int" = 255) -> None:
+        """
+         Sets the base color of the alpha blend control using RGBA values (0-255)
+        
+        """
+        pass
+
+class ApiUiBaseControl:
+    ""
+    CanMove: bool = None
+    IsVisible: bool = None
+    IsDisposed: bool = None
+
+    def Add(self, childControl: "Any") -> None:
+        """
+         Adds a child control to this control. Works with gumps too (gump.Add(control)).
+         Used in python API
+        
+        """
+        pass
+
+    def GetX(self) -> "int":
+        """
+         Returns the control's X position.
+         Used in python API
+        
+        """
+        pass
+
+    def GetY(self) -> "int":
+        """
+         Returns the control's Y position.
+         Used in python API
+        
+        """
+        pass
+
+    def SetX(self, x: "int") -> "Any":
+        """
+         Sets the control's X position.
+         Used in python API
+        
+        """
+        pass
+
+    def SetY(self, y: "int") -> "Any":
+        """
+         Sets the control's Y position.
+         Used in python API
+        
+        """
+        pass
+
+    def SetPos(self, x: "int", y: "int") -> "Any":
+        """
+         Sets the control's X and Y positions.
+         Used in python API
+        
+        """
+        pass
+
+    def GetWidth(self) -> "int":
+        pass
+
+    def GetHeight(self) -> "int":
+        pass
+
+    def SetWidth(self, width: "int") -> "Any":
+        """
+         Sets the control's width.
+         Used in python API
+        
+        """
+        pass
+
+    def SetHeight(self, height: "int") -> "Any":
+        """
+         Sets the control's height.
+         Used in python API
+        
+        """
+        pass
+
+    def SetRect(self, x: "int", y: "int", width: "int", height: "int") -> "Any":
+        """
+         Sets the control's position and size in one operation.
+         Used in python API
+        
+        """
+        pass
+
+    def CenterXInViewPort(self) -> "Any":
+        """
+         Centers a GUMP horizontally in the viewport. Only works on Gump instances.
+         Used in python API
+        
+        """
+        pass
+
+    def CenterYInViewPort(self) -> "Any":
+        """
+         Centers a GUMP vertically in the viewport. Only works on Gump instances.
+         Used in python API
+        
+        """
+        pass
+
+    def GetAlpha(self) -> "float":
+        """
+         Returns the control's Alpha value.
+         Used in python API
+        
+        """
+        pass
+
+    def SetAlpha(self, alpha: "float") -> "Any":
+        """
+         Sets the control's Alpha value.
+         Used in python API
+        
+        """
+        pass
+
+    def Clear(self) -> "Any":
+        """
+         Clears all child controls from this control.
+         Used in python API
+        
+        """
+        pass
+
+    def Dispose(self) -> None:
+        """
+         Close/Destroy the control
+        
+        """
+        pass
+
+class ApiUiBaseGump(ApiUiBaseControl, IApiGump):
+    ""
+    IsDisposed: bool = None
+    PacketGumpText: str = None
+    CanCloseWithRightClick: bool = None
+    LayerOrder = None
+    Gump: PyBaseGump = None
+
+    def SetInScreen(self) -> None:
+        """
+         Ensures the gump is fully visible within the screen boundaries.
+         Adjusts the gump's position if it extends beyond the screen edges.
+         Used in python API
+        
+        """
+        pass
+
+    def CenterYInScreen(self) -> None:
+        """
+         Centers the gump vertically within the entire screen.
+         This accounts for the full screen dimensions, including all UI elements.
+         Used in python API
+        
+        """
+        pass
+
+    def CenterXInScreen(self) -> None:
+        """
+         Centers the gump horizontally within the entire screen.
+         This accounts for the full screen dimensions, including all UI elements.
+         Used in python API
+        
+        """
+        pass
+
+class ApiUiButton(ApiUiBaseControl):
+    ""
+    ButtonID: int = None
+    IsClicked: bool = None
+    ButtonAction: int = None
+    ToPage: int = None
+    ButtonGraphicNormal: int = None
+    ButtonGraphicPressed: int = None
+    ButtonGraphicOver: int = None
+    Hue: int = None
+    FontCenter: bool = None
+    ContainsByBounds: bool = None
+
+    def HasBeenClicked(self) -> "bool":
+        pass
+
+class ApiUiCheckbox(ApiUiBaseControl):
+    ""
+    IsChecked: bool = None
+    Text: str = None
+
+    def GetIsChecked(self) -> "bool":
+        """
+         Gets the checked state of the checkbox.
+         Used in python API
+        
+        """
+        pass
+
+    def SetIsChecked(self, isChecked: "bool") -> None:
+        """
+         Sets the checked state of the checkbox.
+         Used in python API
+        
+        """
+        pass
+
+    def GetText(self) -> "str":
+        """
+         Gets the text label displayed next to the checkbox.
+         Used in python API
+        
+        """
+        pass
+
+class ApiUiControlDropDown(ApiUiBaseControl):
+    ""
+
+    def GetSelectedIndex(self) -> "int":
+        """
+         Get the selected index of the dropdown. The first entry is 0.
+        
+        """
+        pass
+
+    def OnDropDownOptionSelected(self, onSelectionChanged: "Any") -> "Any":
+        """
+         Add an onSelectionChanged callback to this dropdown control.
+         The callback function will receive the selected index as a parameter.
+         Example:
+         ```py
+         def on_select(index):
+           API.SysMsg(f"Selected index: {index}")
+        
+         dropdown = API.Gumps.CreateDropDown(100, ["first", "second", "third"], 0)
+         dropdown.OnDropDownOptionSelected(on_select)
+        
+         while True:
+           API.ProcessCallbacks()
+         ```
+        
+        """
+        pass
+
+class ApiUiGump:
+    ""
+
+    def CreateGump(self, acceptMouseInput: "bool" = True, canMove: "bool" = True, keepOpen: "bool" = False) -> "Any":
+        """
+         Get a blank gump.
+         Example:
+         ```py
+         g = API.CreateGump()
+         g.SetRect(100, 100, 200, 200)
+         g.Add(API.CreateGumpLabel("Hello World!"))
+         API.AddGump(g)
+         ```
+        
+        """
+        pass
+
+    def CreateModernGump(self, x: "int", y: "int", width: "int", height: "int", resizable: "bool" = True, minWidth: "int" = 50, minHeight: "int" = 50, onResized: "Any" = None) -> "Any":
+        """
+         Creates a modern nine-slice gump using ModernUIConstants for consistent styling.
+         The gump uses the standard modern UI panel texture and border size internally.
+        
+        """
+        pass
+
+    def AddGump(self, g: "Any") -> None:
+        """
+         Add a gump to the players screen.
+         Example:
+         ```py
+         g = API.CreateGump()
+         g.SetRect(100, 100, 200, 200)
+         g.Add(API.CreateGumpLabel("Hello World!"))
+         API.AddGump(g)
+         ```
+        
+        """
+        pass
+
+    def CreateGumpCheckbox(self, text: "str" = "", hue: "int" = 0, isChecked: "bool" = False) -> "Any":
+        """
+         Create a checkbox for gumps.
+          Example:
+         ```py
+         g = API.CreateGump()
+         g.SetRect(100, 100, 200, 200)
+         cb = API.CreateGumpCheckbox("Check me?!")
+         g.Add(cb)
+         API.AddGump(g)
+        
+         API.SysMsg("Checkbox checked: " + str(cb.IsChecked))
+         ```
+        
+        """
+        pass
+
+    def CreateGumpLabel(self, text: "str", hue: "int" = 996) -> "Any":
+        """
+         Create a label for a gump.
+         Example:
+         ```py
+         g = API.CreateGump()
+         g.SetRect(100, 100, 200, 200)
+         g.Add(API.CreateGumpLabel("Hello World!"))
+         API.AddGump(g)
+         ```
+        
+        """
+        pass
+
+    def CreateGumpColorBox(self, opacity: "float" = 0.7, color: "str" = "#000000") -> "Any":
+        """
+         Get a transparent color box for gumps.
+         Example:
+         ```py
+         g = API.CreateGump()
+         g.SetRect(100, 100, 200, 200)
+         cb = API.CreateGumpColorBox(0.5, "#000000")
+         cb.SetWidth(200)
+         cb.SetHeight(200)
+         g.Add(cb)
+         API.AddGump(g)
+         ```
+        
+        """
+        pass
+
+    def CreateGumpItemPic(self, graphic: "int", width: "int", height: "int") -> "Any":
+        """
+         Create a picture of an item.
+         Example:
+         ```py
+         g = API.CreateGump()
+         g.SetRect(100, 100, 200, 200)
+         g.Add(API.CreateGumpItemPic(0x0E78, 50, 50))
+         API.AddGump(g)
+         ```
+        
+        """
+        pass
+
+    def CreateGumpButton(self, text: "str" = "", hue: "int" = 996, normal: "int" = 0x00EF, pressed: "int" = 0x00F0, hover: "int" = 0x00EE) -> "Any":
+        """
+         Create a button for gumps.
+         Example:
+         ```py
+         g = API.CreateGump()
+         g.SetRect(100, 100, 200, 200)
+         button = API.CreateGumpButton("Click Me!")
+         g.Add(button)
+         API.AddGump(g)
+        
+         while True:
+           API.SysMsg("Button currently clicked?: " + str(button.IsClicked))
+           API.SysMsg("Button clicked since last check?: " + str(button.HasBeenClicked()))
+           API.Pause(0.2)
+         ```
+        
+        """
+        pass
+
+    def CreateSimpleButton(self, text: "str", width: "int", height: "int") -> "Any":
+        """
+         Create a simple button, does not use graphics.
+         Example:
+         ```py
+         g = API.CreateGump()
+         g.SetRect(100, 100, 200, 200)
+         button = API.CreateSimpleButton("Click Me!", 100, 20)
+         g.Add(button)
+         API.AddGump(g)
+         ```
+        
+        """
+        pass
+
+    def CreateGumpRadioButton(self, text: "str" = "", group: "int" = 0, inactive: "int" = 0x00D0, active: "int" = 0x00D1, hue: "int" = 0xFFFF, isChecked: "bool" = False) -> "Any":
+        """
+         Create a radio button for gumps, use group numbers to only allow one item to be checked at a time.
+         Example:
+         ```py
+         g = API.CreateGump()
+         g.SetRect(100, 100, 200, 200)
+         rb = API.CreateGumpRadioButton("Click Me!", 1)
+         g.Add(rb)
+         API.AddGump(g)
+         API.SysMsg("Radio button checked?: " + str(rb.IsChecked))
+         ```
+        
+        """
+        pass
+
+    def CreateGumpTextBox(self, text: "str" = "", width: "int" = 200, height: "int" = 30, multiline: "bool" = False) -> "Any":
+        """
+         Create a text area control.
+         Example:
+         ```py
+         w = 500
+         h = 600
+        
+         gump = API.CreateGump(True, True)
+         gump.SetWidth(w)
+         gump.SetHeight(h)
+         gump.CenterXInViewPort()
+         gump.CenterYInViewPort()
+        
+         bg = API.CreateGumpColorBox(0.7, "#D4202020")
+         bg.SetWidth(w)
+         bg.SetHeight(h)
+        
+         gump.Add(bg)
+        
+         textbox = API.CreateGumpTextBox("Text example", w, h, True)
+        
+         gump.Add(textbox)
+        
+         API.AddGump(gump)
+         ```
+        
+        """
+        pass
+
+    def CreateGumpTTFLabel(self, text: "str", size: "float", color: "str" = "#FFFFFF", font: "str" = TrueTypeLoader.EMBEDDED_FONT, aligned: "str" = "let", maxWidth: "int" = 0, applyStroke: "bool" = False) -> "Any":
+        """
+         Create a TTF label with advanced options.
+         Example:
+         ```py
+         gump = API.CreateGump()
+         gump.SetRect(100, 100, 200, 200)
+        
+         ttflabel = API.CreateGumpTTFLabel("Example label", 25, "#F100DD", "alagard")
+         ttflabel.SetRect(10, 10, 180, 30)
+         gump.Add(ttflabel)
+        
+         API.AddGump(gump) #Add the gump to the players screen
+         ```
+        
+        """
+        pass
+
+    def CreateGumpSimpleProgressBar(self, width: "int", height: "int", backgroundColor: "str" = "#616161", foregroundColor: "str" = "#212121", value: "int" = 100, max: "int" = 100) -> "Any":
+        """
+         Create a progress bar. Can be updated as needed with `bar.SetProgress(current, max)`.
+         Example:
+         ```py
+         gump = API.CreateGump()
+         gump.SetRect(100, 100, 400, 200)
+        
+         pb = API.CreateGumpSimpleProgressBar(400, 200)
+         gump.Add(pb)
+        
+         API.AddGump(gump)
+        
+         cur = 0
+         max = 100
+        
+         while True:
+           pb.SetProgress(cur, max)
+           if cur >= max:
+           break
+           cur += 1
+           API.Pause(0.5)
+         ```
+        
+        """
+        pass
+
+    def CreateGumpScrollArea(self, x: "int", y: "int", width: "int", height: "int") -> "Any":
+        """
+         Create a scrolling area, add and position controls to it directly.
+         Example:
+         ```py
+         sa = API.CreateGumpScrollArea(0, 60, 200, 140)
+         gump.Add(sa)
+        
+         for i in range(10):
+             label = API.CreateGumpTTFLabel(f"Label {i + 1}", 20, "#FFFFFF", "alagard")
+             label.SetRect(5, i * 20, 180, 20)
+             sa.Add(label)
+         ```
+        
+        """
+        pass
+
+    def CreateGumpPic(self, graphic: "int", x: "int" = 0, y: "int" = 0, hue: "int" = 0) -> "Any":
+        """
+         Create a gump pic(Use this for gump art, not item art)
+         Example:
+         ```py
+         gumpPic = API.CreateGumpPic(0xafb)
+         gump.Add(gumpPic)
+        
+        """
+        pass
+
+    def CreateTiledGumpPic(self, graphic: "int", width: "int", height: "int", hue: "int" = 0) -> "Any":
+        """
+         Create a gump pic that tiles(repeats) (Use this for gump art, not item art)
+         Example:
+         ```py
+         gumpPic = API.CreateTiledGumpPic(0xafb, 100, 100)
+         gump.Add(gumpPic)
+        
+        """
+        pass
+
+    def CreateDropDown(self, width: "int", items: "list[str]", selectedIndex: "int" = 0) -> "Any":
+        """
+         Creates a dropdown control (combobox) with the specified width and items.
+        
+        """
+        pass
+
+    def AddControlOnClick(self, control: "Any", onClick: "Any", leftOnly: "bool" = True) -> "Any":
+        """
+         Add an onClick callback to a control.
+         Example:
+         ```py
+         def myfunc:
+           API.SysMsg("Something clicked!")
+         bg = API.CreateGumpColorBox(0.7, "#D4202020")
+         API.AddControlOnClick(bg, myfunc)
+         while True:
+           API.ProcessCallbacks()
+         ```
+        
+        """
+        pass
+
+    def AddControlOnDisposed(self, control: "Any", onDispose: "Any") -> "Any":
+        """
+         Add onDispose(Closed) callback to a control.
+         Example:
+         ```py
+         def onClose():
+             API.Stop()
+        
+         gump = API.CreateGump()
+         gump.SetRect(100, 100, 200, 200)
+        
+         bg = API.CreateGumpColorBox(opacity=0.7, color="#000000")
+         gump.Add(bg.SetRect(0, 0, 200, 200))
+        
+         API.AddControlOnDisposed(gump, onClose)
+         ```
+        
+        """
+        pass
+
+class ApiUiGumpPic(ApiUiBaseControl):
+    ""
+    Graphic: int = None
+    Hue: int = None
+    IsPartialHue: bool = None
+    ContainsByBounds: bool = None
+
+class ApiUiLabel(ApiUiBaseControl):
+    ""
+    Text: str = None
+    Hue: int = None
+
+class ApiUiMenuItem:
+    ""
+    Index: int = None
+    Name: str = None
+    Graphic: int = None
+    Hue: int = None
+    __class__: str = None
+
+    def ToString(self) -> "str":
+        """
+         Returns a readable string representation of the menu item.
+         Used when printing or converting the object to a string in Python scripts.
+        
+        """
+        pass
+
+    def __repr__(self) -> "str":
+        """
+         Returns a detailed string representation of the object.
+         This string is used by Python’s built-in <c>repr()</c> function.
+        
+        """
+        pass
+
+class ApiUiNiceButton(ApiUiBaseControl):
+    ""
+    ButtonParameter: int = None
+    IsSelectable: bool = None
+    IsSelected: bool = None
+    DisplayBorder: bool = None
+    AlwaysShowBackground: bool = None
+    Text: str = None
+    TextHue: int = None
+    BackgroundHue: int = None
+
+    def SetText(self, text: "str") -> None:
+        pass
+
+    def SetBackgroundHue(self, hue: "int") -> None:
+        pass
+
+    def SetBackgroundColor(self, r: "int | None", g: "int | None", b: "int | None", a: "int | None" = 255) -> None:
+        """
+         Sets the background color of the button. Pass null to clear.
+        
+        """
+        pass
+
+    def ClearBackgroundColor(self) -> None:
+        """
+         Clears the background color of the button.
+        
+        """
+        pass
+
+class ApiUiNineSliceGump(ApiUiBaseControl, IApiGump):
+    ""
+    NineSliceGump = None
+    Gump: PyBaseGump = None
+
+    def GetHue(self) -> "int":
+        """
+         Gets the current hue of the nine-slice gump
+        
+        """
+        pass
+
+    def SetHue(self, hue: "int") -> None:
+        """
+         Sets the hue of the nine-slice gump
+        
+        """
+        pass
+
+    def GetResizable(self) -> "bool":
+        """
+         Gets whether the gump is resizable
+        
+        """
+        pass
+
+    def SetResizable(self, resizable: "bool") -> None:
+        """
+         Sets whether the gump is resizable
+        
+        """
+        pass
+
+    def GetBorderSize(self) -> "int":
+        """
+         Gets the border size of the nine-slice
+        
+        """
+        pass
+
+    def SetBorderSize(self, borderSize: "int") -> None:
+        """
+         Sets the border size of the nine-slice
+        
+        """
+        pass
+
+class ModernNineSliceGump(NineSliceGump):
+    ""
+
+    def SetResizeCallback(self, callback: "Any") -> None:
+        pass
+
+class ApiUiRadioButton(ApiUiCheckbox):
     ""
     GroupIndex: int = None
 
@@ -1042,16 +986,16 @@ class PyRadioButton(PyCheckbox):
         """
         pass
 
-class PyResizableStaticPic(PyBaseControl):
+class ApiUiResizableStaticPic(ApiUiBaseControl):
     ""
     Hue: int = None
     Graphic: int = None
     DrawBorder: bool = None
 
-class PyScrollArea(PyBaseControl):
+class ApiUiScrollArea(ApiUiBaseControl):
     ""
 
-class PySimpleProgressBar(PyBaseControl):
+class ApiUiSimpleProgressBar(ApiUiBaseControl):
     ""
 
     def SetProgress(self, value: "float", max: "float") -> None:
@@ -1061,16 +1005,23 @@ class PySimpleProgressBar(PyBaseControl):
         """
         pass
 
-class PyStatic(PyGameObject):
+class ApiUiTextBox(ApiUiBaseControl):
     ""
-    IsImpassible: bool = None
-    IsTree: bool = None
-    IsVegetation: bool = None
-    IsCave: bool = None
-    Name: str = None
-    __class__: str = None
+    Text: str = None
+    Hue: int = None
+    Font: str = None
+    FontSize: float = None
+    MultiLine: bool = None
 
-class PyTTFTextInputField(PyBaseControl):
+    def SetText(self, text: "str") -> None:
+        pass
+
+class ApiUiTiledGumpPic(ApiUiBaseControl):
+    ""
+    Graphic: int = None
+    Hue: int = None
+
+class ApiUiTtfTextInputField(ApiUiBaseControl):
     ""
     Text: str = None
     CaretIndex: int = None
@@ -1090,44 +1041,40 @@ class PyTTFTextInputField(PyBaseControl):
     def UpdateSize(self, width: "int", height: "int") -> None:
         pass
 
-class PyTextBox(PyBaseControl):
+class ApiUserProfile:
     ""
-    Text: str = None
-    Hue: int = None
-    Font: str = None
-    FontSize: float = None
-    MultiLine: bool = None
+    CharacterName: str = None
+    ServerName: str = None
+    LootBagSerial: int = None
+    FavoriteBagSerial: int = None
+    MoveItemDelay: int = None
+    AutoLootEnabled: bool = None
 
-    def SetText(self, text: "str") -> None:
-        pass
-
-class PyTiledGumpPic(PyBaseControl):
+class Buff:
     ""
     Graphic: int = None
-    Hue: int = None
+    Text: str = None
+    Timer: int = None
+    Type = None
+    Title: str = None
 
-class PySoundEntry:
-    ""
-    ID: int = None
-    X: int = None
-    Y: int = None
-    Time: datetime = None
-
+Events = None
+Config = None
 JournalEntries = None
 SoundEntries = None
 ScriptName: str = None
 ScriptPath: str = None
 Backpack: int = None
-Player: PyPlayer = None
+Player = None
 Bank: int = None
 Random = None
 LastTargetSerial: int = None
 LastTargetPos = None
 LastTargetGraphic: int = None
 Found: int = None
-Profile: PyProfile = None
-Events: PyEvents = None
-Gumps: PyGumps = None
+InstanceId: int = None
+Profile = None
+Gumps = None
 StopRequested: bool = None
 CancellationToken = None
 
@@ -1282,7 +1229,7 @@ def BandageSelf() -> "bool":
     """
     pass
 
-def ClearLeftHand() -> "PyItem":
+def ClearLeftHand() -> "Any":
     """
      If you have an item in your left hand, move it to your backpack
      Sets API.Found to the item's serial.
@@ -1296,7 +1243,7 @@ def ClearLeftHand() -> "PyItem":
     """
     pass
 
-def ClearRightHand() -> "PyItem":
+def ClearRightHand() -> "Any":
     """
      If you have an item in your right hand, move it to your backpack
      Sets API.Found to the item's serial.
@@ -1366,7 +1313,7 @@ def MenuResponseCurrent(index: "int", itemGraphic: "int" = 0, itemHue: "int" = 0
     """
     pass
 
-def MenuItemsCurrent() -> "list":
+def MenuItemsCurrent() -> "list[Any]":
     """
      Retrieve the current open menu's (uses the latest MenuGump) menu item descriptions.
      Useful when menu IDs change every time (e.g., Tracking skill).
@@ -1528,7 +1475,7 @@ def UndressAll(kr: "bool" = False) -> None:
     """
     pass
 
-def GetAvailableDressOutfits() -> "list":
+def GetAvailableDressOutfits() -> "list[str]":
     """
      Get all available dress configurations.
      Example:
@@ -1606,7 +1553,7 @@ def Msg(message: "str") -> None:
      Say a message outloud.
      Example:
      ```py
-     API.Msg("Hello friend!")
+     API.Say("Hello friend!")
      ```
     
     """
@@ -1703,7 +1650,7 @@ def PromptResponse(message: "str") -> None:
     """
     pass
 
-def FindItem(serial: "int") -> "PyItem":
+def FindItem(serial: "int") -> "Any":
     """
      Try to get an item by its serial.
      Sets API.Found to the serial of the item found.
@@ -1719,7 +1666,7 @@ def FindItem(serial: "int") -> "PyItem":
     """
     pass
 
-def FindType(graphic: "int", container: "int" = 1337, range: "int" = 1337, hue: "int" = 1337, minamount: "int" = 0) -> "PyItem":
+def FindType(graphic: "int", container: "int" = 1337, range: "int" = 1337, hue: "int" = 1337, minamount: "int" = 0) -> "Any":
     """
      Attempt to find an item by type(graphic).
      Sets API.Found to the serial of the item found.
@@ -1734,7 +1681,7 @@ def FindType(graphic: "int", container: "int" = 1337, range: "int" = 1337, hue: 
     """
     pass
 
-def FindTypeAll(graphic: "int", container: "int" = 1337, range: "int" = 1337, hue: "int" = 1337, minamount: "int" = 0) -> "list[PyItem]":
+def FindTypeAll(graphic: "int", container: "int" = 1337, range: "int" = 1337, hue: "int" = 1337, minamount: "int" = 0) -> "list[Any]":
     """
      Return a list of items matching the parameters set.
      Example:
@@ -1747,7 +1694,7 @@ def FindTypeAll(graphic: "int", container: "int" = 1337, range: "int" = 1337, hu
     """
     pass
 
-def FindLayer(layer: "str", serial: "int" = 1337) -> "PyItem":
+def FindLayer(layer: "str", serial: "int" = 1337) -> "Any":
     """
      Attempt to find an item on a layer.
      Sets API.Found to the serial of the item found.
@@ -1761,7 +1708,7 @@ def FindLayer(layer: "str", serial: "int" = 1337) -> "PyItem":
     """
     pass
 
-def GetItemsOnGround(distance: "int" = int.MaxValue, graphic: "int" = 1337) -> "list":
+def GetItemsOnGround(distance: "int" = int.MaxValue, graphic: "int" = 1337) -> "list[Any]":
     """
      Get all items on the ground within specified range.
      Example:
@@ -1774,7 +1721,7 @@ def GetItemsOnGround(distance: "int" = int.MaxValue, graphic: "int" = 1337) -> "
     """
     pass
 
-def ItemsInContainer(container: "int", recursive: "bool" = False) -> "list[PyItem]":
+def ItemsInContainer(container: "int", recursive: "bool" = False) -> "list[Any]":
     """
      Get all items in a container.
      Example:
@@ -1911,7 +1858,7 @@ def CancelPathfinding() -> None:
     """
     pass
 
-def GetPath(x: "int", y: "int", z: "int" = 1337, distance: "int" = 1) -> "list":
+def GetPath(x: "int", y: "int", z: "int" = 1337, distance: "int" = 1) -> "list[Any]":
     """
      Attempt to build a path to a location.  This will fail with large distances.
      Example:
@@ -1929,7 +1876,7 @@ def GetPath(x: "int", y: "int", z: "int" = 1337, distance: "int" = 1) -> "list":
 
 def AutoFollow(mobile: "int") -> None:
     """
-     Automatically follow a mobile. This is different than pathfinding. This will continune to follow the mobile.
+     Automatically follow a mobile. This is different from pathfinding. This will continue to follow the mobile.
      Example:
      ```py
      mob = API.NearestMobile([API.Notoriety.Gray, API.Notoriety.Criminal], 7)
@@ -2073,7 +2020,7 @@ def RequestTarget(timeout: "float" = 5) -> "int":
     """
     pass
 
-def RequestAnyTarget(timeout: "float" = 5) -> "PyGameObject":
+def RequestAnyTarget(timeout: "float" = 5) -> "Any":
     """
      Prompts the player to target any object in the game world, including an <c>Item</c> , <c>Mobile</c> , <c>Land</c> tile, <c>Static</c> , or <c>Multi</c> .
      Waits for the player to select a target within a given timeout period.
@@ -2354,9 +2301,9 @@ def GetGump(ID: "int" = 1337) -> "PyBaseGump":
     """
     pass
 
-def GetAllGumps() -> "list":
+def GetAllGumps() -> "list[PyBaseGump]":
     """
-     Gets all currently open server-side gumps.
+         Gets all currently open server-side gumps.
     
     """
     pass
@@ -2480,7 +2427,7 @@ def CheckSoundLog(idx: "int") -> "Any":
     """
     pass
 
-def GetSoundLog(seconds: "float") -> "list":
+def GetSoundLog(seconds: "float") -> "list[Any]":
     """
      Get all the sound logs of the last X seconds.
      Example:
@@ -2507,7 +2454,7 @@ def InJournalAny(msgs: "list[str]", clearMatches: "bool" = False) -> "bool":
     """
     pass
 
-def GetJournalEntries(seconds: "float", matchingText: "str" = "") -> "list":
+def GetJournalEntries(seconds: "float", matchingText: "str" = "") -> "list[Any]":
     """
      Get all the journal entires in the last X seconds.
      matchingText supports regex with $ prepended.
@@ -2607,7 +2554,7 @@ def NearestEntity(scanType: "ScanType", maxDistance: "int" = 10) -> "Any":
     """
     pass
 
-def NearestMobile(notoriety: "list[Notoriety]", maxDistance: "int" = 10) -> "PyMobile":
+def NearestMobile(notoriety: "list[Notoriety]", maxDistance: "int" = 10) -> "Any":
     """
      Get the nearest mobile by Notoriety.
      Sets API.Found to the serial of the mobile.
@@ -2623,7 +2570,7 @@ def NearestMobile(notoriety: "list[Notoriety]", maxDistance: "int" = 10) -> "PyM
     """
     pass
 
-def NearestCorpse(distance: "int" = 3) -> "PyItem":
+def NearestCorpse(distance: "int" = 3) -> "Any":
     """
      Get the nearest corpse within a distance.
      Sets API.Found to the serial of the corpse.
@@ -2638,7 +2585,7 @@ def NearestCorpse(distance: "int" = 3) -> "PyItem":
     """
     pass
 
-def NearestMobiles(notoriety: "list[Notoriety]", maxDistance: "int" = 10) -> "list[PyMobile]":
+def NearestMobiles(notoriety: "list[Notoriety]", maxDistance: "int" = 10) -> "list[Any]":
     """
      Get all mobiles matching Notoriety and distance.
      Example:
@@ -2653,7 +2600,7 @@ def NearestMobiles(notoriety: "list[Notoriety]", maxDistance: "int" = 10) -> "li
     """
     pass
 
-def FindMobile(serial: "int") -> "PyMobile":
+def FindMobile(serial: "int") -> "Any":
     """
      Get a mobile from its serial.
      Sets API.Found to the serial of the mobile.
@@ -2668,7 +2615,7 @@ def FindMobile(serial: "int") -> "PyMobile":
     """
     pass
 
-def GetAllMobiles(graphic: "int | None" = None, distance: "int | None" = None, notoriety: "list[Notoriety]" = None) -> "list[PyMobile]":
+def GetAllMobiles(graphic: "int | None" = None, distance: "int | None" = None, notoriety: "list[Notoriety]" = None) -> "list[Any]":
     """
      Return a list of all mobiles the client is aware of, optionally filtered by graphic, distance, and/or notoriety.
      Example:
@@ -2686,7 +2633,7 @@ def GetAllMobiles(graphic: "int | None" = None, distance: "int | None" = None, n
     """
     pass
 
-def GetTile(x: "int", y: "int") -> "PyGameObject":
+def GetTile(x: "int", y: "int") -> "Any":
     """
      Get the tile at a location.
      Example:
@@ -2794,7 +2741,7 @@ def RemoveFriend(serial: "int") -> "bool":
     """
     pass
 
-def GetAllFriends() -> "list":
+def GetAllFriends() -> "list[int]":
     """
      Get all friends as an array of serials.
      Example:
@@ -2807,7 +2754,7 @@ def GetAllFriends() -> "list":
     """
     pass
 
-def GetPartyMemberSerials() -> "list":
+def GetPartyMemberSerials() -> "list[int]":
     """
      Gets a list of serials for all current party members, excluding yourself.
     
@@ -2817,7 +2764,7 @@ def GetPartyMemberSerials() -> "list":
     """
     pass
 
-def CreateGump(acceptMouseInput: "bool" = True, canMove: "bool" = True, keepOpen: "bool" = False) -> "PyBaseGump":
+def CreateGump(acceptMouseInput: "bool" = True, canMove: "bool" = True, keepOpen: "bool" = False) -> "Any":
     """
      Use API.Gumps.CreateGump instead
     
@@ -2831,98 +2778,98 @@ def AddGump(g: "Any") -> None:
     """
     pass
 
-def CreateGumpCheckbox(text: "str" = "", hue: "int" = 0, isChecked: "bool" = False) -> "PyCheckbox":
+def CreateGumpCheckbox(text: "str" = "", hue: "int" = 0, isChecked: "bool" = False) -> "Any":
     """
      Use API.Gumps.CreateGumpCheckbox instead.
     
     """
     pass
 
-def CreateGumpLabel(text: "str", hue: "int" = 996) -> "PyLabel":
+def CreateGumpLabel(text: "str", hue: "int" = 996) -> "Any":
     """
      Use API.Gumps.CreateGumpLabel instead.
     
     """
     pass
 
-def CreateGumpColorBox(opacity: "float" = 0.7, color: "str" = "#000000") -> "PyAlphaBlendControl":
+def CreateGumpColorBox(opacity: "float" = 0.7, color: "str" = "#000000") -> "Any":
     """
      Use API.Gumps.CreateGumpColorBox instead.
     
     """
     pass
 
-def CreateGumpItemPic(graphic: "int", width: "int", height: "int") -> "PyResizableStaticPic":
+def CreateGumpItemPic(graphic: "int", width: "int", height: "int") -> "Any":
     """
      Use API.Gumps.CreateGumpItemPic instead.
     
     """
     pass
 
-def CreateGumpButton(text: "str" = "", hue: "int" = 996, normal: "int" = 0x00EF, pressed: "int" = 0x00F0, hover: "int" = 0x00EE) -> "PyButton":
+def CreateGumpButton(text: "str" = "", hue: "int" = 996, normal: "int" = 0x00EF, pressed: "int" = 0x00F0, hover: "int" = 0x00EE) -> "Any":
     """
      Use API.Gumps.CreateGumpButton instead.
     
     """
     pass
 
-def CreateSimpleButton(text: "str", width: "int", height: "int") -> "PyNiceButton":
+def CreateSimpleButton(text: "str", width: "int", height: "int") -> "Any":
     """
      Use API.Gumps.CreateSimpleButton instead.
     
     """
     pass
 
-def CreateGumpRadioButton(text: "str" = "", group: "int" = 0, inactive: "int" = 0x00D0, active: "int" = 0x00D1, hue: "int" = 0xFFFF, isChecked: "bool" = False) -> "PyRadioButton":
+def CreateGumpRadioButton(text: "str" = "", group: "int" = 0, inactive: "int" = 0x00D0, active: "int" = 0x00D1, hue: "int" = 0xFFFF, isChecked: "bool" = False) -> "Any":
     """
      Use API.Gumps.CreateGumpRadioButton instead.
     
     """
     pass
 
-def CreateGumpTextBox(text: "str" = "", width: "int" = 200, height: "int" = 30, multiline: "bool" = False) -> "PyTTFTextInputField":
+def CreateGumpTextBox(text: "str" = "", width: "int" = 200, height: "int" = 30, multiline: "bool" = False) -> "Any":
     """
      Use API.Gumps.CreateGumpTextBox instead.
     
     """
     pass
 
-def CreateGumpTTFLabel(text: "str", size: "float", color: "str" = "#FFFFFF", font: "str" = TrueTypeLoader.EMBEDDED_FONT, aligned: "str" = "let", maxWidth: "int" = 0, applyStroke: "bool" = False) -> "PyTextBox":
+def CreateGumpTTFLabel(text: "str", size: "float", color: "str" = "#FFFFFF", font: "str" = TrueTypeLoader.EMBEDDED_FONT, aligned: "str" = "let", maxWidth: "int" = 0, applyStroke: "bool" = False) -> "Any":
     """
      Use API.Gumps.CreateGumpTTFLabel instead.
     
     """
     pass
 
-def CreateGumpSimpleProgressBar(width: "int", height: "int", backgroundColor: "str" = "#616161", foregroundColor: "str" = "#212121", value: "int" = 100, max: "int" = 100) -> "PySimpleProgressBar":
+def CreateGumpSimpleProgressBar(width: "int", height: "int", backgroundColor: "str" = "#616161", foregroundColor: "str" = "#212121", value: "int" = 100, max: "int" = 100) -> "Any":
     """
      Use API.Gumps.CreateGumpSimpleProgressBar instead.
     
     """
     pass
 
-def CreateGumpScrollArea(x: "int", y: "int", width: "int", height: "int") -> "PyScrollArea":
+def CreateGumpScrollArea(x: "int", y: "int", width: "int", height: "int") -> "Any":
     """
      Use API.Gumps.CreateGumpScrollArea instead.
     
     """
     pass
 
-def CreateGumpPic(graphic: "int", x: "int" = 0, y: "int" = 0, hue: "int" = 0) -> "PyGumpPic":
+def CreateGumpPic(graphic: "int", x: "int" = 0, y: "int" = 0, hue: "int" = 0) -> "Any":
     """
      Use API.Gumps.CreateGumpPic instead.
     
     """
     pass
 
-def CreateDropDown(width: "int", items: "list[str]", selectedIndex: "int" = 0) -> "PyControlDropDown":
+def CreateDropDown(width: "int", items: "list[str]", selectedIndex: "int" = 0) -> "Any":
     """
      Use API.Gumps.CreateDropDown instead.
     
     """
     pass
 
-def CreateModernGump(x: "int", y: "int", width: "int", height: "int", resizable: "bool" = True, minWidth: "int" = 50, minHeight: "int" = 50, onResized: "Any" = None) -> "PyNineSliceGump":
+def CreateModernGump(x: "int", y: "int", width: "int", height: "int", resizable: "bool" = True, minWidth: "int" = 50, minHeight: "int" = 50, onResized: "Any" = None) -> "Any":
     """
      Use API.Gumps.CreateModernGump instead.
     
@@ -2936,7 +2883,7 @@ def AddControlOnClick(control: "Any", onClick: "Any", leftOnly: "bool" = True) -
     """
     pass
 
-def AddControlOnDisposed(control: "PyBaseControl", onDispose: "Any") -> "PyBaseControl":
+def AddControlOnDisposed(control: "Any", onDispose: "Any") -> "Any":
     """
      Use API.Gumps.AddControlOnDisposed instead.
     
@@ -3112,4 +3059,157 @@ def TrackingArrow(x: "int", y: "int", identifier: "int" = 1337) -> None:
     
     """
     pass
+
+class EventSinkApiDeclaration:
+    ""
+
+    def OnItemCreated(self, callback: "Any") -> None:
+        """
+             Invoked when an item is added to the client, sender is the Item
+        
+        """
+        pass
+
+    def PyOnItemCreated(self, callback: "Any") -> None:
+        pass
+
+    def OnItemUpdated(self, callback: "Any") -> None:
+        """
+             Invoked when an item is already in the client but has been updated, sender is the Item
+        
+        """
+        pass
+
+    def OnCorpseCreated(self, callback: "Any") -> None:
+        """
+             Invoked when a corpse is added to the client, sender is the corpse Item
+        
+        """
+        pass
+
+    def OnConnected(self, callback: "Any") -> None:
+        """
+             Invoked when the player is connected to a server
+        
+        """
+        pass
+
+    def OnDisconnected(self, callback: "Any") -> None:
+        """
+             Invoked when the player is connected to a server
+        
+        """
+        pass
+
+    def MessageReceived(self, callback: "Any") -> None:
+        """
+             Invoked when any message is received from the server after client processing
+        
+        """
+        pass
+
+    def RawMessageReceived(self, callback: "Any") -> None:
+        """
+             Invoked when any message is received from the server *before* client processing
+        
+        """
+        pass
+
+    def ClilocMessageReceived(self, callback: "Any") -> None:
+        """
+             Not currently used. May be removed later or put into use, not sure right now
+        
+        """
+        pass
+
+    def JournalEntryAdded(self, callback: "Any") -> None:
+        """
+             Invoked anytime a message is added to the journal
+        
+        """
+        pass
+
+    def SoundPlayed(self, callback: "Any") -> None:
+        """
+         Invoked anytime a sound is played
+        
+        """
+        pass
+
+    def OPLOnReceive(self, callback: "Any") -> None:
+        """
+             Invoked anytime we receive object property list data (Tooltip text for items)
+        
+        """
+        pass
+
+    def OnBuffAdded(self, callback: "Any") -> None:
+        """
+             Invoked when a buff is "added" to a player
+        
+        """
+        pass
+
+    def PyOnBuffAdded(self, callback: "Any") -> None:
+        pass
+
+    def OnBuffRemoved(self, callback: "Any") -> None:
+        """
+             Invoked when a buff is "removed" to a player (Called before removal)
+        
+        """
+        pass
+
+    def PyOnBuffRemoved(self, callback: "Any") -> None:
+        pass
+
+    def OnPositionChanged(self, callback: "Any") -> None:
+        """
+             Invoked when the players position is changed
+        
+        """
+        pass
+
+    def OnEntityDamage(self, callback: "Any") -> None:
+        """
+             Invoked when any entity in game receives damage, not necessarily the player.
+        
+        """
+        pass
+
+    def OnOpenContainer(self, callback: "Any") -> None:
+        """
+             Invoked when a container is opened. Sender is the Item, serial is the item serial.
+        
+        """
+        pass
+
+    def OnPlayerDeath(self, callback: "Any") -> None:
+        """
+             Invoked when the player receives a death packet from the server
+        
+        """
+        pass
+
+    def OnPathFinding(self, callback: "Any") -> None:
+        """
+             Invoked when the player or server tells the client to path find
+             Vector is X, Y, Z and Distance
+        
+        """
+        pass
+
+    def OnSetWeather(self, callback: "Any") -> None:
+        """
+             Invoked when the server asks the client to generate some weather
+        
+        """
+        pass
+
+    def OnPlayerHitsChanged(self, callback: "Any") -> None:
+        """
+             Invoked when the players hits changed.
+        
+        """
+        pass
 
