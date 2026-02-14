@@ -2734,7 +2734,8 @@ namespace ClassicUO.LegionScripting
         /// ```
         /// </summary>
         /// <param name="msg">The message to check for. Can be regex, prepend your msg with $</param>
-        /// <returns>True if message was found</returns>
+        /// <param name="clearMatches">When true, the matched message will be discarded after retrieval</param>
+        /// <returns>True if a message was found</returns>
         public bool InJournal(string msg, bool clearMatches = false)
         {
             if (string.IsNullOrEmpty(msg))
