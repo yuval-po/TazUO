@@ -2250,7 +2250,7 @@ You can now type `-updateapi` in game to download the latest API.py file.
 | Name | Type | Optional | Description |
 | --- | --- | --- | --- |
 | `msg` | `string` | ❌ No | The message to check for. Can be regex, prepend your msg with $ |
-| `clearMatches` | `bool` | ✅ Yes |  |
+| `clearMatches` | `bool` | ✅ Yes | When true, the matched message will be discarded after retrieval |
 
 **Return Type:** `bool`
 
