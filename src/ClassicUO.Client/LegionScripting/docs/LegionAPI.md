@@ -1,16 +1,40 @@
 ---
-title: LegionAPI
-description:  Python scripting access point 
+title: Python API Documentation
+description: Automatically generated documentation for the Python API scripting system
+tableOfContents:
+  minHeadingLevel: 1
+  maxHeadingLevel: 4
 ---
 
-## Class Description
- Python scripting access point
+This is automatically generated documentation for the Python API scripting.  
 
+:::note[Usage]
+All methods, properties, enums, etc need to pre prefaced with `API.` for example:
+ `API.Msg("An example")`.
+:::
+
+:::tip[API.py File]
+If you download the [API.py](https://github.com/PlayTazUO/TazUO/blob/dev/src/ClassicUO.Client/LegionScripting/docs/API.py) file, put it in the same folder as your python scripts and add `import API` to your script, that will enable some mild form of autocomplete in an editor like VS Code.  
+
+You can now type `-updateapi` in game to download the latest API.py file.
+:::
+
+[Additional notes](../notes/)  
+
+*This was generated on `2/14/26`.*
 
 ## Properties
+### `Events`
+
+**Type:** `EventSinkApi`
+
+### `Config`
+
+**Type:** `LegionApiConfig`
+
 ### `JournalEntries`
 
-**Type:** `ConcurrentQueue<PyJournalEntry>`
+**Type:** `ConcurrentQueue<ApiJournalEntry>`
 
 ### `Backpack`
 
@@ -21,7 +45,7 @@ description:  Python scripting access point
 
 ### `Player`
 
-**Type:** `PyPlayer`
+**Type:** `ApiPlayer`
 
  Returns the player character object
 
@@ -71,20 +95,20 @@ description:  Python scripting access point
 
 
 
+### `InstanceId`
+
+**Type:** `int`
+
 ### `Profile`
 
-**Type:** `PyProfile`
+**Type:** `ApiUserProfile`
 
  Access useful player settings.
 
 
-### `Events`
-
-**Type:** `PyEvents`
-
 ### `Gumps`
 
-**Type:** `PyGumps`
+**Type:** `ApiUiGump`
 
 ### `StopRequested`
 
@@ -336,7 +360,7 @@ description:  Python scripting access point
  ```
 
 
-**Return Type:** `PyItem`
+**Return Type:** `ApiItem`
 
 ---
 
@@ -352,7 +376,7 @@ description:  Python scripting access point
   ```
 
 
-**Return Type:** `PyItem`
+**Return Type:** `ApiItem`
 
 ---
 
@@ -1044,7 +1068,7 @@ description:  Python scripting access point
 | --- | --- | --- | --- |
 | `serial` | `uint` | ❌ No | The serial |
 
-**Return Type:** `PyItem`
+**Return Type:** `ApiItem`
 
 ---
 
@@ -1071,7 +1095,7 @@ description:  Python scripting access point
 | `hue` | `ushort` | ✅ Yes | Hue of item |
 | `minamount` | `ushort` | ✅ Yes | Only match if item stack is at least this much |
 
-**Return Type:** `PyItem`
+**Return Type:** `ApiItem`
 
 ---
 
@@ -1096,7 +1120,7 @@ description:  Python scripting access point
 | `hue` | `ushort` | ✅ Yes | Hue of item |
 | `minamount` | `ushort` | ✅ Yes | Only match if item stack is at least this much |
 
-**Return Type:** `PyItem[]`
+**Return Type:** `ApiItem[]`
 
 ---
 
@@ -1119,7 +1143,7 @@ description:  Python scripting access point
 | `layer` | `string` | ❌ No | The layer to check, see https://github.com/PlayTazUO/TazUO/blob/main/src/ClassicUO.Client/Game/Data/Layers.cs |
 | `serial` | `uint` | ✅ Yes | Optional, if not set it will check yourself, otherwise it will check the mobile requested |
 
-**Return Type:** `PyItem`
+**Return Type:** `ApiItem`
 
 ---
 
@@ -1166,7 +1190,7 @@ description:  Python scripting access point
 | `container` | `uint` | ❌ No |  |
 | `recursive` | `bool` | ✅ Yes | Search sub containers also? |
 
-**Return Type:** `PyItem[]`
+**Return Type:** `ApiItem[]`
 
 ---
 
@@ -1656,7 +1680,7 @@ description:  Python scripting access point
 | `timeout` | `double` | ✅ Yes | The maximum time, in seconds, to wait for a valid target selection.  
          If the timeout expires without a selection, the method returns <c>null</c> . |
 
-**Return Type:** `PyGameObject`
+**Return Type:** `ApiGameObject`
 
 ---
 
@@ -2404,7 +2428,7 @@ description:  Python scripting access point
 | `scanType` | `ScanType` | ❌ No |  |
 | `maxDistance` | `int` | ✅ Yes |  |
 
-**Return Type:** `PyEntity`
+**Return Type:** `ApiEntity`
 
 ---
 
@@ -2429,7 +2453,7 @@ description:  Python scripting access point
 | `notoriety` | `IList<Notoriety>` | ❌ No | List of notorieties |
 | `maxDistance` | `int` | ✅ Yes |  |
 
-**Return Type:** `PyMobile`
+**Return Type:** `ApiMobile`
 
 ---
 
@@ -2452,7 +2476,7 @@ description:  Python scripting access point
 | --- | --- | --- | --- |
 | `distance` | `int` | ✅ Yes |  |
 
-**Return Type:** `PyItem`
+**Return Type:** `ApiItem`
 
 ---
 
@@ -2476,7 +2500,7 @@ description:  Python scripting access point
 | `notoriety` | `IList<Notoriety>` | ❌ No | List of notorieties |
 | `maxDistance` | `int` | ✅ Yes |  |
 
-**Return Type:** `PyMobile[]`
+**Return Type:** `ApiMobile[]`
 
 ---
 
@@ -2499,7 +2523,7 @@ description:  Python scripting access point
 | --- | --- | --- | --- |
 | `serial` | `uint` | ❌ No |  |
 
-**Return Type:** `PyMobile`
+**Return Type:** `ApiMobile`
 
 ---
 
@@ -2527,7 +2551,7 @@ description:  Python scripting access point
 | `distance` | `int?` | ✅ Yes | Optional maximum distance from player |
 | `notoriety` | `IList<Notoriety>` | ✅ Yes | Optional list of notoriety flags to filter by |
 
-**Return Type:** `PyMobile[]`
+**Return Type:** `ApiMobile[]`
 
 ---
 
@@ -2549,7 +2573,7 @@ description:  Python scripting access point
 | `x` | `int` | ❌ No |  |
 | `y` | `int` | ❌ No |  |
 
-**Return Type:** `PyGameObject`
+**Return Type:** `ApiGameObject`
 
 ---
 
@@ -2572,7 +2596,7 @@ description:  Python scripting access point
 | `x` | `int` | ❌ No | X coordinate |
 | `y` | `int` | ❌ No | Y coordinate |
 
-**Return Type:** `List<PyStatic>`
+**Return Type:** `List<ApiStatic>`
 
 ---
 
@@ -2599,7 +2623,7 @@ description:  Python scripting access point
 | `x2` | `int` | ❌ No | Ending X coordinate |
 | `y2` | `int` | ❌ No | Ending Y coordinate |
 
-**Return Type:** `List<PyStatic>`
+**Return Type:** `List<ApiStatic>`
 
 ---
 
@@ -2622,7 +2646,7 @@ description:  Python scripting access point
 | `x` | `int` | ❌ No | X coordinate |
 | `y` | `int` | ❌ No | Y coordinate |
 
-**Return Type:** `List<PyMulti>`
+**Return Type:** `List<ApiMulti>`
 
 ---
 
@@ -2648,7 +2672,7 @@ description:  Python scripting access point
 | `x2` | `int` | ❌ No | Ending X coordinate |
 | `y2` | `int` | ❌ No | Ending Y coordinate |
 
-**Return Type:** `List<PyMulti>`
+**Return Type:** `List<ApiMulti>`
 
 ---
 
@@ -2752,7 +2776,7 @@ description:  Python scripting access point
 | `canMove` | `bool` | ✅ Yes |  |
 | `keepOpen` | `bool` | ✅ Yes |  |
 
-**Return Type:** `PyBaseGump`
+**Return Type:** `ApiUiBaseGump`
 
 ---
 
@@ -2784,7 +2808,7 @@ description:  Python scripting access point
 | `hue` | `ushort` | ✅ Yes |  |
 | `isChecked` | `bool` | ✅ Yes |  |
 
-**Return Type:** `PyCheckbox`
+**Return Type:** `ApiUiCheckbox`
 
 ---
 
@@ -2800,7 +2824,7 @@ description:  Python scripting access point
 | `text` | `string` | ❌ No |  |
 | `hue` | `ushort` | ✅ Yes |  |
 
-**Return Type:** `PyLabel`
+**Return Type:** `ApiUiLabel`
 
 ---
 
@@ -2816,7 +2840,7 @@ description:  Python scripting access point
 | `opacity` | `float` | ✅ Yes |  |
 | `color` | `string` | ✅ Yes |  |
 
-**Return Type:** `PyAlphaBlendControl`
+**Return Type:** `ApiUiAlphaBlendControl`
 
 ---
 
@@ -2833,7 +2857,7 @@ description:  Python scripting access point
 | `width` | `int` | ❌ No |  |
 | `height` | `int` | ❌ No |  |
 
-**Return Type:** `PyResizableStaticPic`
+**Return Type:** `ApiUiResizableStaticPic`
 
 ---
 
@@ -2852,7 +2876,7 @@ description:  Python scripting access point
 | `pressed` | `ushort` | ✅ Yes |  |
 | `hover` | `ushort` | ✅ Yes |  |
 
-**Return Type:** `PyButton`
+**Return Type:** `ApiUiButton`
 
 ---
 
@@ -2869,7 +2893,7 @@ description:  Python scripting access point
 | `width` | `int` | ❌ No |  |
 | `height` | `int` | ❌ No |  |
 
-**Return Type:** `PyNiceButton`
+**Return Type:** `ApiUiNiceButton`
 
 ---
 
@@ -2889,7 +2913,7 @@ description:  Python scripting access point
 | `hue` | `ushort` | ✅ Yes |  |
 | `isChecked` | `bool` | ✅ Yes |  |
 
-**Return Type:** `PyRadioButton`
+**Return Type:** `ApiUiRadioButton`
 
 ---
 
@@ -2907,7 +2931,7 @@ description:  Python scripting access point
 | `height` | `int` | ✅ Yes |  |
 | `multiline` | `bool` | ✅ Yes |  |
 
-**Return Type:** `PyTTFTextInputField`
+**Return Type:** `ApiUiTtfTextInputField`
 
 ---
 
@@ -2928,7 +2952,7 @@ description:  Python scripting access point
 | `maxWidth` | `int` | ✅ Yes |  |
 | `applyStroke` | `bool` | ✅ Yes |  |
 
-**Return Type:** `PyTextBox`
+**Return Type:** `ApiUiTextBox`
 
 ---
 
@@ -2948,7 +2972,7 @@ description:  Python scripting access point
 | `value` | `int` | ✅ Yes |  |
 | `max` | `int` | ✅ Yes |  |
 
-**Return Type:** `PySimpleProgressBar`
+**Return Type:** `ApiUiSimpleProgressBar`
 
 ---
 
@@ -2966,7 +2990,7 @@ description:  Python scripting access point
 | `width` | `int` | ❌ No |  |
 | `height` | `int` | ❌ No |  |
 
-**Return Type:** `PyScrollArea`
+**Return Type:** `ApiUiScrollArea`
 
 ---
 
@@ -2984,7 +3008,7 @@ description:  Python scripting access point
 | `y` | `int` | ✅ Yes |  |
 | `hue` | `ushort` | ✅ Yes |  |
 
-**Return Type:** `PyGumpPic`
+**Return Type:** `ApiUiGumpPic`
 
 ---
 
@@ -3001,7 +3025,7 @@ description:  Python scripting access point
 | `items` | `IList<string>` | ❌ No |  |
 | `selectedIndex` | `int` | ✅ Yes |  |
 
-**Return Type:** `PyControlDropDown`
+**Return Type:** `ApiUiControlDropDown`
 
 ---
 
@@ -3023,7 +3047,7 @@ description:  Python scripting access point
 | `minHeight` | `int` | ✅ Yes |  |
 | `onResized` | `object` | ✅ Yes |  |
 
-**Return Type:** `PyNineSliceGump`
+**Return Type:** `ApiUiNineSliceGump`
 
 ---
 
@@ -3053,10 +3077,10 @@ description:  Python scripting access point
 
 | Name | Type | Optional | Description |
 | --- | --- | --- | --- |
-| `control` | `PyBaseControl` | ❌ No |  |
+| `control` | `ApiUiBaseControl` | ❌ No |  |
 | `onDispose` | `object` | ❌ No |  |
 
-**Return Type:** `PyBaseControl`
+**Return Type:** `ApiUiBaseControl`
 
 ---
 

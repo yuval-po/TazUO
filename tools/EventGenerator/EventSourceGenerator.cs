@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using HandlebarsDotNet;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 
@@ -43,6 +44,7 @@ public class EventSourceGenerator : IIncrementalGenerator
     private static ApiEventInfo GetSemanticTargetForGeneration(GeneratorSyntaxContext context)
     {
         var eventFieldDecl = (EventFieldDeclarationSyntax)context.Node;
+        
         var (nsName, className) = AssertGetNamespaceAndClassName(eventFieldDecl);
 
         foreach (var attrList in eventFieldDecl.AttributeLists)
@@ -76,11 +78,33 @@ public class EventSourceGenerator : IIncrementalGenerator
                 EventName = eventName,
                 EventArgsType = eventArgsType,
                 ClassName = className,
-                Namespace = nsName
+                Namespace = nsName,
+                EventDocs = GetDocstringForNode(eventFieldDecl),
             };
         }
 
         return null;
+    }
+
+    private static string GetDocstringForNode(SyntaxNode node)
+    {
+        // The AST we get here doesn't contain comment information.
+        // We need to reparse the node with documentation mode to get the structured trivia
+        var parseOptions = CSharpParseOptions.Default.WithDocumentationMode(DocumentationMode.Parse);
+        var reparsedTree = CSharpSyntaxTree.ParseText(node.ToFullString(), parseOptions);
+        var reparsedRoot = reparsedTree.GetRoot();
+
+        // The reparsed root's first child should be our node
+        // (it's wrapped in a CompilationUnit, so we get the first actual child)
+        var reparsedNode = reparsedRoot.ChildNodes().FirstOrDefault() ?? reparsedRoot;
+
+        // Now we can get the structured documentation
+        var trivia = reparsedNode.GetLeadingTrivia()
+            .Select(t => t.GetStructure())
+            .OfType<DocumentationCommentTriviaSyntax>()
+            .FirstOrDefault();
+        
+        return trivia == null ? string.Empty : trivia.ToFullString().TrimEnd();
     }
 
     private static (string Namespace, string ClassName) AssertGetNamespaceAndClassName(
@@ -125,20 +149,30 @@ public class EventSourceGenerator : IIncrementalGenerator
     {
         var methodsArray = methods.ToArray() ?? [];
         var methodsByClass = methodsArray.GroupBy(m => (m.Namespace, m.ClassName));
-
-        var template = GetTemplate("ApiCallbackDispatcher.hbs");
+        
         var handlebars = Handlebars.Create();
         handlebars.RegisterHelper("TrimOnPrefix", TrimOnPrefix);
-        var compiledTemplate = handlebars.Compile(template);
+        
+        var codeTemplate = GetTemplate("ApiCallbackDispatcher.hbs");
+        var compiledCodeTemplate = handlebars.Compile(codeTemplate);
+        
+        var declTemplate = GetTemplate("LegionApiEventsDeclaration.hbs");
+        var compiledDeclTemplate = handlebars.Compile(declTemplate);
 
         foreach (var group in methodsByClass)
         {
             var templateCtx = CreateContext(group);
-            var source = compiledTemplate(templateCtx);
+            
+            // Generate the source
+            var source = compiledCodeTemplate(templateCtx);
             context.AddSource($"{group.Key.ClassName}.Api.g.cs", SourceText.From(source, Encoding.UTF8));
+            
+            // Generate the declaration
+            var declSource = compiledDeclTemplate(templateCtx);
+            context.AddSource($"{group.Key.ClassName}.Api.Decl.g.cs", SourceText.From(declSource, Encoding.UTF8));
         }
     }
-
+    
     private static void TrimOnPrefix(
         EncodedTextWriter output,
         Context _,
@@ -160,7 +194,8 @@ public class EventSourceGenerator : IIncrementalGenerator
         var methods = methodArray.Select(m => new EventInfoSlim
         {
             Name = m.EventName,
-            EventArgsType = m.EventArgsType
+            EventArgsType = m.EventArgsType,
+            Docs = m.EventDocs
         }).ToArray();
 
         var genClass = new GeneratedClassSlim
@@ -207,12 +242,14 @@ internal class EventInfoSlim
 {
     public string Name { get; set; }
     public string EventArgsType { get; set; }
+    public string Docs { get; set; }
 }
 
 internal class ApiEventInfo
 {
     public string EventName { get; set; }
     public string EventArgsType { get; set; }
+    public string EventDocs { get; set; }
     public string ClassName { get; set; }
     public string Namespace { get; set; }
 }

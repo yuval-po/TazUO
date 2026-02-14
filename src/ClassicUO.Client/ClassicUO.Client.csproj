@@ -135,9 +135,16 @@
   ">true</_IsLinux>
   </PropertyGroup>
 
+  <Target Name="IncludeGeneratedFiles" BeforeTargets="BeforeBuild">
+    <ItemGroup>
+      <None Include="$(BaseIntermediateOutputPath)/generated/EventGenerator/**/*.Api.Decl.g.cs" CopyToOutputDirectory="PreserveNewest"/>
+    </ItemGroup>
+  </Target>
+
   <ItemGroup>
     <DocSourceFiles Include="$(ProjectDir)/LegionScripting/ApiClasses/*.cs" />
     <DocSourceFiles Include="LegionScripting\LegionAPI.cs" />
+    <DocSourceFiles Include="$(BaseIntermediateOutputPath)/generated/EventGenerator/**/*.Api.Decl.g.cs" />
   </ItemGroup>
 
   <PropertyGroup>

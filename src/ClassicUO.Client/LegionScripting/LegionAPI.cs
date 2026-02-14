@@ -35,6 +35,8 @@ namespace ClassicUO.LegionScripting
     {
         #region Members
 
+        public readonly int InstanceId = new Random().Next(100000);
+
         internal readonly ConcurrentBag<Gump> _gumps = [];
         private readonly Queue<Action> _scheduledCallbacks = new();
         private static readonly ConcurrentDictionary<string, object> _sharedVars = new();
@@ -45,7 +47,7 @@ namespace ClassicUO.LegionScripting
         private ConcurrentQueue<ApiJournalEntry> _journalEntries = new();
         internal readonly World World = Client.UnitTestingActive ? new World() : Client.Game.UO.World;
         private Item _backpack;
-        private bool _keyboardHooked = false;
+        private bool _keyboardHooked;
         private readonly System.Threading.Lock _hookLock = new();
 
         private volatile bool _disposed;
@@ -54,7 +56,7 @@ namespace ClassicUO.LegionScripting
 
         #region Accessors
 
-        public  ICallbackChannel CallbackChannel { get; }
+        internal ICallbackChannel CallbackChannel { get; }
 
         // ReSharper disable once MemberCanBePrivate.Global - Used by user scripts
         public EventSinkApi Events { get; }
