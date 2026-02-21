@@ -32,7 +32,7 @@ All notable changes to TazUO will be recorded here.
 * Added support for *C#* scripting - [P.R 369](https://github.com/PlayTazUO/TazUO/pull/369) ([bittiez](https://github.com/bittiez) & [yuval-po](https://github.com/yuval-po))
 * Added an `Open Location` to the script manager window- [P.R 369](https://github.com/PlayTazUO/TazUO/pull/369) ([yuval-po](https://github.com/yuval-po))
 * Added built-in IRC support and channel - [P.R 366](https://github.com/PlayTazUO/TazUO/pull/366) ([bittiez](https://github.com/bittiez))
-* Added Auto-Loot priotrity tiers (High/Normal/Low) - [P.R 363](https://github.com/PlayTazUO/TazUO/pull/363) ([crameep](https://github.com/crameep))
+* Added Auto-Loot priority tiers (High/Normal/Low) - [P.R 363](https://github.com/PlayTazUO/TazUO/pull/363) ([crameep](https://github.com/crameep))
 * Added `ToggleAutoLoot` macro to quickly enable/disable autolooting - ([bittiez](https://github.com/bittiez))
 
 ### API
