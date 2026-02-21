@@ -5,7 +5,9 @@ namespace ClassicUO.LegionScripting.ApiClasses;
 /// </summary>
 public class ApiPoint3D
 {
-    public int X { get; set; }
-    public int Y { get; set; }
-    public int Z { get; set; }
+    public int X { get; init; }
+    public int Y { get; init; }
+    public int Z { get; init; }
+
+    public override string ToString() => $"({X}, {Y}, {Z})";
 }
