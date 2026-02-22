@@ -5,7 +5,7 @@ All notable changes to TazUO will be recorded here.
 
 ## Currently in `dev channel`
 
-## Breaking Changes
+### Breaking Changes
 
 * Python API classes (`Py___`) renamed to `Api___` or `ApiUi___`
 * All `IronPython` types/classes in `LegionAPI` were replaced with standard C# constructs
@@ -18,7 +18,7 @@ All notable changes to TazUO will be recorded here.
 * `Buff` renamed to `ApiBuff` (Affects `OnBuffAdded` & `OnBuffRemoved`)
 
 
-## Features
+### Features
 
 * Added support for *C#* scripting - [P.R 369](https://github.com/PlayTazUO/TazUO/pull/369) ([bittiez](https://github.com/bittiez) & [yuval-po](https://github.com/yuval-po))
 * Added an `Open Location` to the script manager window- [P.R 369](https://github.com/PlayTazUO/TazUO/pull/369) ([yuval-po](https://github.com/yuval-po))
