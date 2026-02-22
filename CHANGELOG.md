@@ -39,12 +39,13 @@ All notable changes to TazUO will be recorded here.
 * Added a *Skill Management* tab to the *Legion Assistant* - [P.R 359](https://github.com/PlayTazUO/TazUO/pull/359) ([crameep](https://github.com/crameep))
 * Organizer tab now shows graphic when hovering over the graphic art - ([bittiez](https://github.com/bittiez))
 * Added Mobile outline option - Highlighting mobiles by notoriety - ([bittiez](https://github.com/bittiez))
-* Added TazUO chat(Top menu -> More -> TazUO Chat) - ([bittiez](https://github.com/bittiez))
+* Added TazUO chat (Top menu -> More -> TazUO Chat) - ([bittiez](https://github.com/bittiez))
 * ItemDatabase search now defaults to not only "this character" - ([bittiez](https://github.com/bittiez))
 
 
 ### Fixes
 
+* Fixed empty ability name on active ability when calling `CurrentAbilityNames` - [P.R 373](https://github.com/PlayTazUO/TazUO/pull/373) ([yuval-po](https://github.com/yuval-po))
 * Fixed automatic corpse opening when too far away - [P.R 371](https://github.com/PlayTazUO/TazUO/pull/371) ([yuval-po](https://github.com/yuval-po))
 * Fixed a reliability issue with `API.OnHotKey` - [P.R 365](https://github.com/PlayTazUO/TazUO/pull/365) ([fpw](https://github.com/fpw))
 * Fixed healthbar collector occasionally becoming unresponsive to targeting/clicks - ([bittiez](https://github.com/bittiez))
@@ -58,7 +59,7 @@ All notable changes to TazUO will be recorded here.
 * Updated PSL browser UI and backend - ([bittiez](https://github.com/bittiez))
 * Move automatic py doc gen to tool usage - ([bittiez](https://github.com/bittiez))
 * Added ibm-plex font to embedded fonts - ([bittiez](https://github.com/bittiez))
-* Clean up a bunch of compile-time warnings - ([bittiez](https://github.com/bittiez))
+* Cleaned up a bunch of compile-time warnings - ([bittiez](https://github.com/bittiez))
 
 
 ---
