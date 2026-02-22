@@ -3,27 +3,18 @@ All notable changes to TazUO will be recorded here.
 
 ---
 
-## v4.18.0
+## Currently in `dev channel`
 
 ## Breaking Changes
 
-
 * Python API classes (`Py___`) renamed to `Api___` or `ApiUi___`
-
 * All `IronPython` types/classes in `LegionAPI` were replaced with standard C# constructs
-
 * Return type for `API.LastTargetPos` changed from `Vector3Int` to `ApiPoint3D`
-
 * `API.Events` signature changes
-
 * `PyOnItemCreated` renamed to `OnItemCreated` and now sends an `ApiItem` as an argument
-
 * `OnItemUpdated` event now sends an `ApiItem` as an argument
-
 * `PyOnBuffAdded` renamed to `OnBuffAdded`
-
 * `PyOnBuffRemoved` renamed to `OnBuffRemoved`
-
 * `Buff` renamed to `ApiBuff` (Affects `OnBuffAdded` & `OnBuffRemoved`)
 
 
