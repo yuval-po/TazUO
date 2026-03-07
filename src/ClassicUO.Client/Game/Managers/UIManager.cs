@@ -935,10 +935,5 @@ namespace ClassicUO.Game.Managers
             // Reset Ctrl drag state when drag ends
             ResetCtrlDragState();
         }
-
-        private static void DisposeGump(Gump g)
-        {
-
-        }
     }
 }
