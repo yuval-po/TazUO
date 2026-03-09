@@ -55,10 +55,12 @@ namespace ClassicUO
         private static Vector3 bgHueShader = new(0, 0, 0.3f);
         private bool drawScene;
 
+#if DEBUG
         static GameController()
         {
             RegisterFnaLoggerListeners();
         }
+#endif
 
         public GameController(IPluginHost pluginHost)
         {
@@ -1263,12 +1265,7 @@ namespace ClassicUO
 
         private static void RegisterFnaLoggerListeners()
         {
-#if DEBUG
             FNALoggerEXT.LogInfo += FnaLogInfo;
-#else
-            // Suppress in release. Done here to make it clear to the compiler it can inline/omit the call
-            FNALoggerEXT.LogInfo += (s) => {};
-#endif
             FNALoggerEXT.LogWarn += FnaLogWarn;
             FNALoggerEXT.LogError += FnaLogError;
         }
