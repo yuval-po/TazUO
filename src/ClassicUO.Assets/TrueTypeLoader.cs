@@ -40,9 +40,15 @@ using System.Threading.Tasks;
 
 namespace ClassicUO.Assets
 {
+    public static class EmbeddedFontNames
+    {
+        public const string EMBEDDED_ROBOTO = "Roboto-Regular";
+        public const string EMBEDDED_NOTO_SANS_2_SYMBOLS = "NotoSansSymbols2-Regular";
+    }
+
     public class TrueTypeLoader
     {
-        public const string EMBEDDED_FONT = "Roboto-Regular";
+        public const string EMBEDDED_FONT = EmbeddedFontNames.EMBEDDED_ROBOTO;
 
         private readonly Dictionary<string, FontSystem> _fonts = new();
 
@@ -99,26 +105,29 @@ namespace ClassicUO.Assets
             foreach (string resourceName in resourceNames)
             {
                 Stream stream = assembly.GetManifestResourceStream(resourceName);
-                if (stream != null)
-                    using (stream)
-                    {
-                        string[] rnameParts = resourceName.Split('.');
-                        string fname = rnameParts[rnameParts.Length - 2];
+
+                if (stream == null)
+                    continue;
+
+                using (stream)
+                {
+                    string[] rameParts = resourceName.Split('.');
+                    string fname = rameParts[rameParts.Length - 2];
 #if DEBUG
-                        Log.Trace($"Loaded embedded font: {fname}");
+                    Log.Trace($"Loaded embedded font: {fname}");
 #endif
-                        var memoryStream = new MemoryStream();
-                        stream.CopyTo(memoryStream);
+                    var memoryStream = new MemoryStream();
+                    stream.CopyTo(memoryStream);
 
-                        byte[] filebytes = memoryStream.ToArray();
+                    byte[] filebytes = memoryStream.ToArray();
 
-                        if (fname == EMBEDDED_FONT) //Special case for ImGui
-                            ImGuiFont = filebytes;
+                    if (fname == EMBEDDED_FONT) //Special case for ImGui
+                        ImGuiFont = filebytes;
 
-                        var fontSystem = new FontSystem(settings);
-                        fontSystem.AddFont(filebytes);
-                        _fonts[fname] = fontSystem;
-                    }
+                    var fontSystem = new FontSystem(settings);
+                    fontSystem.AddFont(filebytes);
+                    _fonts[fname] = fontSystem;
+                }
             }
         }
 

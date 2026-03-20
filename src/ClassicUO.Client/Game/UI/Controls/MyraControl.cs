@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Xml;
 using ClassicUO.Game.Managers;
+using ClassicUO.Game.UI.Controls.ResizableControl;
 using ClassicUO.Game.UI.MyraWindows;
 using ClassicUO.Game.UI.MyraWindows.Widgets;
 using ClassicUO.Input;
@@ -24,6 +25,7 @@ public class MyraControl : IGui
 #region Internal Controls
     protected Desktop _desktop = new();
     protected Window _rootWindow;
+    private readonly ResizableControl.ResizableControl _contentControl = new() { Padding = new Thickness(10, 10, 9, 0) };
     private Widget _minimizedContent;
 #endregion
 
@@ -52,6 +54,8 @@ public class MyraControl : IGui
         _rootWindow.ArrangeUpdated += RootWindowOnSizeChanged;
 
         _rootWindow.CloseKey = null;
+
+        _rootWindow.Content = _contentControl;
 
         UIManager.TopMostChanged += UIManagerOnTopMostChanged;
     }
@@ -155,6 +159,13 @@ public class MyraControl : IGui
     public Point Location { get; set; } = Point.Zero;
     public bool HasKeyboardFocus => UIManager.KeyboardFocusControl == this;
     public bool ModalClickOutsideAreaClosesThisControl { get; } = true;
+
+    public ResizeProperties ResizeBehavior
+    {
+        get => _contentControl.Props.Resize;
+        set => _contentControl.Props.Resize = value;
+    }
+
 #endregion
 
 protected void MinMaximize()
@@ -176,10 +187,11 @@ protected void MinMaximize()
     //_rootWindow.Content?.Visible = !_rootWindow.Content.Visible;
     UpdateBoundsToContents();
 }
-
     protected void SetRootContent(Widget widget)
     {
-        _rootWindow.Content = widget;
+        _contentControl.Widgets.Clear();
+        _contentControl.Widgets.Add(widget);
+        _rootWindow.Arrange(new Rectangle(X, Y, StyleConstantsDefaults.WINDOW_MAX_HEIGHT, StyleConstantsDefaults.WINDOW_MAX_WIDTH));
         UpdateBoundsToContents();
     }
 
@@ -221,9 +233,11 @@ protected void MinMaximize()
 
     public virtual void PreDraw()
     {
-        if (IsDisposed) return;
+        if (IsDisposed)
+            return;
 
-        if(_disposeRequested) ExecuteDispose();
+        if (_disposeRequested)
+            ExecuteDispose();
     }
 
     public virtual bool Draw(UltimaBatcher2D batcher, int x, int y)

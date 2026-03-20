@@ -28,10 +28,21 @@ public class MyraGrid : Grid
             RowsProportions.Add(proportion ?? new Proportion(ProportionType.Auto));
     }
 
-    internal void AddWidget(Widget widget, int row, int col)
+    internal void AddWidget(
+        Widget widget,
+        int row, int col,
+        int? rowspan = null,
+        int? colspan = null
+    )
     {
         Widgets.Add(widget);
         SetRow(widget, row);
         SetColumn(widget, col);
+
+        if (rowspan != null)
+            SetRowSpan(widget, rowspan.Value);
+
+        if (colspan != null)
+            SetColumnSpan(widget, colspan.Value);
     }
 }
