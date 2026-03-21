@@ -2,8 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Xml;
 using ClassicUO.Game.Managers;
-using ClassicUO.Game.UI.Controls.ResizableControl;
-using ClassicUO.Game.UI.Controls.Resizer;
+using ClassicUO.Game.UI.Controls.ResizableComponents;
 using ClassicUO.Game.UI.MyraWindows;
 using ClassicUO.Game.UI.MyraWindows.Widgets;
 using ClassicUO.Input;
@@ -23,34 +22,17 @@ namespace ClassicUO.Game.UI.Controls;
 /// </summary>
 public class MyraControl : IGui
 {
-#region Internal Controls
+    #region Internal Controls
+
     protected readonly Desktop _desktop = new();
     protected readonly ResizableWindow _rootWindow;
     private Widget _minimizedContent;
-#endregion
+
+    #endregion
 
     public MyraControl(string title)
     {
-        _rootWindow = new ResizableWindow
-        {
-            Title = title,
-            Props =
-            {
-                Resize =
-                {
-                    ResizerProps =
-                    {
-                        Placements =
-                        [
-                            new ResizerPlacement(HorizontalAlignment.Left, VerticalAlignment.Top),
-                            new ResizerPlacement(HorizontalAlignment.Left, VerticalAlignment.Bottom),
-                            new ResizerPlacement(HorizontalAlignment.Right, VerticalAlignment.Bottom),
-                            new ResizerPlacement(HorizontalAlignment.Right, VerticalAlignment.Top)
-                        ]
-                    }
-                }
-            }
-        };
+        _rootWindow = new ResizableWindow { Title = title, Props = { Resize = { Placements = ResizeEdges.All } } };
         _rootWindow.Closed += OnRootWindowOnClosed;
         _rootWindow.TitlePanel.TouchDoubleClick += (_, _) => { MinMaximize(); };
         _rootWindow.TitlePanel.Background = new SolidBrush(new Color(0, 0, 0, 75));
@@ -177,7 +159,7 @@ public class MyraControl : IGui
     public bool HasKeyboardFocus => UIManager.KeyboardFocusControl == this;
     public bool ModalClickOutsideAreaClosesThisControl { get; } = true;
 
-    public ResizeProperties ResizeBehavior
+    public ResizeBehavior ResizeBehavior
     {
         get => _rootWindow.Props.Resize;
         set => _rootWindow.Props.Resize = value;
