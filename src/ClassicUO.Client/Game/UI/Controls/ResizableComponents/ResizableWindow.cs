@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using ClassicUO.Input;
 using Microsoft.Xna.Framework;
+using Myra.Graphics2D;
 using Myra.Graphics2D.UI;
 
 namespace ClassicUO.Game.UI.Controls.ResizableComponents;
@@ -18,6 +19,25 @@ public class ResizableWindow(ResizableWindowProps props = null) : Window, IDispo
     public event EventHandler<ResizeEventArgs> Resized;
 
     public ResizableWindowProps Props { get; } = props ?? new ResizableWindowProps();
+
+    public override Widget Content
+    {
+        get => base.Content;
+        set
+        {
+            if (value == null)
+            {
+                base.Content = null;
+                return;
+            }
+
+            Widget component = Props.Resize.ScrollerMode == ScrollViewerMode.None
+                ? value
+                : WrapWithScrollViewer(value);
+
+            base.Content = component;
+        }
+    }
 
     private ResizeEdges? _activeResizeEdge;
 
@@ -35,6 +55,27 @@ public class ResizableWindow(ResizableWindowProps props = null) : Window, IDispo
     {
         base.OnMouseEntered();
         Mouse.Moved += OnMouseMovedWhileInWindow;
+    }
+
+    private ScrollViewer WrapWithScrollViewer(Widget widget)
+    {
+        var scroller = new ScrollViewer
+        {
+            ShowHorizontalScrollBar = (Props.Resize.ScrollerMode & ScrollViewerMode.Horizontal) != 0,
+            ShowVerticalScrollBar = (Props.Resize.ScrollerMode & ScrollViewerMode.Vertical) != 0
+        };
+
+        // We need a panel here to serve as a sort-of barrier between the scroller and the widget, otherwise we can get superposition.
+        var panel = new Panel
+        {
+            // Note that if the scroll component's height/width changes post-construction, that won't be reflected. Might improve later.
+            Padding = new Thickness(scroller.HorizontalScrollbarHeight(), scroller.VerticalScrollbarWidth())
+        };
+        panel.Widgets.Add(widget);
+
+        scroller.Content = panel;
+
+        return scroller;
     }
 
     public override void OnMouseLeft()
@@ -173,30 +214,6 @@ public class ResizableWindow(ResizableWindowProps props = null) : Window, IDispo
         && mousePos.Y <= edgeY + radius
         && mousePos.X >= left - radius
         && mousePos.X <= right + radius;
-
-    private Point GetHandlePosition(ResizeEdges edges)
-    {
-        int width = Width ?? Bounds.Width;
-        int height = Height ?? Bounds.Height;
-
-        int left = Bounds.X;
-        int top = Bounds.Y;
-        int right = left + width;
-        int bottom = top + height;
-
-        return edges switch
-        {
-            ResizeEdges.Left | ResizeEdges.Top => new Point(left, top),
-            ResizeEdges.Right | ResizeEdges.Top => new Point(right, top),
-            ResizeEdges.Left | ResizeEdges.Bottom => new Point(left, bottom),
-            ResizeEdges.Right | ResizeEdges.Bottom => new Point(right, bottom),
-            ResizeEdges.Left => new Point(left, top + height / 2),
-            ResizeEdges.Right => new Point(right, top + height / 2),
-            ResizeEdges.Top => new Point(left + width / 2, top),
-            ResizeEdges.Bottom => new Point(left + width / 2, bottom),
-            _ => new Point(left, top)
-        };
-    }
 
     private IEnumerable<ResizeEdges> GetEnabledResizeEdges()
     {

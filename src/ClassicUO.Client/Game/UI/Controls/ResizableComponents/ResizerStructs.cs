@@ -25,7 +25,17 @@ public class ResizerProperties : MyraCommonProps
     public uint ResizeHandleRadiusPx { get; set; } = 25;
 }
 
+[Flags]
+public enum ScrollViewerMode
+{
+    None = 0,
+    Horizontal = 1,
+    Vertical = 1 << 1,
+    Both = Horizontal | Vertical
+}
+
 public class ResizeBehavior : ResizerProperties
 {
     public bool Enabled { get; set; } = true;
+    public ScrollViewerMode ScrollerMode { get; set; } = ScrollViewerMode.Both;
 }
