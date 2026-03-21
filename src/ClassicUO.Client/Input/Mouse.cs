@@ -182,7 +182,9 @@ namespace ClassicUO.Input
             Position.Y = (int)(((double)Position.Y * Client.Game.GraphicManager.PreferredBackBufferHeight / Client.Game.Window.ClientBounds.Height) / Client.Game.RenderScale);
 
             IsDragging = LButtonPressed || RButtonPressed || MButtonPressed;
-            Moved?.Invoke(null, new MouseMovedEventArgs(previous, Position));
+
+            if (previous != Position)
+                Moved?.Invoke(null, new MouseMovedEventArgs(previous, Position));
         }
     }
 }

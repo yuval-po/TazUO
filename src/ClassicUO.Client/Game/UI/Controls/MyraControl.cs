@@ -24,14 +24,13 @@ public class MyraControl : IGui
 {
 #region Internal Controls
     protected readonly Desktop _desktop = new();
-    protected readonly Window _rootWindow;
-    private readonly ResizableControl.ResizableControl _contentControl = new() { Padding = new Thickness(10, 10, 9, 0) };
+    protected readonly ResizableWindow _rootWindow;
     private Widget _minimizedContent;
 #endregion
 
     public MyraControl(string title)
     {
-        _rootWindow = new Window { Title = title };
+        _rootWindow = new ResizableWindow { Title = title };
         _rootWindow.Closed += OnRootWindowOnClosed;
         _rootWindow.TitlePanel.TouchDoubleClick += (_, _) => { MinMaximize(); };
         _rootWindow.TitlePanel.Background = new SolidBrush(new Color(0, 0, 0, 75));
@@ -54,8 +53,6 @@ public class MyraControl : IGui
         _rootWindow.ArrangeUpdated += RootWindowOnSizeChanged;
 
         _rootWindow.CloseKey = null;
-
-        _rootWindow.Content = _contentControl;
 
         UIManager.TopMostChanged += UIManagerOnTopMostChanged;
     }
@@ -162,8 +159,8 @@ public class MyraControl : IGui
 
     public ResizeProperties ResizeBehavior
     {
-        get => _contentControl.Props.Resize;
-        set => _contentControl.Props.Resize = value;
+        get => _rootWindow.Props.Resize;
+        set => _rootWindow.Props.Resize = value;
     }
 
 #endregion
@@ -189,9 +186,7 @@ protected void MinMaximize()
 }
     protected void SetRootContent(Widget widget)
     {
-        _contentControl.Widgets.Clear();
-        _contentControl.Widgets.Add(widget);
-        _rootWindow.Arrange(new Rectangle(X, Y, StyleConstantsDefaults.WINDOW_MAX_HEIGHT, StyleConstantsDefaults.WINDOW_MAX_WIDTH));
+        _rootWindow.Content = widget;
         UpdateBoundsToContents();
     }
 

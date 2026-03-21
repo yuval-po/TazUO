@@ -1,4 +1,6 @@
-namespace ClassicUO.Game.UI.MyraWindows.Widgets;
+using ClassicUO.Game.UI.MyraWindows;
+
+namespace ClassicUO.Game.UI.Controls;
 
 public class MyraCommonProps
 {

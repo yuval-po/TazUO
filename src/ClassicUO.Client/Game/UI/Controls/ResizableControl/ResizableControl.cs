@@ -9,6 +9,7 @@ public class ResizeProperties
 {
     public bool Enabled { get; set; } = true;
     public ResizerProperties ResizerProps { get; set; } = new();
+    public uint ResizeHandleRadiusPx { get; set; } = 30;
 }
 
 public class ResizablePanelProps : MyraCommonProps
