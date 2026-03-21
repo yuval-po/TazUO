@@ -2,7 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using ClassicUO.Assets;
+using ClassicUO.Configuration;
+using ClassicUO.Game.UI.MyraWindows.Widgets;
 using ClassicUO.Input;
+using FontStashSharp;
+using FontStashSharp.RichText;
 using Microsoft.Xna.Framework;
 using Myra.Graphics2D;
 using Myra.Graphics2D.UI;
@@ -12,13 +17,23 @@ namespace ClassicUO.Game.UI.Controls.ResizableComponents;
 public class ResizableWindowProps : MyraCommonProps
 {
     public ResizeBehavior Resize { get; set; } = new();
+    public bool Minimizable { get; set; } = true;
 }
 
-public class ResizableWindow(ResizableWindowProps props = null) : Window, IDisposable
+public class ResizableWindow : Window, IDisposable
 {
     public event EventHandler<ResizeEventArgs> Resized;
 
-    public ResizableWindowProps Props { get; } = props ?? new ResizableWindowProps();
+    public ResizableWindowProps Props { get; }
+
+    public ResizableWindow(ResizableWindowProps props = null)
+    {
+        Props = props ?? new ResizableWindowProps();
+
+        if (Props.Minimizable)
+            ConfigureMinMaxButton();
+    }
+
 
     public override Widget Content
     {
@@ -35,7 +50,9 @@ public class ResizableWindow(ResizableWindowProps props = null) : Window, IDispo
                 ? value
                 : WrapWithScrollViewer(value);
 
+            _content = component;
             base.Content = component;
+            InvalidateMeasure();
         }
     }
 
@@ -47,9 +64,103 @@ public class ResizableWindow(ResizableWindowProps props = null) : Window, IDispo
     private int _resizeStartWidth;
     private int _resizeStartHeight;
 
+    private int _restoreWidth;
+    private int _restoreHeight;
+
     private bool _isOverridingCursorStyle;
 
+    private Widget _minMaxButton;
+    private MyraLabel _minMaxButtonLabel;
+
+    private Widget _content;
+
+    private string MinMaxButtonText => IsMinimized ? "□" : "−";
+
+    private SpriteFontBase MinMaxButtonFont => IsMinimized
+        ? TrueTypeLoader.Instance.GetFont(EmbeddedFontNames.NOTO_SANS_2_SYMBOLS, 24)
+        : TrueTypeLoader.Instance.GetFont(EmbeddedFontNames.NOTO_SANS_2_SYMBOLS, 32);
+
     public bool IsDisposed { get; private set; }
+
+    public bool IsMinimized { get; private set; }
+
+    public void Minimize()
+    {
+        _restoreWidth = Width ?? Bounds.Width;
+        _restoreHeight = Height ?? Bounds.Height;
+        Width = null;
+        Height = null;
+
+        IsMinimized = true;
+        UpdateMinMaxButtonLabel();
+        base.Content = null; // Using 'Visible' to hide causes some padding to remain. This is a bit of an ugly workaround.
+        InvalidateMeasure();
+    }
+
+    protected override Point InternalMeasure(Point availableSize)
+    {
+        int a = 0;
+        return base.InternalMeasure(availableSize);
+    }
+
+    public void Maximize()
+    {
+        IsMinimized = false;
+        Width = _restoreWidth;
+        Height = _restoreHeight;
+
+        _restoreWidth = 0;
+        _restoreHeight = 0;
+
+        UpdateMinMaxButtonLabel();
+        base.Content = _content;
+        InvalidateMeasure();
+    }
+
+    private void UpdateMinMaxButtonLabel()
+    {
+        _minMaxButtonLabel.Text = MinMaxButtonText;
+        _minMaxButtonLabel.Font = MinMaxButtonFont;
+    }
+
+    private void OnMinMaxButtonClick(object _, EventArgs _1)
+    {
+        if (IsMinimized)
+            Maximize();
+        else
+            Minimize();
+    }
+
+    private void ConfigureMinMaxButton()
+    {
+        const int buttonSize = 28;
+
+        _minMaxButtonLabel = new MyraLabel(MinMaxButtonText, 24)
+        {
+            Font = MinMaxButtonFont,
+            Wrap = false,
+            SingleLine = true,
+            TextAlign = TextHorizontalAlignment.Center,
+            HorizontalAlignment = HorizontalAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Center,
+            Width = buttonSize,
+            Height = buttonSize
+        };
+
+        _minMaxButton = new Myra.Graphics2D.UI.Button
+        {
+            Width = buttonSize,
+            Height = buttonSize,
+            Tooltip = Language.Instance.UiCommons.MinMaxWindowButtonTooltip,
+            Content = _minMaxButtonLabel,
+            VerticalAlignment = VerticalAlignment.Center
+        };
+
+        _minMaxButton.TouchDown += OnMinMaxButtonClick;
+
+        TitlePanel.Widgets.Insert(0, _minMaxButton);
+        TitlePanel.TouchDoubleClick += OnMinMaxButtonClick;
+    }
 
     public override void OnMouseEntered()
     {
@@ -101,6 +212,10 @@ public class ResizableWindow(ResizableWindowProps props = null) : Window, IDispo
             return;
         }
 
+        // Don't allow resizing if minimized
+        if (IsMinimized)
+            return;
+
         _activeResizeEdge = GetResizerUnderCursor();
         if (!_activeResizeEdge.HasValue)
             return;
@@ -141,17 +256,17 @@ public class ResizableWindow(ResizableWindowProps props = null) : Window, IDispo
             return null;
 
         Point mousePos = LocalMousePosition.Value;
-        int radius = (int)Props.Resize.ResizeHandleRadiusPx;
+        int radius = (int)Props.Resize.CornerTriggerRadiusPx;
         int radiusSq = radius * radius;
 
         foreach (ResizeEdges edges in GetEnabledResizeEdges())
-            if (IsCursorOverResizer(mousePos, edges, radius, radiusSq))
+            if (IsCursorOverResizer(mousePos, edges, radiusSq))
                 return edges;
 
         return null;
     }
 
-    private bool IsCursorOverResizer(Point mousePos, ResizeEdges edges, int radius, int radiusSq)
+    private bool IsCursorOverResizer(Point mousePos, ResizeEdges edges, int cornerTriggerRadiusSquared)
     {
         int width = Width ?? Bounds.Width;
         int height = Height ?? Bounds.Height;
@@ -168,29 +283,29 @@ public class ResizableWindow(ResizableWindowProps props = null) : Window, IDispo
 
         // Corner handles: circular hit areas around the corner point.
         if (hasLeft && hasTop)
-            return IsWithinRadius(mousePos, left, top, radiusSq);
+            return IsWithinRadius(mousePos, left, top, cornerTriggerRadiusSquared);
 
         if (hasRight && hasTop)
-            return IsWithinRadius(mousePos, right, top, radiusSq);
+            return IsWithinRadius(mousePos, right, top, cornerTriggerRadiusSquared);
 
         if (hasLeft && hasBottom)
-            return IsWithinRadius(mousePos, left, bottom, radiusSq);
+            return IsWithinRadius(mousePos, left, bottom, cornerTriggerRadiusSquared);
 
         if (hasRight && hasBottom)
-            return IsWithinRadius(mousePos, right, bottom, radiusSq);
+            return IsWithinRadius(mousePos, right, bottom, cornerTriggerRadiusSquared);
 
         // Edge handles: strip along the edge, with thickness based on radius.
         if (hasLeft)
-            return IsWithinVerticalEdge(mousePos, left, top, bottom, radius);
+            return IsWithinVerticalEdge(mousePos, left, top, bottom, Props.Resize.EdgeTriggerBandWidthPx);
 
         if (hasRight)
-            return IsWithinVerticalEdge(mousePos, right, top, bottom, radius);
+            return IsWithinVerticalEdge(mousePos, right, top, bottom, Props.Resize.EdgeTriggerBandWidthPx);
 
         if (hasTop)
-            return IsWithinHorizontalEdge(mousePos, top, left, right, radius);
+            return IsWithinHorizontalEdge(mousePos, top, left, right, Props.Resize.EdgeTriggerBandWidthPx);
 
         if (hasBottom)
-            return IsWithinHorizontalEdge(mousePos, bottom, left, right, radius);
+            return IsWithinHorizontalEdge(mousePos, bottom, left, right, Props.Resize.EdgeTriggerBandWidthPx);
 
         return false;
     }
@@ -203,13 +318,13 @@ public class ResizableWindow(ResizableWindowProps props = null) : Window, IDispo
         return dx * dx + dy * dy <= radiusSq;
     }
 
-    private static bool IsWithinVerticalEdge(Point mousePos, int edgeX, int top, int bottom, int radius) =>
+    private static bool IsWithinVerticalEdge(Point mousePos, int edgeX, int top, int bottom, uint radius) =>
         mousePos.X >= edgeX - radius
         && mousePos.X <= edgeX + radius
         && mousePos.Y >= top - radius
         && mousePos.Y <= bottom + radius;
 
-    private static bool IsWithinHorizontalEdge(Point mousePos, int edgeY, int left, int right, int radius) =>
+    private static bool IsWithinHorizontalEdge(Point mousePos, int edgeY, int left, int right, uint radius) =>
         mousePos.Y >= edgeY - radius
         && mousePos.Y <= edgeY + radius
         && mousePos.X >= left - radius
@@ -252,6 +367,10 @@ public class ResizableWindow(ResizableWindowProps props = null) : Window, IDispo
 
     private void OnMouseMovedWhileInWindow(object _, MouseMovedEventArgs e)
     {
+        // Resize is disabled when the window is minimized, so no need to even check the cursor position.
+        if (IsMinimized)
+            return;
+
         bool isOnHandle = GetResizerUnderCursor() != null;
 
         switch (isOnHandle)
@@ -356,10 +475,11 @@ public class ResizableWindow(ResizableWindowProps props = null) : Window, IDispo
         Mouse.Moved -= OnMouseMovedWhileInWindow;
         Mouse.LeftButtonClickStateChanged -= LeftClickChangedHandler;
         Mouse.Moved -= OnMouseMovedWhileResizing;
+        TitlePanel?.TouchDoubleClick -= OnMinMaxButtonClick;
+        _minMaxButton?.TouchDown -= OnMinMaxButtonClick;
         StopOverridingCursorStyle();
 
-        GC.SuppressFinalize(this);
-
         IsDisposed = true;
+        GC.SuppressFinalize(this);
     }
 }

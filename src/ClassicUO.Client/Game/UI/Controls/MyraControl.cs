@@ -34,16 +34,11 @@ public class MyraControl : IGui
     {
         _rootWindow = new ResizableWindow { Title = title, Props = { Resize = { Placements = ResizeEdges.All } } };
         _rootWindow.Closed += OnRootWindowOnClosed;
-        _rootWindow.TitlePanel.TouchDoubleClick += (_, _) => { MinMaximize(); };
         _rootWindow.TitlePanel.Background = new SolidBrush(new Color(0, 0, 0, 75));
         _rootWindow.TitlePanel.Border = new SolidBrush(new Color(0, 0, 0, MyraStyle.STANDARD_BORDER_ALPHA));
         _rootWindow.TitlePanel.BorderThickness = new Thickness(1);
 
         MyraStyle.ApplyButtonDangerStyle(_rootWindow.CloseButton);
-
-        var minButton = new Myra.Graphics2D.UI.Button { Content = new MyraLabel("^", 16), Tooltip = "Minimize or maximize this window."};
-        minButton.TouchDown += (_, _) => MinMaximize();
-        _rootWindow.TitlePanel.Widgets.Insert(0, minButton);
 
         _desktop.Root = _rootWindow;
 
@@ -165,27 +160,8 @@ public class MyraControl : IGui
         set => _rootWindow.Props.Resize = value;
     }
 
-#endregion
+    #endregion
 
-protected void MinMaximize()
-{
-    if (_rootWindow.Content == null)
-    {
-        if (_minimizedContent != null)
-        {
-            _rootWindow.Content = _minimizedContent;
-            _minimizedContent = null;
-        }
-        return;
-    }
-
-    _minimizedContent = _rootWindow.Content;
-    _rootWindow.Content = null;
-    _rootWindow.Width = null;
-    _rootWindow.Height = null;
-    //_rootWindow.Content?.Visible = !_rootWindow.Content.Visible;
-    UpdateBoundsToContents();
-}
     protected void SetRootContent(Widget widget)
     {
         _rootWindow.Content = widget;

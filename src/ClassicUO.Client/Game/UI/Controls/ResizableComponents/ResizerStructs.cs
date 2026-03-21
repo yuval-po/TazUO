@@ -22,7 +22,8 @@ public class ResizeEventArgs : EventArgs
 public class ResizerProperties : MyraCommonProps
 {
     public ResizeEdges Placements { get; set; } = ResizeEdges.All;
-    public uint ResizeHandleRadiusPx { get; set; } = 25;
+    public uint CornerTriggerRadiusPx { get; set; } = 18;
+    public uint EdgeTriggerBandWidthPx { get; set; } = 8;
 }
 
 [Flags]

@@ -36,19 +36,18 @@ using FontStashSharp;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace ClassicUO.Assets
 {
     public static class EmbeddedFontNames
     {
-        public const string EMBEDDED_ROBOTO = "Roboto-Regular";
-        public const string EMBEDDED_NOTO_SANS_2_SYMBOLS = "NotoSansSymbols2-Regular";
+        public const string ROBOTO = "Roboto-Regular";
+        public const string NOTO_SANS_2_SYMBOLS = "NotoSansSymbols2-Regular";
     }
 
     public class TrueTypeLoader
     {
-        public const string EMBEDDED_FONT = EmbeddedFontNames.EMBEDDED_ROBOTO;
+        public const string EMBEDDED_FONT = EmbeddedFontNames.ROBOTO;
 
         private readonly Dictionary<string, FontSystem> _fonts = new();
 
