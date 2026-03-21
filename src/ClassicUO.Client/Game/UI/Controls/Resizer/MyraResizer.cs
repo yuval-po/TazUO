@@ -57,7 +57,7 @@ public class MyraResizer : ContentControl
         _innerPanel.Widgets.Clear();
         _innerPanel.Widgets.Add(newContent);
 
-        foreach (ResizerAlignment alignment in _props.Alignments)
+        foreach (ResizerAlignment alignment in _props.Placements)
             _innerPanel.Widgets.Add(CreateHandle(newContent, alignment));
 
         _scroller.Content = _innerPanel;

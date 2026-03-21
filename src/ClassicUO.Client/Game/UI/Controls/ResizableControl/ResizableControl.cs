@@ -23,7 +23,7 @@ public class ResizableControl : Container
     private MyraGrid _grid;
     private readonly Panel _contentPanel = new();
 
-    public override ObservableCollection<Widget> Widgets { get => _contentPanel.Widgets; }
+    public override ObservableCollection<Widget> Widgets => _contentPanel.Widgets;
 
     public ResizableControl(ResizablePanelProps props = null)
     {
@@ -35,6 +35,9 @@ public class ResizableControl : Container
     {
         if (Props.Resize.Enabled)
             BuildResizable();
+        else
+            BuildNonResizable();
+
         InvalidateMeasure();
     }
 
@@ -45,7 +48,7 @@ public class ResizableControl : Container
             MinWidth = Props.MinWidth,
             MinHeight = Props.MinHeight,
             MaxWidth = Props.MaxWidth,
-            MaxHeight = Props.MaxHeight,
+            MaxHeight = Props.MaxHeight
         };
 
         _grid.AddRow(new Proportion(ProportionType.Fill));
@@ -64,7 +67,7 @@ public class ResizableControl : Container
             MinWidth = Props.Resize.ResizerProps.MinWidth,
             MinHeight = Props.Resize.ResizerProps.MinHeight,
             MaxWidth = Props.Resize.ResizerProps.MaxWidth,
-            MaxHeight = Props.Resize.ResizerProps.MaxHeight,
+            MaxHeight = Props.Resize.ResizerProps.MaxHeight
         });
 
         resizerHandle.Resized += (_, args) =>
@@ -74,8 +77,25 @@ public class ResizableControl : Container
         };
 
         _grid.AddWidget(resizerHandle, 1, 1);
-        ChildrenLayout = new GridLayout();
 
+        ChildrenLayout = new GridLayout();
+        Children.Add(_grid);
+    }
+
+    private void BuildNonResizable()
+    {
+        _grid = new MyraGrid
+        {
+            MinWidth = Props.MinWidth,
+            MinHeight = Props.MinHeight,
+            MaxWidth = Props.MaxWidth,
+            MaxHeight = Props.MaxHeight
+        };
+
+        _grid.AddRow(new Proportion(ProportionType.Fill));
+        _grid.AddColumn(new Proportion(ProportionType.Fill));
+
+        ChildrenLayout = new GridLayout();
         Children.Add(_grid);
     }
 }

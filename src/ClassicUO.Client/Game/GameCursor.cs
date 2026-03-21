@@ -527,6 +527,16 @@ namespace ClassicUO.Game
             }
         }
 
+        /// <summary>
+        /// Overrides the game cursor visual style.
+        /// Set to null to remove the override and revert to the standard behavior.
+        /// </summary>
+        /// <param name="visual">
+        /// The visual style to use.
+        /// <para>
+        /// Note that additional styles are available but not listed here. See <see cref="_cursorData"/> for a complete list
+        /// </para>
+        /// </param>
         public void ForceSetCursorVisualStyle(GameCursorVisualType? visual) => _cursorVisual = visual;
 
         private void DrawToolTip(UltimaBatcher2D batcher, Point position)

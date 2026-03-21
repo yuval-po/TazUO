@@ -9,12 +9,10 @@ public record struct ResizerAlignment(HorizontalAlignment Horizontal, VerticalAl
 
 public class ResizerProperties
 {
-    public const string DEFAULT_HANDLE_TEXT = "🭿";
-
     public Dictionary<ResizerAlignment, string> HandleTexts { get; set; } = new();
 
     public string Tooltip { get; set; } = Language.Instance.UiCommons.DragToResize;
-    public ResizerAlignment[] Alignments { get; set; } = [new(HorizontalAlignment.Right, VerticalAlignment.Bottom)];
+    public ResizerAlignment[] Placements { get; set; } = [new(HorizontalAlignment.Right, VerticalAlignment.Bottom)];
     public int FontSize { get; set; } = 30;
 
     public int MinWidth { get; set; } = StyleConstantsDefaults.WINDOW_MIN_WIDTH;
@@ -23,6 +21,18 @@ public class ResizerProperties
     public int MaxWidth { get; set; } = StyleConstantsDefaults.WINDOW_MAX_WIDTH;
     public int MaxHeight { get; set; } = StyleConstantsDefaults.WINDOW_MAX_HEIGHT;
 
-    public string GetHandleText(ResizerAlignment alignment) =>
-        HandleTexts.GetValueOrDefault(alignment, DEFAULT_HANDLE_TEXT);
+    public string GetHandleText(ResizerAlignment alignment)
+    {
+        if (HandleTexts.TryGetValue(alignment, out string text))
+            return text;
+
+        return alignment switch
+        {
+            { Horizontal: HorizontalAlignment.Right, Vertical: VerticalAlignment.Top } => StyleConstantsDefaults.TOP_RIGHT_HANDLE_TEXT,
+            { Horizontal: HorizontalAlignment.Right, Vertical: VerticalAlignment.Bottom } => StyleConstantsDefaults.BOTTOM_RIGHT_HANDLE_TEXT,
+            { Horizontal: HorizontalAlignment.Left, Vertical: VerticalAlignment.Bottom } => StyleConstantsDefaults.BOTTOM_LEFT_HANDLE_TEXT,
+            { Horizontal: HorizontalAlignment.Left, Vertical: VerticalAlignment.Top } => StyleConstantsDefaults.TOP_LEFT_HANDLE_TEXT,
+            _ => "<>"
+        };
+    }
 }

@@ -23,8 +23,8 @@ namespace ClassicUO.Game.UI.Controls;
 public class MyraControl : IGui
 {
 #region Internal Controls
-    protected Desktop _desktop = new();
-    protected Window _rootWindow;
+    protected readonly Desktop _desktop = new();
+    protected readonly Window _rootWindow;
     private readonly ResizableControl.ResizableControl _contentControl = new() { Padding = new Thickness(10, 10, 9, 0) };
     private Widget _minimizedContent;
 #endregion
