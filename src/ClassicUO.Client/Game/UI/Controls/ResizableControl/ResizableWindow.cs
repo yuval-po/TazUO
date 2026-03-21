@@ -12,15 +12,18 @@ public class ResizableWindowProps : MyraCommonProps
     public ResizeProperties Resize { get; set; } = new();
 }
 
-public class ResizableWindow(ResizableWindowProps props = null) : Window
+public class ResizableWindow(ResizableWindowProps props = null) : Window, IDisposable
 {
     public event EventHandler<ResizeEventArgs> Resized;
 
     public ResizableWindowProps Props { get; } = props ?? new ResizableWindowProps();
 
-    private bool _isResizing;
+    private Point? _activeResizer;
+
     private Point _resizeStartMouse;
     private bool _isOverridingCursorStyle;
+
+    public bool IsDisposed { get; private set; }
 
     public override void OnMouseEntered()
     {
@@ -33,8 +36,8 @@ public class ResizableWindow(ResizableWindowProps props = null) : Window
         base.OnMouseLeft();
         Mouse.Moved -= OnMouseMovedWhileInWindow;
 
-        // Stop overriding cursor style if the mouse has left the window and we're not currently resizing
-        if (_isOverridingCursorStyle && !_isResizing)
+        // Stop overriding cursor style if the mouse has left the window, and we're not currently resizing
+        if (_isOverridingCursorStyle && !_activeResizer.HasValue)
             StopOverridingCursorStyle();
     }
 
@@ -46,15 +49,15 @@ public class ResizableWindow(ResizableWindowProps props = null) : Window
         if (widgets[^1] != this)
         {
             BringToFront();
-            // If we ever want the visual cursor style change right after focusing, we can add it here.
+            // If we ever want the visual cursor style changed right after focusing, we can add it here.
             // Just a nitpick.
             return;
         }
 
-        if (!IsCursorOnDragHandle())
+        _activeResizer = GetResizerUnderCursor();
+        if (!_activeResizer.HasValue)
             return;
 
-        _isResizing = true;
         _resizeStartMouse = Mouse.Position;
 
         Mouse.LeftButtonClickStateChanged += LeftClickChangedHandler;
@@ -67,10 +70,24 @@ public class ResizableWindow(ResizableWindowProps props = null) : Window
         OnDragStop(null, EventArgs.Empty);
     }
 
-    private bool IsCursorOnDragHandle()
+    public override void Close()
+    {
+        base.Close();
+        Dispose();
+    }
+
+    public void OnFocusLost()
+    {
+        if (_activeResizer.HasValue)
+            OnDragStop(null, EventArgs.Empty);
+
+        StopOverridingCursorStyle();
+    }
+
+    private Point? GetResizerUnderCursor()
     {
         if (!LocalMousePosition.HasValue)
-            return false;
+            return null;
 
         Point mousePos = LocalMousePosition.Value;
         Point[] handlePositions = GetDragHandlePositions();
@@ -84,10 +101,10 @@ public class ResizableWindow(ResizableWindowProps props = null) : Window
             int dy = mousePos.Y - handlePosition.Y;
 
             if (dx * dx + dy * dy <= radiusSq)
-                return true;
+                return handlePosition;
         }
 
-        return false;
+        return null;
     }
 
     private Point[] GetDragHandlePositions()
@@ -100,12 +117,12 @@ public class ResizableWindow(ResizableWindowProps props = null) : Window
             {
                 { Horizontal: HorizontalAlignment.Right, Vertical: VerticalAlignment.Top } =>
                     new Point(Bounds.X + Width ?? Bounds.Width, Bounds.Y),
-                { Horizontal: HorizontalAlignment.Right, Vertical: VerticalAlignment.Bottom }
-                    => new Point(Bounds.X + Width ?? Bounds.Width, Bounds.Y + Height ?? Bounds.Height),
-                { Horizontal: HorizontalAlignment.Left, Vertical: VerticalAlignment.Bottom }
-                    => new Point(Bounds.X, Bounds.Y + Height ?? Bounds.Height),
-                { Horizontal: HorizontalAlignment.Left, Vertical: VerticalAlignment.Top }
-                    => new Point(Bounds.X, Bounds.Y),
+                { Horizontal: HorizontalAlignment.Right, Vertical: VerticalAlignment.Bottom } =>
+                    new Point(Bounds.X + Width ?? Bounds.Width, Bounds.Y + Height ?? Bounds.Height),
+                { Horizontal: HorizontalAlignment.Left, Vertical: VerticalAlignment.Bottom } =>
+                    new Point(Bounds.X, Bounds.Y + Height ?? Bounds.Height),
+                { Horizontal: HorizontalAlignment.Left, Vertical: VerticalAlignment.Top } =>
+                    new Point(Bounds.X, Bounds.Y),
                 _ => null
             };
 
@@ -124,7 +141,7 @@ public class ResizableWindow(ResizableWindowProps props = null) : Window
 
     private void OnMouseMovedWhileInWindow(object _, MouseMovedEventArgs e)
     {
-        bool isOnHandle = IsCursorOnDragHandle();
+        bool isOnHandle = GetResizerUnderCursor() != null;
 
         switch (isOnHandle)
         {
@@ -139,7 +156,7 @@ public class ResizableWindow(ResizableWindowProps props = null) : Window
 
     private void OnMouseMovedWhileResizing(object _, MouseMovedEventArgs e)
     {
-        if (!_isResizing || !Mouse.LButtonPressed)
+        if (!_activeResizer.HasValue || !Mouse.LButtonPressed)
         {
             Mouse.Moved -= OnMouseMovedWhileResizing;
             return;
@@ -165,13 +182,13 @@ public class ResizableWindow(ResizableWindowProps props = null) : Window
 
     private void LeftClickChangedHandler(object _, MouseLeftButtonClickStateChangedEventArgs e)
     {
-        if (!e.Current && _isResizing)
+        if (!e.Current && _activeResizer.HasValue)
             OnDragStop(null, EventArgs.Empty);
     }
 
     private void OnDragStop(object _, EventArgs __)
     {
-        _isResizing = false;
+        _activeResizer = null;
         Mouse.LeftButtonClickStateChanged -= LeftClickChangedHandler;
     }
 
@@ -182,5 +199,20 @@ public class ResizableWindow(ResizableWindowProps props = null) : Window
 
         Client.Game.UO.GameCursor.ForceSetCursorVisualStyle(null);
         _isOverridingCursorStyle = false;
+    }
+
+    public void Dispose()
+    {
+        if (IsDisposed)
+            return;
+
+        Mouse.Moved -= OnMouseMovedWhileInWindow;
+        Mouse.LeftButtonClickStateChanged -= LeftClickChangedHandler;
+        Mouse.Moved -= OnMouseMovedWhileResizing;
+        StopOverridingCursorStyle();
+
+        GC.SuppressFinalize(this);
+
+        IsDisposed = true;
     }
 }

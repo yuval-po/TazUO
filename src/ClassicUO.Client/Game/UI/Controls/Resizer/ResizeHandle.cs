@@ -14,7 +14,7 @@ public class ResizeHandleProps
     public string Glyph { get; set; } = StyleConstantsDefaults.BOTTOM_RIGHT_HANDLE_TEXT;
     public string Tooltip { get; set; } = null;
     public int FontSize { get; set; } = StyleConstantsDefaults.RESIZE_HANDLE_FONT_SIZE;
-    public ResizerAlignment Alignment { get; set; } = new();
+    public ResizerPlacement Placement { get; set; } = new();
     public int MinWidth { get; set; } = StyleConstantsDefaults.WINDOW_MIN_WIDTH;
     public int MinHeight { get; set; } = StyleConstantsDefaults.WINDOW_MIN_HEIGHT;
 
@@ -58,8 +58,8 @@ public sealed class ResizeHandle : Widget
         // If this ever stops being the case, this logic will behave erratically.
         var handle = new MyraLabel(_props.Glyph, _props.FontSize)
         {
-            HorizontalAlignment = _props.Alignment.Horizontal,
-            VerticalAlignment = _props.Alignment.Vertical,
+            HorizontalAlignment = _props.Placement.Horizontal,
+            VerticalAlignment = _props.Placement.Vertical,
             Tooltip = _props.Tooltip,
             Font = TrueTypeLoader.Instance.GetFont(EmbeddedFontNames.EMBEDDED_NOTO_SANS_2_SYMBOLS, _props.FontSize),
             TextColor = StyleConstantsDefaults.ModernUiBorderLight,

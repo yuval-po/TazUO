@@ -146,7 +146,7 @@ namespace ClassicUO.Game.UI.Gumps
                 }
                 else
                 {
-                    currentX += 30; // Add space even when no kick button for alignment
+                    currentX += 30; // Add space even when no kick button for placement
                 }
 
                 // Name background

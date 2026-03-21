@@ -57,21 +57,21 @@ public class MyraResizer : ContentControl
         _innerPanel.Widgets.Clear();
         _innerPanel.Widgets.Add(newContent);
 
-        foreach (ResizerAlignment alignment in _props.Placements)
+        foreach (ResizerPlacement alignment in _props.Placements)
             _innerPanel.Widgets.Add(CreateHandle(newContent, alignment));
 
         _scroller.Content = _innerPanel;
         _scroller.UpdateArrange();
     }
 
-    private MyraLabel CreateHandle(Widget owner, ResizerAlignment alignment)
+    private MyraLabel CreateHandle(Widget owner, ResizerPlacement placement)
     {
         // Note - we assume only one handle can be resizing at a time.
         // If this ever stops being the case, this logic will behave erratically.
-        var handle = new MyraLabel(_props.GetHandleText(alignment), _props.FontSize)
+        var handle = new MyraLabel(_props.GetHandleText(placement), _props.FontSize)
         {
-            HorizontalAlignment = alignment.Horizontal,
-            VerticalAlignment = alignment.Vertical,
+            HorizontalAlignment = placement.Horizontal,
+            VerticalAlignment = placement.Vertical,
             Tooltip = _props.Tooltip,
             Font = TrueTypeLoader.Instance.GetFont("NotoSansSymbols2-Regular", _props.FontSize),
             TextColor = StyleConstantsDefaults.ModernUiBorderLight,

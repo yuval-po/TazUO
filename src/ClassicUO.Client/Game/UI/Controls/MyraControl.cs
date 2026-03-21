@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Xml;
 using ClassicUO.Game.Managers;
 using ClassicUO.Game.UI.Controls.ResizableControl;
+using ClassicUO.Game.UI.Controls.Resizer;
 using ClassicUO.Game.UI.MyraWindows;
 using ClassicUO.Game.UI.MyraWindows.Widgets;
 using ClassicUO.Input;
@@ -30,7 +31,26 @@ public class MyraControl : IGui
 
     public MyraControl(string title)
     {
-        _rootWindow = new ResizableWindow { Title = title };
+        _rootWindow = new ResizableWindow
+        {
+            Title = title,
+            Props =
+            {
+                Resize =
+                {
+                    ResizerProps =
+                    {
+                        Placements =
+                        [
+                            new ResizerPlacement(HorizontalAlignment.Left, VerticalAlignment.Top),
+                            new ResizerPlacement(HorizontalAlignment.Left, VerticalAlignment.Bottom),
+                            new ResizerPlacement(HorizontalAlignment.Right, VerticalAlignment.Bottom),
+                            new ResizerPlacement(HorizontalAlignment.Right, VerticalAlignment.Top)
+                        ]
+                    }
+                }
+            }
+        };
         _rootWindow.Closed += OnRootWindowOnClosed;
         _rootWindow.TitlePanel.TouchDoubleClick += (_, _) => { MinMaximize(); };
         _rootWindow.TitlePanel.Background = new SolidBrush(new Color(0, 0, 0, 75));
@@ -324,6 +344,10 @@ protected void MinMaximize()
     {
         IsFocused = false;
         _desktop.FocusedKeyboardWidget = null;
+
+        // Myra doesn't appear to have native focus controls, so we have to manually
+        // propagate the event down to the window.
+        _rootWindow.OnFocusLost();
     }
 
     #region Invokations

@@ -62,7 +62,7 @@ public class ResizableControl : Container
 
         var resizerHandle = new ResizeHandle(new ResizeHandleProps
         {
-            Glyph = Props.Resize.ResizerProps.GetHandleText(new ResizerAlignment()),
+            Glyph = Props.Resize.ResizerProps.GetHandleText(new ResizerPlacement()),
             Tooltip = Props.Resize.ResizerProps.Tooltip,
             FontSize = Props.Resize.ResizerProps.FontSize,
             MinWidth = Props.Resize.ResizerProps.MinWidth,
