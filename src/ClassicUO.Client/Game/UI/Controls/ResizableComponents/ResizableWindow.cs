@@ -72,6 +72,10 @@ public class ResizableWindow : Window, IDisposable
 
     #region Constructors
 
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="ResizableWindow" /> class.
+    /// </summary>
+    /// <param name="props">Properties defining initial window state and resize behavior.</param>
     public ResizableWindow(ResizableWindowProps props = null)
     {
         Props = props ?? new ResizableWindowProps();
@@ -82,6 +86,9 @@ public class ResizableWindow : Window, IDisposable
 
     #region Public Methods
 
+    /// <summary>
+    ///     Minimizes the window to its title bar only.
+    /// </summary>
     public void Minimize()
     {
         _restoreWidth = Width ?? Bounds.Width;
@@ -91,13 +98,20 @@ public class ResizableWindow : Window, IDisposable
 
         IsMinimized = true;
         UpdateMinMaxButtonLabel();
-        base.Content =
-            null; // Using 'Visible' to hide causes some padding to remain. This is a bit of an ugly workaround.
+        // Using 'Visible' to hide causes some padding to remain. This is a bit of an ugly workaround.
+        base.Content = null;
         InvalidateMeasure();
     }
 
+    /// <summary>
+    ///     Restores the window to its previous size after being minimized.
+    ///     Does nothing when called without a previous call to minimize.
+    /// </summary>
     public void Maximize()
     {
+        if (!IsMinimized)
+            return;
+
         IsMinimized = false;
         Width = _restoreWidth;
         Height = _restoreHeight;
@@ -110,6 +124,10 @@ public class ResizableWindow : Window, IDisposable
         InvalidateMeasure();
     }
 
+    /// <summary>
+    ///     A handler that should be called by the UI I.S when the window loses focus, stopping any active resizing.
+    ///     This is necessary due to the lack of built-in support at the Myra level.
+    /// </summary>
     public void OnFocusLost()
     {
         if (_activeResizeEdge.HasValue)
@@ -118,6 +136,9 @@ public class ResizableWindow : Window, IDisposable
         StopOverridingCursorStyle();
     }
 
+    /// <summary>
+    ///     Disposes of the window resources and unregisters mouse event handlers.
+    /// </summary>
     public void Dispose()
     {
         if (IsDisposed)
@@ -136,6 +157,9 @@ public class ResizableWindow : Window, IDisposable
 
     #region Overrides
 
+    /// <summary>
+    ///     Gets or sets the content of the window
+    /// </summary>
     public override Widget Content
     {
         get => base.Content;
@@ -157,6 +181,9 @@ public class ResizableWindow : Window, IDisposable
         }
     }
 
+    /// <summary>
+    ///     Handles mouse leave events, resetting the cursor style if necessary.
+    /// </summary>
     public override void OnMouseLeft()
     {
         base.OnMouseLeft();
@@ -167,6 +194,9 @@ public class ResizableWindow : Window, IDisposable
             StopOverridingCursorStyle();
     }
 
+    /// <summary>
+    ///     Initiates a resize operation if the user clicks on a resize handle.
+    /// </summary>
     public override void OnTouchDown()
     {
         // To preserve normal Myra window behavior, we have to consider whether the window is in front.
@@ -198,18 +228,27 @@ public class ResizableWindow : Window, IDisposable
         Mouse.Moved += OnMouseMovedWhileResizing;
     }
 
+    /// <summary>
+    ///     Handles touch-up events, stopping any active dragging or resizing.
+    /// </summary>
     public override void OnTouchUp()
     {
         base.OnTouchUp();
         OnDragStop(null, EventArgs.Empty);
     }
 
+    /// <summary>
+    ///     Closes the window and disposes of its resources.
+    /// </summary>
     public override void Close()
     {
         base.Close();
         Dispose();
     }
 
+    /// <summary>
+    ///     Handles mouse entry events, registering mouse movement handlers.
+    /// </summary>
     public override void OnMouseEntered()
     {
         base.OnMouseEntered();
@@ -222,6 +261,9 @@ public class ResizableWindow : Window, IDisposable
 
     #region Private Methods
 
+    /// <summary>
+    ///     Configures the window UI components.
+    /// </summary>
     private void Configure()
     {
         // The close button is kinda ugly, so we center it manually during construction.
@@ -232,12 +274,18 @@ public class ResizableWindow : Window, IDisposable
             ConfigureMinMaxButton();
     }
 
+    /// <summary>
+    ///     Updates the text and font of the minimize/maximize button based on the current state.
+    /// </summary>
     private void UpdateMinMaxButtonLabel()
     {
         _minMaxButtonLabel.Text = MinMaxButtonText;
         _minMaxButtonLabel.Font = MinMaxButtonFont;
     }
 
+    /// <summary>
+    ///     Event handler for the minimize/maximize button click.
+    /// </summary>
     private void OnMinMaxButtonClick(object _, EventArgs _1)
     {
         if (IsMinimized)
@@ -246,6 +294,9 @@ public class ResizableWindow : Window, IDisposable
             Minimize();
     }
 
+    /// <summary>
+    ///     Initializes and adds the minimize/maximize button to the title panel.
+    /// </summary>
     private void ConfigureMinMaxButton()
     {
         const int buttonSize = 28;
@@ -277,6 +328,11 @@ public class ResizableWindow : Window, IDisposable
         TitlePanel.TouchDoubleClick += OnMinMaxButtonClick;
     }
 
+    /// <summary>
+    ///     Wraps a widget with a <see cref="ScrollViewer" />.
+    /// </summary>
+    /// <param name="widget">The widget to wrap.</param>
+    /// <returns>A new <see cref="ScrollViewer" /> containing the widget.</returns>
     private ScrollViewer WrapWithScrollViewer(Widget widget)
     {
         var scroller = new ScrollViewer
@@ -298,6 +354,10 @@ public class ResizableWindow : Window, IDisposable
         return scroller;
     }
 
+    /// <summary>
+    ///     Identifies which resize handle, if any, is currently under the mouse cursor.
+    /// </summary>
+    /// <returns>The <see cref="ResizeEdges" /> under the cursor, or null if none.</returns>
     private ResizeEdges? GetResizerUnderCursor()
     {
         if (!LocalMousePosition.HasValue)
@@ -314,6 +374,13 @@ public class ResizableWindow : Window, IDisposable
         return null;
     }
 
+    /// <summary>
+    ///     Determines if the cursor is over a specific set of resize edges.
+    /// </summary>
+    /// <param name="mousePos">Current mouse position.</param>
+    /// <param name="edges">Edges to check against.</param>
+    /// <param name="cornerTriggerRadiusSquared">Squared radius for corner trigger areas.</param>
+    /// <returns>True if the cursor is over the specified resizer area.</returns>
     private bool IsCursorOverResizer(Point mousePos, ResizeEdges edges, int cornerTriggerRadiusSquared)
     {
         int width = Width ?? Bounds.Width;
@@ -358,6 +425,14 @@ public class ResizableWindow : Window, IDisposable
         return false;
     }
 
+    /// <summary>
+    ///     Checks if a point is within a given radius of another point.
+    /// </summary>
+    /// <param name="mousePos">Point to check.</param>
+    /// <param name="x">Center X coordinate.</param>
+    /// <param name="y">Center Y coordinate.</param>
+    /// <param name="radiusSq">Squared radius.</param>
+    /// <returns>True if the point is within the radius.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static bool IsWithinRadius(Point mousePos, int x, int y, int radiusSq)
     {
@@ -366,18 +441,40 @@ public class ResizableWindow : Window, IDisposable
         return dx * dx + dy * dy <= radiusSq;
     }
 
-    private static bool IsWithinVerticalEdge(Point mousePos, int edgeX, int top, int bottom, uint radius) =>
-        mousePos.X >= edgeX - radius
-        && mousePos.X <= edgeX + radius
-        && mousePos.Y >= top - radius
-        && mousePos.Y <= bottom + radius;
+    /// <summary>
+    ///     Checks if a point is within a vertical edge hit area.
+    /// </summary>
+    /// <param name="mousePos">Point to check.</param>
+    /// <param name="edgeX">X coordinate of the edge.</param>
+    /// <param name="top">Top Y coordinate of the edge.</param>
+    /// <param name="bottom">Bottom Y coordinate of the edge.</param>
+    /// <param name="edgeStripWidth">Thickness of the hit area.</param>
+    /// <returns>True if the point is within the edge area.</returns>
+    private static bool IsWithinVerticalEdge(Point mousePos, int edgeX, int top, int bottom, uint edgeStripWidth) =>
+        mousePos.X >= edgeX - edgeStripWidth
+        && mousePos.X <= edgeX + edgeStripWidth
+        && mousePos.Y >= top - edgeStripWidth
+        && mousePos.Y <= bottom + edgeStripWidth;
 
-    private static bool IsWithinHorizontalEdge(Point mousePos, int edgeY, int left, int right, uint radius) =>
-        mousePos.Y >= edgeY - radius
-        && mousePos.Y <= edgeY + radius
-        && mousePos.X >= left - radius
-        && mousePos.X <= right + radius;
+    /// <summary>
+    ///     Checks if a point is within a horizontal edge hit area.
+    /// </summary>
+    /// <param name="mousePos">Point to check.</param>
+    /// <param name="edgeY">Y coordinate of the edge.</param>
+    /// <param name="left">Left X coordinate of the edge.</param>
+    /// <param name="right">Right X coordinate of the edge.</param>
+    /// <param name="edgeStripWidth">Thickness of the hit area.</param>
+    /// <returns>True if the point is within the edge area.</returns>
+    private static bool IsWithinHorizontalEdge(Point mousePos, int edgeY, int left, int right, uint edgeStripWidth) =>
+        mousePos.Y >= edgeY - edgeStripWidth
+        && mousePos.Y <= edgeY + edgeStripWidth
+        && mousePos.X >= left - edgeStripWidth
+        && mousePos.X <= right + edgeStripWidth;
 
+    /// <summary>
+    ///     Returns an enumerable of all enabled resize edge combinations.
+    /// </summary>
+    /// <returns>An enumeration of <see cref="ResizeEdges" />.</returns>
     private IEnumerable<ResizeEdges> GetEnabledResizeEdges()
     {
         ResizeEdges placements = Props.Resize.Placements;
@@ -407,12 +504,19 @@ public class ResizableWindow : Window, IDisposable
             yield return ResizeEdges.Bottom;
     }
 
+    /// <summary>
+    ///     Called when the mouse hovers over a 'resize handle'.
+    ///     Sets the cursor to the dragging (grabby hand) style
+    /// </summary>
     private void OnHoverEnterOverDrag()
     {
         Client.Game.UO.GameCursor.ForceSetCursorVisualStyle(GameCursorVisualType.Dragging);
         _isOverridingCursorStyle = true;
     }
 
+    /// <summary>
+    ///     Updates the cursor style as it moves within the window based on whether it is over a resize handle.
+    /// </summary>
     private void OnMouseMovedWhileInWindow(object _, MouseMovedEventArgs e)
     {
         // Resize is disabled when the window is minimized, so no need to even check the cursor position.
@@ -432,6 +536,9 @@ public class ResizableWindow : Window, IDisposable
         }
     }
 
+    /// <summary>
+    ///     Processes window resizing as the mouse moves.
+    /// </summary>
     private void OnMouseMovedWhileResizing(object _, MouseMovedEventArgs e)
     {
         if (!_activeResizeEdge.HasValue || !Mouse.LButtonPressed)
@@ -457,6 +564,11 @@ public class ResizableWindow : Window, IDisposable
         Resized?.Invoke(this, new ResizeEventArgs { NewWidth = newBounds.Width, NewHeight = newBounds.Height });
     }
 
+    /// <summary>
+    ///     Calculates the new window bounds based on mouse delta and active resize edges.
+    /// </summary>
+    /// <param name="resizeEdges">The edges currently being dragged.</param>
+    /// <returns>The calculated <see cref="Rectangle" /> bounds.</returns>
     private Rectangle CalculateNewBounds(ResizeEdges resizeEdges)
     {
         Point delta = Mouse.Position - _resizeStartMouse;
@@ -494,18 +606,27 @@ public class ResizableWindow : Window, IDisposable
         return new Rectangle(newX, newY, newWidth, newHeight);
     }
 
+    /// <summary>
+    ///     Handles left mouse button click state changes during a drag/resize operation.
+    /// </summary>
     private void LeftClickChangedHandler(object _, MouseLeftButtonClickStateChangedEventArgs e)
     {
         if (!e.Current && _activeResizeEdge.HasValue)
             OnDragStop(null, EventArgs.Empty);
     }
 
+    /// <summary>
+    ///     Stops the current drag/resize operation.
+    /// </summary>
     private void OnDragStop(object _, EventArgs _1)
     {
         _activeResizeEdge = null;
         Mouse.LeftButtonClickStateChanged -= LeftClickChangedHandler;
     }
 
+    /// <summary>
+    ///     Resets the cursor style to default and clears the override flag.
+    /// </summary>
     private void StopOverridingCursorStyle()
     {
         if (!_isOverridingCursorStyle)
