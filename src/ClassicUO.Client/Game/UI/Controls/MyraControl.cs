@@ -154,12 +154,6 @@ public class MyraControl : IGui
     public bool HasKeyboardFocus => UIManager.KeyboardFocusControl == this;
     public bool ModalClickOutsideAreaClosesThisControl { get; } = true;
 
-    public ResizeBehavior ResizeBehavior
-    {
-        get => _rootWindow.Props.Resize;
-        set => _rootWindow.Props.Resize = value;
-    }
-
     #endregion
 
     protected void SetRootContent(Widget widget)
