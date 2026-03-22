@@ -14,26 +14,127 @@ using Myra.Graphics2D.UI;
 
 namespace ClassicUO.Game.UI.Controls.ResizableComponents;
 
+#region Auxiliary Classes
+
 public class ResizableWindowProps : MyraCommonProps
 {
     public ResizeBehavior Resize { get; set; } = new();
     public bool Minimizable { get; set; } = true;
 }
 
+#endregion
+
 public class ResizableWindow : Window, IDisposable
 {
+    #region Events
+
     public event EventHandler<ResizeEventArgs> Resized;
 
+    #endregion
+
+    #region Accessors
+
     public ResizableWindowProps Props { get; }
+
+    public bool IsDisposed { get; private set; }
+
+    public bool IsMinimized { get; private set; }
+
+    private string MinMaxButtonText => IsMinimized ? "□" : "−";
+
+    private SpriteFontBase MinMaxButtonFont => IsMinimized
+        ? TrueTypeLoader.Instance.GetFont(EmbeddedFontNames.NOTO_SANS_2_SYMBOLS, 24)
+        : TrueTypeLoader.Instance.GetFont(EmbeddedFontNames.NOTO_SANS_2_SYMBOLS, 32);
+
+    #endregion
+
+    #region Members
+
+    private ResizeEdges? _activeResizeEdge;
+
+    private Point _resizeStartMouse;
+    private int _resizeStartLeft;
+    private int _resizeStartTop;
+    private int _resizeStartWidth;
+    private int _resizeStartHeight;
+
+    private int _restoreWidth;
+    private int _restoreHeight;
+
+    private bool _isOverridingCursorStyle;
+
+    private Widget _minMaxButton;
+    private MyraLabel _minMaxButtonLabel;
+
+    private Widget _content;
+
+    #endregion
+
+    #region Constructors
 
     public ResizableWindow(ResizableWindowProps props = null)
     {
         Props = props ?? new ResizableWindowProps();
-
-        if (Props.Minimizable)
-            ConfigureMinMaxButton();
+        Configure();
     }
 
+    #endregion
+
+    #region Public Methods
+
+    public void Minimize()
+    {
+        _restoreWidth = Width ?? Bounds.Width;
+        _restoreHeight = Height ?? Bounds.Height;
+        Width = null;
+        Height = null;
+
+        IsMinimized = true;
+        UpdateMinMaxButtonLabel();
+        base.Content =
+            null; // Using 'Visible' to hide causes some padding to remain. This is a bit of an ugly workaround.
+        InvalidateMeasure();
+    }
+
+    public void Maximize()
+    {
+        IsMinimized = false;
+        Width = _restoreWidth;
+        Height = _restoreHeight;
+
+        _restoreWidth = 0;
+        _restoreHeight = 0;
+
+        UpdateMinMaxButtonLabel();
+        base.Content = _content;
+        InvalidateMeasure();
+    }
+
+    public void OnFocusLost()
+    {
+        if (_activeResizeEdge.HasValue)
+            OnDragStop(null, EventArgs.Empty);
+
+        StopOverridingCursorStyle();
+    }
+
+    public void Dispose()
+    {
+        if (IsDisposed)
+            return;
+
+        Mouse.Moved -= OnMouseMovedWhileInWindow;
+        Mouse.LeftButtonClickStateChanged -= LeftClickChangedHandler;
+        Mouse.Moved -= OnMouseMovedWhileResizing;
+        TitlePanel?.TouchDoubleClick -= OnMinMaxButtonClick;
+        _minMaxButton?.TouchDown -= OnMinMaxButtonClick;
+        StopOverridingCursorStyle();
+
+        IsDisposed = true;
+        GC.SuppressFinalize(this);
+    }
+
+    #region Overrides
 
     public override Widget Content
     {
@@ -54,139 +155,6 @@ public class ResizableWindow : Window, IDisposable
             base.Content = component;
             InvalidateMeasure();
         }
-    }
-
-    private ResizeEdges? _activeResizeEdge;
-
-    private Point _resizeStartMouse;
-    private int _resizeStartLeft;
-    private int _resizeStartTop;
-    private int _resizeStartWidth;
-    private int _resizeStartHeight;
-
-    private int _restoreWidth;
-    private int _restoreHeight;
-
-    private bool _isOverridingCursorStyle;
-
-    private Widget _minMaxButton;
-    private MyraLabel _minMaxButtonLabel;
-
-    private Widget _content;
-
-    private string MinMaxButtonText => IsMinimized ? "□" : "−";
-
-    private SpriteFontBase MinMaxButtonFont => IsMinimized
-        ? TrueTypeLoader.Instance.GetFont(EmbeddedFontNames.NOTO_SANS_2_SYMBOLS, 24)
-        : TrueTypeLoader.Instance.GetFont(EmbeddedFontNames.NOTO_SANS_2_SYMBOLS, 32);
-
-    public bool IsDisposed { get; private set; }
-
-    public bool IsMinimized { get; private set; }
-
-    public void Minimize()
-    {
-        _restoreWidth = Width ?? Bounds.Width;
-        _restoreHeight = Height ?? Bounds.Height;
-        Width = null;
-        Height = null;
-
-        IsMinimized = true;
-        UpdateMinMaxButtonLabel();
-        base.Content = null; // Using 'Visible' to hide causes some padding to remain. This is a bit of an ugly workaround.
-        InvalidateMeasure();
-    }
-
-    protected override Point InternalMeasure(Point availableSize)
-    {
-        int a = 0;
-        return base.InternalMeasure(availableSize);
-    }
-
-    public void Maximize()
-    {
-        IsMinimized = false;
-        Width = _restoreWidth;
-        Height = _restoreHeight;
-
-        _restoreWidth = 0;
-        _restoreHeight = 0;
-
-        UpdateMinMaxButtonLabel();
-        base.Content = _content;
-        InvalidateMeasure();
-    }
-
-    private void UpdateMinMaxButtonLabel()
-    {
-        _minMaxButtonLabel.Text = MinMaxButtonText;
-        _minMaxButtonLabel.Font = MinMaxButtonFont;
-    }
-
-    private void OnMinMaxButtonClick(object _, EventArgs _1)
-    {
-        if (IsMinimized)
-            Maximize();
-        else
-            Minimize();
-    }
-
-    private void ConfigureMinMaxButton()
-    {
-        const int buttonSize = 28;
-
-        _minMaxButtonLabel = new MyraLabel(MinMaxButtonText, 24)
-        {
-            Font = MinMaxButtonFont,
-            Wrap = false,
-            SingleLine = true,
-            TextAlign = TextHorizontalAlignment.Center,
-            HorizontalAlignment = HorizontalAlignment.Center,
-            VerticalAlignment = VerticalAlignment.Center,
-            Width = buttonSize,
-            Height = buttonSize
-        };
-
-        _minMaxButton = new Myra.Graphics2D.UI.Button
-        {
-            Width = buttonSize,
-            Height = buttonSize,
-            Tooltip = Language.Instance.UiCommons.MinMaxWindowButtonTooltip,
-            Content = _minMaxButtonLabel,
-            VerticalAlignment = VerticalAlignment.Center
-        };
-
-        _minMaxButton.TouchDown += OnMinMaxButtonClick;
-
-        TitlePanel.Widgets.Insert(0, _minMaxButton);
-        TitlePanel.TouchDoubleClick += OnMinMaxButtonClick;
-    }
-
-    public override void OnMouseEntered()
-    {
-        base.OnMouseEntered();
-        Mouse.Moved += OnMouseMovedWhileInWindow;
-    }
-
-    private ScrollViewer WrapWithScrollViewer(Widget widget)
-    {
-        var scroller = new ScrollViewer
-        {
-            ShowHorizontalScrollBar = (Props.Resize.ScrollerMode & ScrollViewerMode.Horizontal) != 0,
-            ShowVerticalScrollBar = (Props.Resize.ScrollerMode & ScrollViewerMode.Vertical) != 0
-        };
-
-        // We need a panel here to serve as a sort-of barrier between the scroller and the widget, otherwise we can get superposition.
-        var panel = new Panel
-        {
-            // Note that if the scroll component's height/width changes post-construction, that won't be reflected. Might improve later.
-            Padding = new Thickness(scroller.HorizontalScrollbarHeight(), scroller.VerticalScrollbarWidth())
-        };
-        panel.Widgets.Add(widget);
-
-        scroller.Content = panel;
-
-        return scroller;
     }
 
     public override void OnMouseLeft()
@@ -242,12 +210,92 @@ public class ResizableWindow : Window, IDisposable
         Dispose();
     }
 
-    public void OnFocusLost()
+    public override void OnMouseEntered()
     {
-        if (_activeResizeEdge.HasValue)
-            OnDragStop(null, EventArgs.Empty);
+        base.OnMouseEntered();
+        Mouse.Moved += OnMouseMovedWhileInWindow;
+    }
 
-        StopOverridingCursorStyle();
+    #endregion
+
+    #endregion
+
+    #region Private Methods
+
+    private void Configure()
+    {
+        // The close button is kinda ugly, so we center it manually during construction.
+        TitlePanel.Widgets.FirstOrDefault(widget => widget == CloseButton)?.VerticalAlignment =
+            VerticalAlignment.Center;
+
+        if (Props.Minimizable)
+            ConfigureMinMaxButton();
+    }
+
+    private void UpdateMinMaxButtonLabel()
+    {
+        _minMaxButtonLabel.Text = MinMaxButtonText;
+        _minMaxButtonLabel.Font = MinMaxButtonFont;
+    }
+
+    private void OnMinMaxButtonClick(object _, EventArgs _1)
+    {
+        if (IsMinimized)
+            Maximize();
+        else
+            Minimize();
+    }
+
+    private void ConfigureMinMaxButton()
+    {
+        const int buttonSize = 28;
+
+        _minMaxButtonLabel = new MyraLabel(MinMaxButtonText, 24)
+        {
+            Font = MinMaxButtonFont,
+            Wrap = false,
+            SingleLine = true,
+            TextAlign = TextHorizontalAlignment.Center,
+            HorizontalAlignment = HorizontalAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Center,
+            Width = buttonSize,
+            Height = buttonSize
+        };
+
+        _minMaxButton = new Myra.Graphics2D.UI.Button
+        {
+            Width = buttonSize,
+            Height = buttonSize,
+            Tooltip = Language.Instance.UiCommons.MinMaxWindowButtonTooltip,
+            Content = _minMaxButtonLabel,
+            VerticalAlignment = VerticalAlignment.Center
+        };
+
+        _minMaxButton.TouchDown += OnMinMaxButtonClick;
+
+        TitlePanel.Widgets.Insert(0, _minMaxButton);
+        TitlePanel.TouchDoubleClick += OnMinMaxButtonClick;
+    }
+
+    private ScrollViewer WrapWithScrollViewer(Widget widget)
+    {
+        var scroller = new ScrollViewer
+        {
+            ShowHorizontalScrollBar = (Props.Resize.ScrollerMode & ScrollViewerMode.Horizontal) != 0,
+            ShowVerticalScrollBar = (Props.Resize.ScrollerMode & ScrollViewerMode.Vertical) != 0
+        };
+
+        // We need a panel here to serve as a sort-of barrier between the scroller and the widget, otherwise we can get superposition.
+        var panel = new Panel
+        {
+            // Note that if the scroll component's height/width changes post-construction, that won't be reflected. Might improve later.
+            Padding = new Thickness(scroller.HorizontalScrollbarHeight(), scroller.VerticalScrollbarWidth())
+        };
+        panel.Widgets.Add(widget);
+
+        scroller.Content = panel;
+
+        return scroller;
     }
 
     private ResizeEdges? GetResizerUnderCursor()
@@ -467,19 +515,5 @@ public class ResizableWindow : Window, IDisposable
         _isOverridingCursorStyle = false;
     }
 
-    public void Dispose()
-    {
-        if (IsDisposed)
-            return;
-
-        Mouse.Moved -= OnMouseMovedWhileInWindow;
-        Mouse.LeftButtonClickStateChanged -= LeftClickChangedHandler;
-        Mouse.Moved -= OnMouseMovedWhileResizing;
-        TitlePanel?.TouchDoubleClick -= OnMinMaxButtonClick;
-        _minMaxButton?.TouchDown -= OnMinMaxButtonClick;
-        StopOverridingCursorStyle();
-
-        IsDisposed = true;
-        GC.SuppressFinalize(this);
-    }
+    #endregion
 }

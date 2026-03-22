@@ -7,7 +7,6 @@ using ClassicUO.Game.Managers;
 using ClassicUO.Game.UI.Controls;
 using ClassicUO.Game.UI.Gumps;
 using ClassicUO.Game.UI.MyraWindows.Widgets;
-using ClassicUO.Input;
 using ClassicUO.LegionScripting;
 using ClassicUO.Utility;
 using ClassicUO.Utility.Logging;
@@ -34,7 +33,7 @@ public class ScriptManagerWindow : MyraControl
     private const int MIN_WIDTH  = 200;
     private const int MIN_HEIGHT = 200;
 
-    private readonly HashSet<string> _collapsedGroups = new();
+    private readonly HashSet<string> _collapsedGroups = [];
     private bool _pendingReload = true;
     private string _searchFilter = "";
     private readonly VerticalStackPanel _scriptListPanel = new() { Spacing = 2 };
@@ -43,11 +42,6 @@ public class ScriptManagerWindow : MyraControl
     private string _contextMenuGroup = "";
     private string _contextMenuSubGroup = "";
 
-    // Resize state
-    private bool _isResizing;
-    private Point _resizeStartMouse;
-    private int _resizeStartWidth;
-    private int _resizeStartHeight;
     private MyraGrid _mainGrid;
 
     public ScriptManagerWindow() : base("Script Manager")
@@ -90,20 +84,6 @@ public class ScriptManagerWindow : MyraControl
     {
         base.PreDraw();
 
-        if (_isResizing)
-        {
-            if (Mouse.LButtonPressed)
-            {
-                Point delta = Mouse.Position - _resizeStartMouse;
-                _mainGrid.Width  = Math.Clamp(_resizeStartWidth  + delta.X, MIN_WIDTH, 600);
-                _mainGrid.Height = Math.Clamp(_resizeStartHeight + delta.Y, MIN_HEIGHT, 600);
-            }
-            else
-            {
-                _isResizing = false;
-            }
-        }
-
         if (_pendingReload)
         {
             _pendingReload = false;
@@ -115,49 +95,28 @@ public class ScriptManagerWindow : MyraControl
     public override void Save(XmlTextWriter xml)
     {
         base.Save(xml);
-        xml.WriteAttributeString("width",  (_mainGrid.Width).ToString());
-        xml.WriteAttributeString("height", (_mainGrid.Height).ToString());
+        xml.WriteAttributeString("width",  (_rootWindow.Width).ToString());
+        xml.WriteAttributeString("height", (_rootWindow.Height).ToString());
     }
 
     public override void Load(XmlElement xml)
     {
         base.Load(xml);
-        if (int.TryParse(xml.GetAttribute("width"),  out int w) && w >= MIN_WIDTH)  _mainGrid.Width  = w;
-        if (int.TryParse(xml.GetAttribute("height"), out int h) && h >= MIN_HEIGHT) _mainGrid.Height = h;
+        if (int.TryParse(xml.GetAttribute("width"),  out int w) && w >= MIN_WIDTH)  _rootWindow.Width  = w;
+        if (int.TryParse(xml.GetAttribute("height"), out int h) && h >= MIN_HEIGHT) _rootWindow.Height = h;
     }
 
     private void Build()
     {
         _mainGrid = new MyraGrid();
-        _rootWindow.MaxHeight = _mainGrid.MaxHeight = 600;
+        _rootWindow.Height = Math.Clamp(_rootWindow.Height ?? _rootWindow.Bounds.Height, StyleConstantsDefaults.WINDOW_MIN_HEIGHT, 600);
         _mainGrid.AddRow();                                           // Row 0: menu bar (Auto)
         _mainGrid.AddRow(new Proportion(ProportionType.Fill));        // Row 1: script list (Fill)
-        _mainGrid.AddRow();                                           // Row 2: resize handle (Auto)
         _mainGrid.AddColumn(new Proportion(ProportionType.Fill));     // single Fill column
 
         _mainGrid.AddWidget(BuildMenuBar(), 0, 0);
 
-        _mainGrid.AddWidget(new ScrollViewer
-        {
-            HorizontalAlignment = HorizontalAlignment.Stretch,
-            VerticalAlignment   = VerticalAlignment.Stretch,
-            Content = _scriptListPanel,
-            MaxHeight = 600
-        }, 1, 0);
-
-        var handle = new MyraLabel("<>", 20)
-        {
-            HorizontalAlignment = HorizontalAlignment.Right,
-            Tooltip             = "Drag to resize"
-        };
-        handle.TouchDown += (_, _) =>
-        {
-            _isResizing        = true;
-            _resizeStartMouse  = Mouse.Position;
-            _resizeStartWidth  = _mainGrid.Width  ?? Width;
-            _resizeStartHeight = _mainGrid.Height ?? Height;
-        };
-        _mainGrid.AddWidget(handle, 2, 0);
+        _mainGrid.AddWidget(_scriptListPanel, 1, 0);
 
         SetRootContent(_mainGrid);
     }
