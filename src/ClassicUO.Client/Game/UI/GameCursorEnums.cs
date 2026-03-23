@@ -1,5 +1,9 @@
 namespace ClassicUO.Game.UI;
 
+/// <summary>
+///     An enumeration representing the different types of cursors that can be displayed in the game.
+///     Note that this list is not exhaustive - several other cursor styles exist.
+/// </summary>
 public enum GameCursorVisualType : ushort
 {
     PointingNorthWest = 0,

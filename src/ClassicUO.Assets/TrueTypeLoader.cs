@@ -39,17 +39,21 @@ using System.Linq;
 
 namespace ClassicUO.Assets
 {
+    /// <summary>
+    /// Contains a list of embedded fonts available for use in the application.
+    /// Note that this list is not exhaustive and may be expanded in the future.
+    /// </summary>
     public static class EmbeddedFontNames
     {
         public const string ROBOTO = "Roboto-Regular";
         public const string NOTO_SANS_2_SYMBOLS = "NotoSansSymbols2-Regular";
         public const string ROBOTO_MONO = "Roboto-Mono";
+        public const string IBM_PLEX = "ibm-plex";
     }
 
     public class TrueTypeLoader
     {
         public const string EMBEDDED_FONT = EmbeddedFontNames.ROBOTO;
-        public const string MONO_FONT = EmbeddedFontNames.ROBOTO_MONO;
 
         private readonly Dictionary<string, FontSystem> _fonts = new();
 

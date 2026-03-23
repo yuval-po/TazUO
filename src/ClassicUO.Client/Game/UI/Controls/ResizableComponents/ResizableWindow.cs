@@ -204,7 +204,8 @@ public class ResizableWindow : Window, IDisposable
         Widget[] widgets = (Parent != null ? Parent.GetChildren() : Desktop.Widgets).ToArray();
         if (widgets[^1] != this)
         {
-            BringToFront();
+            // The base cals BringToFront so we just let it take control here.
+            base.OnTouchDown();
             // If we ever want the visual cursor style changed right after focusing, we can add it here.
             // Just a nitpick.
             return;
@@ -622,6 +623,7 @@ public class ResizableWindow : Window, IDisposable
     {
         _activeResizeEdge = null;
         Mouse.LeftButtonClickStateChanged -= LeftClickChangedHandler;
+        Mouse.Moved -= OnMouseMovedWhileResizing;
     }
 
     /// <summary>

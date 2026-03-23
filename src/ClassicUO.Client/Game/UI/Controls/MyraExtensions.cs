@@ -7,6 +7,10 @@ public static class MyraExtensions
     // These are actually implemented by Myra but are private for some reason
     extension(ScrollViewer scrollViewer)
     {
+        /// <summary>
+        ///     Computes a <see cref="ScrollViewer" />'s horizontal scroll bar's height based on its current style/texture"/>
+        /// </summary>
+        /// <returns>An integer representing the scroll bar's height, in pixels</returns>
         public int HorizontalScrollbarHeight()
         {
             int result = 0;
@@ -19,6 +23,10 @@ public static class MyraExtensions
             return result;
         }
 
+        /// <summary>
+        ///     Computes a <see cref="ScrollViewer" />'s vertical scroll bar's width based on its current style/texture
+        /// </summary>
+        /// <returns>An integer representing the scroll bar's width, in pixels</returns>
         public int VerticalScrollbarWidth()
         {
             int result = 0;

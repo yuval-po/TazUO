@@ -86,6 +86,10 @@ namespace ClassicUO.Game
         private readonly Tooltip _tooltip;
         private readonly World _world;
 
+        /// <summary>
+        ///     The game cursor's visual style override.
+        ///     When set to a value other than null, the cursor's visual style will be overridden.
+        /// </summary>
         private GameCursorVisualType? _cursorVisual;
 
         public GameCursor(World world)

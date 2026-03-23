@@ -12,7 +12,14 @@ namespace ClassicUO.Input
     {
         public const int MOUSE_DELAY_DOUBLE_CLICK = 350;
 
+        /// <summary>
+        /// Invoked whenever the mouse position changes
+        /// </summary>
         public static event EventHandler<MouseMovedEventArgs> Moved;
+
+        /// <summary>
+        /// Invoked whenever the left mouse button is pressed or released
+        /// </summary>
         public static event EventHandler<MouseLeftButtonClickStateChangedEventArgs> LeftButtonClickStateChanged;
 
         public static MouseInfo GetMyraMouseInfo()
@@ -123,8 +130,10 @@ namespace ClassicUO.Input
                 if (field == value)
                     return;
 
+                var eArgs = new MouseLeftButtonClickStateChangedEventArgs(field, value);
+
                 field = value;
-                LeftButtonClickStateChanged?.Invoke(null, new MouseLeftButtonClickStateChangedEventArgs(field, value));
+                LeftButtonClickStateChanged?.Invoke(null, eArgs);
             }
         }
 
