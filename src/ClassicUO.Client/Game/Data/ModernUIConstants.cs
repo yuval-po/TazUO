@@ -34,6 +34,9 @@ public static class ModernUIConstants
 
     public const int ModernUIButton_BorderSize = 4;
 
-    public static Texture2D ModernUIVerticalScrollbar { get { PNGLoader.Instance.TryGetEmbeddedTexture("scroll.png", out Texture2D texture); return texture; } }
+    public static Texture2D ModernUIVerticalScrollbar { get { PNGLoader.Instance.TryGetEmbeddedTexture("scroll-vertical.png", out Texture2D texture); return texture; } }
     public static Texture2D ModernUIVerticalScrollbarKnob { get { PNGLoader.Instance.TryGetEmbeddedTexture("scroll-knob-vertical.png", out Texture2D texture); return texture; } }
+
+    public static Texture2D ModernUIHorizontalScrollbar { get { PNGLoader.Instance.TryGetEmbeddedTexture("scroll-horizontal.png", out Texture2D texture); return texture; } }
+    public static Texture2D ModernUIHorizontalScrollbarKnob { get { PNGLoader.Instance.TryGetEmbeddedTexture("scroll-knob-horizontal.png", out Texture2D texture); return texture; } }
 }
