@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Xml;
 using ClassicUO.Game.Managers;
+using ClassicUO.Game.UI.Controls.ResizableComponents;
 using ClassicUO.Game.UI.MyraWindows;
-using ClassicUO.Game.UI.MyraWindows.Widgets;
 using ClassicUO.Input;
 using ClassicUO.Renderer;
 using Microsoft.Xna.Framework;
@@ -22,34 +22,21 @@ namespace ClassicUO.Game.UI.Controls;
 public class MyraControl : IGui
 {
     #region Internal Controls
-    protected Desktop _desktop = new();
-    protected Window _rootWindow;
-    private Widget _minimizedContent;
+
+    protected readonly Desktop _desktop = new();
+    protected readonly ResizableWindow _rootWindow;
+
     #endregion
 
     public MyraControl(string title)
     {
-        _rootWindow = new Window { Title = title };
+        _rootWindow = new ResizableWindow { Title = title, Props = { Resize = { Placements = ResizeEdges.All } } };
         _rootWindow.Closed += OnRootWindowOnClosed;
-        _rootWindow.TitlePanel.TouchDoubleClick += (_, _) =>
-        {
-            MinMaximize();
-        };
         _rootWindow.TitlePanel.Background = new SolidBrush(new Color(0, 0, 0, 75));
         _rootWindow.TitlePanel.Border = new SolidBrush(new Color(0, 0, 0, MyraStyle.STANDARD_BORDER_ALPHA));
         _rootWindow.TitlePanel.BorderThickness = new Thickness(1);
 
         MyraStyle.ApplyButtonDangerStyle(_rootWindow.CloseButton);
-        _rootWindow.CloseButton.VerticalAlignment = VerticalAlignment.Center;
-        _rootWindow.CloseButton.Margin = new Thickness(2, 0);
-
-        var minButton = new Myra.Graphics2D.UI.Button
-        {
-            Content = new MyraLabel("^", 16),
-            Tooltip = "Minimize or maximize this window.",
-        };
-        minButton.TouchDown += (_, _) => MinMaximize();
-        _rootWindow.TitlePanel.Widgets.Insert(0, minButton);
 
         _desktop.Root = _rootWindow;
 
@@ -176,27 +163,8 @@ public class MyraControl : IGui
     public Point Location { get; set; } = Point.Zero;
     public bool HasKeyboardFocus => UIManager.KeyboardFocusControl == this;
     public bool ModalClickOutsideAreaClosesThisControl { get; } = true;
+
     #endregion
-
-    protected void MinMaximize()
-    {
-        if (_rootWindow.Content == null)
-        {
-            if (_minimizedContent != null)
-            {
-                _rootWindow.Content = _minimizedContent;
-                _minimizedContent = null;
-            }
-            return;
-        }
-
-        _minimizedContent = _rootWindow.Content;
-        _rootWindow.Content = null;
-        _rootWindow.Width = null;
-        _rootWindow.Height = null;
-        //_rootWindow.Content?.Visible = !_rootWindow.Content.Visible;
-        UpdateBoundsToContents();
-    }
 
     protected void SetRootContent(Widget widget)
     {
@@ -338,6 +306,10 @@ public class MyraControl : IGui
     {
         IsFocused = false;
         _desktop.FocusedKeyboardWidget = null;
+
+        // Myra doesn't appear to have native focus controls, so we have to manually
+        // propagate the event down to the window.
+        _rootWindow.OnFocusLost();
     }
 
     #region Invokations

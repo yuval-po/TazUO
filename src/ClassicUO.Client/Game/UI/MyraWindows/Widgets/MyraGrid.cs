@@ -28,11 +28,22 @@ public class MyraGrid : Grid
             RowsProportions.Add(proportion ?? new Proportion(ProportionType.Auto));
     }
 
-    internal void AddWidget(Widget widget, int row, int col)
+    internal void AddWidget(
+        Widget widget,
+        int row, int col,
+        int? rowspan = null,
+        int? colspan = null
+    )
     {
         Widgets.Add(widget);
         SetRow(widget, row);
         SetColumn(widget, col);
+
+        if (rowspan != null)
+            SetRowSpan(widget, rowspan.Value);
+
+        if (colspan != null)
+            SetColumnSpan(widget, colspan.Value);
     }
 
     internal void SetupWithHeaders(params GridColumnInfo[] columns)
@@ -48,7 +59,7 @@ public class MyraGrid : Grid
 
         for (int i = 0; i < columns.Length; i++)
         {
-            var col = columns[i];
+            GridColumnInfo col = columns[i];
             AddWidget(new MyraLabel(col.Label, MyraLabel.TextStyle.TableHeader,
                 col.AlignRight ? MyraLabel.AlignMode.Right : MyraLabel.AlignMode.Left), 0, i);
         }

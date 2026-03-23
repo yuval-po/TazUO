@@ -18,6 +18,7 @@ namespace ClassicUO.Configuration
         public TopBarGumpLanguage TopBarGump { get; set; } = new();
         public ScriptingLanguage Scripting { get; set; } = new();
         public AssistantLanguage Assistant { get; set; } = new();
+        public UiCommonsLanguage UiCommons { get; set; } = new();
 
         public string TazuoVersionHistory { get; set; } = "TazUO Version History";
         public string CurrentVersion { get; set; } = "Current Version: ";
@@ -646,6 +647,12 @@ namespace ClassicUO.Configuration
     {
         public string OpenLocation { get; set; } = "Open Location";
         public string OpenLocationFailed { get; set; } = "Failed to open location '{0}'";
+    }
+
+    public class UiCommonsLanguage
+    {
+        public string DragToResize { get; set; } = "Drag to resize";
+        public string MinMaxWindowButtonTooltip { get; set; } = "Minimize or maximize this window.";
     }
 
     public class ErrorsLanguage

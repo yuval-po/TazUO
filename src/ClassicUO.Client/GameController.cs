@@ -755,7 +755,7 @@ namespace ClassicUO
                             sdlEvent->key.mod
                         );
 
-                        Scene.OnKeyDown(sdlEvent->key);
+                        Scene?.OnKeyDown(sdlEvent->key);
                     }
                     else
                     {

@@ -1,7 +1,6 @@
 ﻿// SPDX-License-Identifier: BSD-2-Clause
 
-using ClassicUO.Configuration;
-using ClassicUO.Game;
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Myra.Graphics2D.UI;
@@ -12,6 +11,9 @@ namespace ClassicUO.Input
     internal static class Mouse
     {
         public const int MOUSE_DELAY_DOUBLE_CLICK = 350;
+
+        public static event EventHandler<MouseMovedEventArgs> Moved;
+        public static event EventHandler<MouseLeftButtonClickStateChangedEventArgs> LeftButtonClickStateChanged;
 
         public static MouseInfo GetMyraMouseInfo()
         {
@@ -113,7 +115,18 @@ namespace ClassicUO.Input
 
         public static bool CancelDoubleClick { get; set; }
 
-        public static bool LButtonPressed { get; set; }
+        public static bool LButtonPressed
+        {
+            get;
+            set
+            {
+                if (field == value)
+                    return;
+
+                field = value;
+                LeftButtonClickStateChanged?.Invoke(null, new MouseLeftButtonClickStateChangedEventArgs(field, value));
+            }
+        }
 
         public static bool RButtonPressed { get; set; }
 
@@ -140,6 +153,8 @@ namespace ClassicUO.Input
             if (_isWarpingMouse)
                 return;
 
+            Point previous = Position;
+
             if (!MouseInWindow)
             {
                 SDL.SDL_GetGlobalMouseState(out float x, out float y);
@@ -152,7 +167,7 @@ namespace ClassicUO.Input
                 SDL.SDL_GetMouseState(out float x, out float y);
                 Position.X = (int)x;
                 Position.Y = (int)y;
-                Microsoft.Xna.Framework.Input.GamePadState gamePadState = Microsoft.Xna.Framework.Input.GamePad.GetState(PlayerIndex.One);
+                GamePadState gamePadState = GamePad.GetState(PlayerIndex.One);
 
                 if (gamePadState.IsConnected && gamePadState.ThumbSticks.Right != Vector2.Zero)
                 {
@@ -170,6 +185,11 @@ namespace ClassicUO.Input
             Position.Y = (int)(((double)Position.Y * Client.Game.GraphicManager.PreferredBackBufferHeight / Client.Game.Window.ClientBounds.Height) / Client.Game.RenderScale);
 
             IsDragging = LButtonPressed || RButtonPressed || MButtonPressed;
+
+            // Check for null first;
+            // While a point comparison is not a 'heavy' operation, a null check should generally be quicker.
+            if (Moved != null && previous != Position)
+                Moved?.Invoke(null, new MouseMovedEventArgs(previous, Position));
         }
     }
 }
