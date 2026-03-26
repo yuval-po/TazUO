@@ -50,7 +50,7 @@ public class TazUOChatWindow : MyraControl
         CenterInViewPort();
 
         _titleNickName = new MyraLabel("", MyraLabel.TextStyle.H3);
-        _rootWindow.TitlePanel.Widgets.Insert(1, _titleNickName);
+        _rootWindow.TitlePanel.Widgets.Insert(2, _titleNickName);
 
         _nickName = _manager.CurrentNick;
     }
