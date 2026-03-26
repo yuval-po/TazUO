@@ -11,6 +11,7 @@ using ClassicUO.Game.UI;
 using ClassicUO.Input;
 using ClassicUO.Game.UI.Controls;
 using ClassicUO.Renderer;
+using ClassicUO.Utility.Logging;
 using Microsoft.Xna.Framework;
 using SDL3;
 
@@ -540,7 +541,23 @@ namespace ClassicUO.Game
         /// Note that additional styles are available but not listed here. See <see cref="_cursorData"/> for a complete list
         /// </para>
         /// </param>
-        public void ForceSetCursorVisualStyle(GameCursorVisualType? visual) => _cursorVisual = visual;
+        public void ForceSetCursorVisualStyle(GameCursorVisualType? visual)
+        {
+            if (visual is null)
+            {
+                _cursorVisual = null;
+                return;
+            }
+
+            int index = (int)visual.Value;
+            if (index < 0 || (uint)index >= (uint)_cursorData.GetLength(1))
+            {
+                Log.Warn($"Method was called with an out-of-bounds cursor visual '{visual}'. Ignoring");
+                return; // This is a pretty 'low-value' method, so it's honestly better to ignore than crash here.
+            }
+
+            _cursorVisual = visual;
+        }
 
         private void DrawToolTip(UltimaBatcher2D batcher, Point position)
         {
