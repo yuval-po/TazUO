@@ -1,6 +1,7 @@
 ﻿// SPDX-License-Identifier: BSD-2-Clause
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
@@ -33,6 +34,7 @@ namespace ClassicUO.Game.UI.Gumps
             _savedSize;
         private readonly GameScene _scene;
         private readonly SystemChatControl _systemChatControl;
+        private List<(string, ushort)>? _userNotifications = null;
 
         private static Texture2D damageWindowOutline = SolidColorTextureCache.GetTexture(Color.White);
         public static Vector3 DamageWindowOutlineHue = ShaderHueTranslator.GetHueVector(32);
@@ -114,14 +116,34 @@ namespace ClassicUO.Game.UI.Gumps
 
             if (Settings.GlobalSettings.FPS < GameController.SupportedRefreshRate)
             {
-                var fps = new Timer(TimeSpan.FromSeconds(5));
-                fps.Elapsed += (sender, args) =>
+                _userNotifications ??= new();
+                _userNotifications.Add(($"Your monitor supports {GameController.SupportedRefreshRate} fps, but you currently have your fps limited to {Settings.GlobalSettings.FPS}. " +
+                                        $"To update this type -syncfps", Constants.HUE_ERROR));
+            }
+
+            if (Settings.GlobalSettings.UltimaOnlineDirectory.StartsWith(CUOEnviroment.ExecutablePath))
+            {
+                _userNotifications ??= new();
+                _userNotifications.Add(("Warning: It looks like your UO folder is stored inside TazUO, this is discouraged as you may accidentally have your UO files deleted.", Constants.HUE_ERROR));
+            }
+
+            if (_userNotifications != null) //Why is this here? This ensures the user is in-game and can see the world viewport before sending them messages
+            {
+                var timer = new Timer(TimeSpan.FromSeconds(5));
+                timer.Elapsed += (sender, args) =>
                 {
                     if (World.Instance != null)
-                        GameActions.Print($"Your monitor supports {GameController.SupportedRefreshRate} fps, but you currently have your fps limited to {Settings.GlobalSettings.FPS}. To update this type -syncfps", Constants.HUE_ERROR);
-                    fps?.Stop();
+                        _userNotifications.ForEach((s) =>
+                        {
+                            (string item1, ushort item2) = s;
+                            GameActions.Print(item1, item2);
+                        });
+
+                    _userNotifications.Clear();
+                    _userNotifications = null;
+                    timer?.Stop();
                 };
-                fps.Start();
+                timer.Start();
             }
         }
 

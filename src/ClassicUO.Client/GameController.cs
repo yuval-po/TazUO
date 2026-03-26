@@ -917,14 +917,7 @@ namespace ClassicUO
                                 Scene.OnMouseDoubleClick(buttonType)
                                 || UIManager.OnMouseDoubleClick(buttonType);
 
-                            if (!res)
-                            {
-                                if (!Scene.OnMouseDown(buttonType))
-                                {
-                                    UIManager.OnMouseButtonDown(buttonType);
-                                }
-                            }
-                            else
+                            if (res)
                             {
                                 lastClickTime = 0xFFFF_FFFF;
                             }

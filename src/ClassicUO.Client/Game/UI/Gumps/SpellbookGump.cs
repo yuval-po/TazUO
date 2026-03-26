@@ -15,6 +15,7 @@ using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Xml;
+using ClassicUO.Common.Enums;
 
 namespace ClassicUO.Game.UI.Gumps
 {

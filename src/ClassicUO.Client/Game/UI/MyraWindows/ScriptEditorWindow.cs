@@ -1,11 +1,13 @@
 #nullable enable
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using ClassicUO.Assets;
 using ClassicUO.Game.Managers;
 using ClassicUO.Game.UI.Controls;
 using ClassicUO.Game.UI.MyraWindows.Widgets;
 using ClassicUO.LegionScripting;
+using FontStashSharp;
 using Microsoft.Xna.Framework;
 using Myra.Graphics2D.Brushes;
 using Myra.Graphics2D.UI;
@@ -50,7 +52,7 @@ public class ScriptEditorWindow : MyraControl
 
     private void Build(string content)
     {
-        var monoFont = TrueTypeLoader.Instance.GetFont(EmbeddedFontNames.ROBOTO_MONO, 18);
+        SpriteFontBase? monoFont = TrueTypeLoader.Instance.GetFont(EmbeddedFontNames.ROBOTO_MONO, 18);
 
         _lines = new MyraInputBox
         {
@@ -133,9 +135,9 @@ public class ScriptEditorWindow : MyraControl
             return;
 
         _lastLineCount = lineCount;
-        var maxDigits = lineCount.ToString().Length;
+        int maxDigits = lineCount.ToString().Length;
 
-        var numbers = Enumerable.Range(1, lineCount).Select(n => n.ToString().PadLeft(maxDigits + 1));
+        IEnumerable<string> numbers = Enumerable.Range(1, lineCount).Select(n => n.ToString().PadLeft(maxDigits + 1));
 
         _lines.Text = string.Join("\n", numbers);
     }

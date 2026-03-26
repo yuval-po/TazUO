@@ -18,6 +18,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using ClassicUO.Common.Enums;
 using ClassicUO.Utility.Logging;
 using static ClassicUO.Game.Managers.AutoLootManager;
 using ClassicUO.Game.UI.Gumps.GridHighLight;

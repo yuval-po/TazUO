@@ -14,6 +14,8 @@ public class AssistantWindow : MyraControl
 {
     public static void Show() => UIManager.Add(new AssistantWindow());
 
+    private SkillsTabContent _skillsTabContent;
+
     public AssistantWindow() : base("Legion Assistant")
     {
         UIManager.ForEach<AssistantWindow>(w => { if(w != this) w.Dispose(); });
@@ -21,13 +23,23 @@ public class AssistantWindow : MyraControl
         CanBeSaved = true;
         Build();
         CenterInViewPort();
+
+        EventSink.SkillValueChangedEvent += EventSkillUpdated;
+        EventSink.SkillBaseChangedEvent += EventSkillUpdated;
+        EventSink.SkillCapChangedEvent += EventSkillUpdated;
     }
+
+    private void EventSkillUpdated(object sender, SkillChangeArgs e) => _skillsTabContent?.UpdateSkills();
 
     public override void Dispose()
     {
         base.Dispose();
 
         MacrosTabContent.Cleanup();
+
+        EventSink.SkillValueChangedEvent -= EventSkillUpdated;
+        EventSink.SkillBaseChangedEvent -= EventSkillUpdated;
+        EventSink.SkillCapChangedEvent -= EventSkillUpdated;
     }
 
     private void Build()
@@ -38,7 +50,7 @@ public class AssistantWindow : MyraControl
         tabs.AddTab("Filters", FiltersTab.Build);
         tabs.AddTab("Item Database", ItemDatabaseTabContent.Build);
         tabs.AddTab("Macros", MacrosTabContent.Build);
-        tabs.AddTab("Skills", SkillsTabContent.Build);
+        tabs.AddTab("Skills", () => _skillsTabContent = new());
         tabs.SelectFirst();
         SetRootContent(tabs);
     }

@@ -705,5 +705,6 @@ namespace ClassicUO.Configuration
         public string SetQuickHealSpell { get; set; } = "Set heal spell";
         public string SetQuickCureSpell { get; set; } = "Set cure spell";
         public string QuickSpellTooltip { get; set; } = "These are used on health-bars for party members/pets.";
+        public string SingleClickLastTarg { get; set; } = "Single clicking a mobile will set it as last target.";
     }
 }

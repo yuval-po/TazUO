@@ -12,13 +12,22 @@ using Myra.Graphics2D.UI;
 
 namespace ClassicUO.Game.UI.MyraWindows.Widgets.Assistant.Skills;
 
-public static class SkillsTabContent
+public class SkillsTabContent : VerticalStackPanel
 {
-    public static Widget Build()
+    private Action? _resort;
+    private Action? _rebuild;
+    private MyraLabel? _totalLabel;
+    private Skill[]? _skills;
+
+    public SkillsTabContent()
     {
         Skill[]? skills = World.Instance?.Player?.Skills;
         if (skills == null)
-            return new MyraLabel("Not connected", MyraLabel.TextStyle.P);
+            return;
+
+        Spacing = MyraStyle.STANDARD_SPACING;
+
+        _skills = skills;
 
         PlayerMobile player = World.Instance!.Player!;
         int count = skills.Length;
@@ -268,17 +277,33 @@ public static class SkillsTabContent
 
         toolbar.Widgets.Add(new MyraLabel("|", MyraLabel.TextStyle.P));
 
-        float baseSum = 0f, capSum = 0f;
-        for (int i = 0; i < skills.Length; i++)
-            if (skills[i] != null) { baseSum += skills[i].Base; capSum += skills[i].Cap; }
-        toolbar.Widgets.Add(new MyraLabel($"Total: {baseSum:F1} / {capSum:F1}", MyraLabel.TextStyle.P));
+        _resort = SortSkills;
+        _rebuild = BuildGrid;
 
         SortSkills();
         BuildGrid();
 
-        var root = new VerticalStackPanel { Spacing = 4 };
-        root.Widgets.Add(toolbar);
-        root.Widgets.Add(new ScrollViewer { MaxHeight = 500, Content = gridPanel });
-        return root;
+        float baseSum = 0f, capSum = 0f;
+        for (int i = 0; i < skills.Length; i++)
+            if (skills[i] != null) { baseSum += skills[i].Base; capSum += skills[i].Cap; }
+        _totalLabel = new MyraLabel($"Total: {baseSum:F1} / {capSum:F1}", MyraLabel.TextStyle.P);
+        toolbar.Widgets.Add(_totalLabel);
+
+        Widgets.Add(toolbar);
+        Widgets.Add(new ScrollViewer { MaxHeight = 500, Content = gridPanel });
+    }
+
+    public void UpdateSkills()
+    {
+        _resort?.Invoke();
+        _rebuild?.Invoke();
+
+        if (_totalLabel != null && _skills != null)
+        {
+            float baseSum = 0f, capSum = 0f;
+            for (int i = 0; i < _skills.Length; i++)
+                if (_skills[i] != null) { baseSum += _skills[i].Base; capSum += _skills[i].Cap; }
+            _totalLabel.Text = $"Total: {baseSum:F1} / {capSum:F1}";
+        }
     }
 }

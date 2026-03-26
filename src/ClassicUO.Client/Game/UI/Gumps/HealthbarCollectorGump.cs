@@ -705,6 +705,7 @@ namespace ClassicUO.Game.UI.Gumps
                 {
                     if(_world.TargetManager.IsTargeting)
                         _world.TargetManager.Target(Serial);
+
                     else if (Keyboard.Alt && !ProfileManager.CurrentProfile.DisableAutoFollowAlt) //Auto follow
                     {
                         ProfileManager.CurrentProfile.FollowingMode = true;
@@ -719,6 +720,9 @@ namespace ClassicUO.Game.UI.Gumps
                             Time.Ticks + Mouse.MOUSE_DELAY_DOUBLE_CLICK
                         );
                     }
+
+                    if (ProfileManager.CurrentProfile.SingleClickMobileSetsLastTarget)
+                        World.Instance.TargetManager.LastTargetInfo.SetEntity(Serial);
                 }
                 base.OnMouseDown(x, y, button);
             }

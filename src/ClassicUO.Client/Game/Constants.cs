@@ -131,6 +131,7 @@ namespace ClassicUO.Game
             public const string OUTLINE_NOTORIETIES = "outline_notorieties";
             public const string IRC_AUTO_CONNECT = "irc_disable_auto_connect";
             public const string PATH_Z_LEVEL = "path_z_level";
+            public const string SINGLE_CLICK_SET_LAST_TARG = "single_click_set_last_targ";
         }
     }
 }

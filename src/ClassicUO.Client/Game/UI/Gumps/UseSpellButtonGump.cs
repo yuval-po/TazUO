@@ -9,6 +9,7 @@ using ClassicUO.Game.Scenes;
 using ClassicUO.Game.UI.Controls;
 using ClassicUO.Input;
 using ClassicUO.Assets;
+using ClassicUO.Common.Enums;
 using ClassicUO.Renderer;
 using Microsoft.Xna.Framework;
 

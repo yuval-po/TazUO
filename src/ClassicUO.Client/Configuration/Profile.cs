@@ -854,6 +854,20 @@ namespace ClassicUO.Configuration
             }
         } = 10;
 
+        [JsonIgnore]
+        public bool SingleClickMobileSetsLastTarget
+        {
+            get;
+            set
+            {
+                if (field != value)
+                    _ = Client.Settings.SetAsync(SettingsScope.Global, Constants.SqlSettings.SINGLE_CLICK_SET_LAST_TARG,
+                        value);
+
+                field = value;
+            }
+        } = true;
+
         private long lastSave;
 
         internal void AfterLoad()
@@ -890,6 +904,9 @@ namespace ClassicUO.Configuration
 
                     if (kvp.TryGetValue(Constants.SqlSettings.PATH_Z_LEVEL, out val) && int.TryParse(val, out v))
                         PathfindingZLevelDiff = v;
+
+                    if (kvp.TryGetValue(Constants.SqlSettings.SINGLE_CLICK_SET_LAST_TARG, out val) && bool.TryParse(val, out b))
+                        SingleClickMobileSetsLastTarget = b;
                 });
             });
 

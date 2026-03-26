@@ -127,6 +127,11 @@ public static class GeneralTabContent
             }, true).CenterInViewPort());
         }).PlaceBefore(cureLabel));
 
+        rightSide.Widgets.Add(MyraCheckButton.CreateWithCallback(profile.SingleClickMobileSetsLastTarget,
+            b => {
+                profile.SingleClickMobileSetsLastTarget = b;
+            }, lang.SingleClickLastTarg));
+
         return mainContent;
     }
 }

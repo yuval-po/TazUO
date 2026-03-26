@@ -33,7 +33,7 @@ namespace ClassicUO.Game.GameObjects
             Walker = new WalkerManager(this);
             Pathfinder = new Pathfinder(world);
 
-            Skill.SkillValueChangedEvent += (s, e) =>
+            EventSink.SkillValueChangedEvent += (s, e) =>
             {
                 if (ProfileManager.CurrentProfile.DisplaySkillBarOnChange)
                 {

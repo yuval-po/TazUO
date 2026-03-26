@@ -330,6 +330,8 @@ namespace ClassicUO.Game.Managers
 
         public void Dispose()
         {
+            if (!_initialized) return;
+
             StopListening();
             _recognizer?.Dispose();
             _model?.Dispose();

@@ -10,6 +10,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using ClassicUO.Common;
 using ClassicUO.Game.Managers.Structs;
 using ClassicUO.Utility.Logging;
 
@@ -578,6 +579,7 @@ namespace ClassicUO.Game.Managers
             public string Name { get; set; } = "";
             public int Graphic { get; set; } = 0;
             public ushort Hue { get; set; } = ushort.MaxValue;
+            [JsonConverter(typeof(RawStringConverter))]
             public string RegexSearch { get; set; } = string.Empty;
             public uint DestinationContainer { get; set; } = 0;
             public AutoLootPriority Priority { get; set; } = AutoLootPriority.Normal;

@@ -307,6 +307,9 @@ namespace ClassicUO.Game.UI.Gumps
             {
                 _lastLeftMousePositionDown = Mouse.Position;
                 _leftMouseIsDown = true;
+
+                if (ProfileManager.CurrentProfile.SingleClickMobileSetsLastTarget)
+                    World.Instance.TargetManager.LastTargetInfo.SetEntity(LocalSerial);
             }
 
             base.OnMouseDown(x, y, button);

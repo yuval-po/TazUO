@@ -263,25 +263,21 @@ public class EventSink
         ApiMobileCreated?.Invoke(null, new ApiMobile(m));
     }
 
-    /// <summary>
-    ///  Invoked when the visual spell manager detects a spell recovery phase.
-    ///  The event argument is the spell ID.
-    /// </summary>
-    [Obsolete]
-    public static event EventHandler<int> SpellRecoveryBegin;
+    public static event EventHandler<SkillChangeArgs> SkillValueChangedEvent;
+    public static event EventHandler<SkillChangeArgs> SkillBaseChangedEvent;
+    public static event EventHandler<SkillChangeArgs> SkillCapChangedEvent;
+    public static void InvokeSkillValueChanged(int index) => SkillValueChangedEvent?.Invoke(null, new SkillChangeArgs(index));
+    public static void InvokeSkillBaseChanged(int index) => SkillBaseChangedEvent?.Invoke(null, new SkillChangeArgs(index));
+    public static void InvokeSkillCapChanged(int index) => SkillCapChangedEvent?.Invoke(null, new SkillChangeArgs(index));
+}
 
-    /// <summary>Invokes <see cref="SpellRecoveryBegin" />.</summary>
-    public static void InvokeSpellRecoveryBegin(int spell) => SpellRecoveryBegin?.Invoke(null, spell);
-
-    /// <summary>
-    /// Invoked when the visual spell manager detects a spell recovery phase end.
-    /// The event argument is the spell ID.
-    /// </summary>
-    [Obsolete]
-    public static event EventHandler SpellRecoveryEnd;
-
-    /// <summary>Invokes <see cref="SpellRecoveryEnd" />.</summary>
-    public static void InvokeSpellRecoveryEnd() => SpellRecoveryEnd?.Invoke(null, EventArgs.Empty);
+public class SkillChangeArgs : EventArgs
+{
+    public int Index;
+    public SkillChangeArgs(int index)
+    {
+        Index = index;
+    }
 }
 
 /// <summary>
