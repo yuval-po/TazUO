@@ -652,7 +652,8 @@ namespace ClassicUO.Configuration
     public class UiCommonsLanguage
     {
         public string DragToResize { get; set; } = "Drag to resize";
-        public string MinMaxWindowButtonTooltip { get; set; } = "Minimize or maximize this window.";
+        public string MinMaxWindowButtonTooltip { get; set; } = "Minimize or maximize this window";
+        public string ResetWindowSizeButtonTooltip { get; set; } = "Reset window size";
     }
 
     public class ErrorsLanguage

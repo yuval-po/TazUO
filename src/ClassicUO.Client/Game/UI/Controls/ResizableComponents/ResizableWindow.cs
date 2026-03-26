@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using ClassicUO.Assets;
 using ClassicUO.Configuration;
+using ClassicUO.Game.UI.MyraWindows;
 using ClassicUO.Game.UI.MyraWindows.Widgets;
 using ClassicUO.Input;
 using FontStashSharp;
@@ -63,10 +64,16 @@ public class ResizableWindow : Window, IDisposable
 
     private bool _isOverridingCursorStyle;
 
+    #region Components
+
     private Widget _minMaxButton;
     private MyraLabel _minMaxButtonLabel;
 
+    private Widget _resetSizeButton;
+
     private Widget _content;
+
+    #endregion
 
     #endregion
 
@@ -149,6 +156,7 @@ public class ResizableWindow : Window, IDisposable
         Mouse.Moved -= OnMouseMovedWhileResizing;
         TitlePanel?.TouchDoubleClick -= OnMinMaxButtonClick;
         _minMaxButton?.TouchDown -= OnMinMaxButtonClick;
+        _resetSizeButton?.TouchDown -= OnResetSizeButtonClick;
         StopOverridingCursorStyle();
 
         IsDisposed = true;
@@ -273,6 +281,9 @@ public class ResizableWindow : Window, IDisposable
 
         if (Props.Minimizable)
             ConfigureMinMaxButton();
+
+        if (Props.Resize.Enabled)
+            ConfigureResizeResetButton();
     }
 
     /// <summary>
@@ -286,6 +297,7 @@ public class ResizableWindow : Window, IDisposable
 
     /// <summary>
     ///     Event handler for the minimize/maximize button click.
+    ///     Minimizes or maximizes the window
     /// </summary>
     private void OnMinMaxButtonClick(object _, EventArgs _1)
     {
@@ -296,12 +308,22 @@ public class ResizableWindow : Window, IDisposable
     }
 
     /// <summary>
+    ///     Event handler for the reset-window-size button click.
+    ///     Resets the window's width/height which causes the window to size itself to fit its current content.
+    /// </summary>
+    /// <param name="_"></param>
+    /// <param name="_1"></param>
+    private void OnResetSizeButtonClick(object _, EventArgs _1)
+    {
+        Width = null;
+        Height = null;
+    }
+
+    /// <summary>
     ///     Initializes and adds the minimize/maximize button to the title panel.
     /// </summary>
-    private void ConfigureMinMaxButton()
+    private void ConfigureMinMaxButton(int index = 0)
     {
-        const int buttonSize = 28;
-
         _minMaxButtonLabel = new MyraLabel(MinMaxButtonText, 24)
         {
             Font = MinMaxButtonFont,
@@ -310,14 +332,14 @@ public class ResizableWindow : Window, IDisposable
             TextAlign = TextHorizontalAlignment.Center,
             HorizontalAlignment = HorizontalAlignment.Center,
             VerticalAlignment = VerticalAlignment.Center,
-            Width = buttonSize,
-            Height = buttonSize
+            Width = StyleConstantsDefaults.TOOLBAR_BUTTON_SIZE,
+            Height = StyleConstantsDefaults.TOOLBAR_BUTTON_SIZE
         };
 
         _minMaxButton = new Myra.Graphics2D.UI.Button
         {
-            Width = buttonSize,
-            Height = buttonSize,
+            Width = StyleConstantsDefaults.TOOLBAR_BUTTON_SIZE,
+            Height = StyleConstantsDefaults.TOOLBAR_BUTTON_SIZE,
             Tooltip = Language.Instance.UiCommons.MinMaxWindowButtonTooltip,
             Content = _minMaxButtonLabel,
             VerticalAlignment = VerticalAlignment.Center
@@ -325,8 +347,38 @@ public class ResizableWindow : Window, IDisposable
 
         _minMaxButton.TouchDown += OnMinMaxButtonClick;
 
-        TitlePanel.Widgets.Insert(0, _minMaxButton);
+        TitlePanel.Widgets.Insert(index, _minMaxButton);
         TitlePanel.TouchDoubleClick += OnMinMaxButtonClick;
+    }
+
+    /// <summary>
+    ///     Initializes and adds the reset-window-size button to the title panel.
+    /// </summary>
+    private void ConfigureResizeResetButton(int index = 1)
+    {
+        var label = new MyraLabel(StyleConstantsDefaults.RESET_LABEL_ICON_TEXT, 24)
+        {
+            Font = TrueTypeLoader.Instance.GetFont(EmbeddedFontNames.NOTO_SANS_2_SYMBOLS, 24),
+            Wrap = false,
+            SingleLine = true,
+            TextAlign = TextHorizontalAlignment.Center,
+            HorizontalAlignment = HorizontalAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Center,
+            Width = StyleConstantsDefaults.TOOLBAR_BUTTON_SIZE,
+            Height = StyleConstantsDefaults.TOOLBAR_BUTTON_SIZE
+        };
+
+        _resetSizeButton = new Myra.Graphics2D.UI.Button
+        {
+            Width = StyleConstantsDefaults.TOOLBAR_BUTTON_SIZE,
+            Height = StyleConstantsDefaults.TOOLBAR_BUTTON_SIZE,
+            Tooltip = Language.Instance.UiCommons.ResetWindowSizeButtonTooltip,
+            Content = label,
+            VerticalAlignment = VerticalAlignment.Center
+        };
+
+        _resetSizeButton.TouchDown += OnResetSizeButtonClick;
+        TitlePanel.Widgets.Insert(index, _resetSizeButton);
     }
 
     /// <summary>

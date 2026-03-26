@@ -22,4 +22,12 @@ public static class StyleConstantsDefaults
     public const string BOTTOM_LEFT_HANDLE_TEXT = "🭼";
 
     #endregion
+
+    /// <summary>
+    /// A standard icon for 'reset' type operations.
+    /// Must be used with a supported font such as <see cref="ClassicUO.Assets.EmbeddedFontNames.NOTO_SANS_2_SYMBOLS"/>
+    /// </summary>
+    public const string RESET_LABEL_ICON_TEXT = "⭯";
+
+    public const int TOOLBAR_BUTTON_SIZE = 28;
 }
