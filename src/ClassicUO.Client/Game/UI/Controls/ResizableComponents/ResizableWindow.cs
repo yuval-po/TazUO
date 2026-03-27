@@ -35,11 +35,31 @@ public class ResizableWindow : Window, IDisposable
 
     #region Accessors
 
+    /// <summary>
+    /// Gets the properties that define the behavior and configuration
+    /// of the resizable window, including resize behavior and minimization settings.
+    /// </summary>
     public ResizableWindowProps Props { get; }
 
+    /// <summary>
+    /// Gets a value indicating whether the current instance has been disposed.
+    /// </summary>
     public bool IsDisposed { get; private set; }
 
+    /// <summary>
+    /// Gets a value indicating whether the window is currently minimized.
+    /// When minimized, the window's content is hidden, and its size settings are temporarily overridden.
+    /// </summary>
     public bool IsMinimized { get; private set; }
+
+    /// <summary>
+    /// Gets a value indicating whether the window is currently resizable.
+    /// </summary>
+    /// <remarks>
+    /// A window is considered resizable if resizing is enabled via the configuration
+    /// properties and the window is not minimized.
+    /// </remarks>
+    public bool IsCurrentlyResizable => Props.Resize.Enabled && !IsMinimized;
 
     private string MinMaxButtonText => IsMinimized ? "□" : "−";
 
@@ -59,8 +79,10 @@ public class ResizableWindow : Window, IDisposable
     private int _resizeStartWidth;
     private int _resizeStartHeight;
 
-    private int _restoreWidth;
-    private int _restoreHeight;
+    private int? _restoreWidth;
+    private int? _restoreHeight;
+    private bool _restoreAutoWidth;
+    private bool _restoreAutoHeight;
 
     private bool _isOverridingCursorStyle;
 
@@ -98,6 +120,11 @@ public class ResizableWindow : Window, IDisposable
     /// </summary>
     public void Minimize()
     {
+        if (IsMinimized)
+            return;
+
+        _restoreAutoWidth = !Width.HasValue;
+        _restoreAutoHeight = !Height.HasValue;
         _restoreWidth = Width ?? Bounds.Width;
         _restoreHeight = Height ?? Bounds.Height;
         Width = null;
@@ -120,8 +147,8 @@ public class ResizableWindow : Window, IDisposable
             return;
 
         IsMinimized = false;
-        Width = _restoreWidth;
-        Height = _restoreHeight;
+        Width = _restoreAutoWidth ? null : _restoreWidth;
+        Height = _restoreAutoHeight ? null : _restoreHeight;
 
         _restoreWidth = 0;
         _restoreHeight = 0;
@@ -175,6 +202,7 @@ public class ResizableWindow : Window, IDisposable
         {
             if (value == null)
             {
+                _content = null;
                 base.Content = null;
                 return;
             }
@@ -184,8 +212,14 @@ public class ResizableWindow : Window, IDisposable
                 : WrapWithScrollViewer(value);
 
             _content = component;
-            base.Content = component;
-            InvalidateMeasure();
+
+            // If we're currently minimized, just keep track of the new content via _content but don't replace the base.Content.
+            // This way we remain minimized but maximize will display the new content.
+            if (!IsMinimized)
+            {
+                base.Content = component;
+                InvalidateMeasure();
+            }
         }
     }
 
@@ -219,8 +253,7 @@ public class ResizableWindow : Window, IDisposable
             return;
         }
 
-        // Don't allow resizing if minimized
-        if (IsMinimized)
+        if (!IsCurrentlyResizable)
             return;
 
         _activeResizeEdge = GetResizerUnderCursor();
@@ -291,8 +324,8 @@ public class ResizableWindow : Window, IDisposable
     /// </summary>
     private void UpdateMinMaxButtonLabel()
     {
-        _minMaxButtonLabel.Text = MinMaxButtonText;
-        _minMaxButtonLabel.Font = MinMaxButtonFont;
+        _minMaxButtonLabel?.Text = MinMaxButtonText;
+        _minMaxButtonLabel?.Font = MinMaxButtonFont;
     }
 
     /// <summary>
@@ -573,7 +606,7 @@ public class ResizableWindow : Window, IDisposable
     private void OnMouseMovedWhileInWindow(object _, MouseMovedEventArgs e)
     {
         // Resize is disabled when the window is minimized, so no need to even check the cursor position.
-        if (IsMinimized)
+        if (!IsCurrentlyResizable)
             return;
 
         bool isOnHandle = GetResizerUnderCursor() != null;
@@ -676,6 +709,10 @@ public class ResizableWindow : Window, IDisposable
         _activeResizeEdge = null;
         Mouse.LeftButtonClickStateChanged -= LeftClickChangedHandler;
         Mouse.Moved -= OnMouseMovedWhileResizing;
+
+        // For the uncommon case where the dragging stops outside the window boundaries
+        if (_isOverridingCursorStyle && !_activeResizeEdge.HasValue)
+            StopOverridingCursorStyle();
     }
 
     /// <summary>

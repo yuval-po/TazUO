@@ -534,6 +534,9 @@ namespace ClassicUO.Game
         /// <summary>
         /// Overrides the game cursor visual style.
         /// Set to null to remove the override and revert to the standard behavior.
+        /// <para>
+        /// <b>This is a global override; Discretion is required.</b>
+        /// </para>
         /// </summary>
         /// <param name="visual">
         /// The visual style to use.
