@@ -30,7 +30,13 @@ public class MyraControl : IGui
 
     public MyraControl(string title)
     {
-        _rootWindow = new ResizableWindow { Title = title, Props = { Resize = { Placements = ResizeEdges.All } } };
+        _rootWindow = new ResizableWindow(
+            new ResizableWindowProps
+            {
+                Resize = { Placements = ResizeEdges.Bottom | ResizeEdges.Left | ResizeEdges.Right }
+            }
+        ) { Title = title };
+
         _rootWindow.Closed += OnRootWindowOnClosed;
         _rootWindow.TitlePanel.Background = new SolidBrush(new Color(0, 0, 0, 75));
         _rootWindow.TitlePanel.Border = new SolidBrush(new Color(0, 0, 0, MyraStyle.STANDARD_BORDER_ALPHA));
