@@ -21,6 +21,10 @@ public static class AutoBuyAgentTabContent
         root.Widgets.Add(MyraCheckButton.CreateWithCallback(
             profile.BuyAgentEnabled, b => profile.BuyAgentEnabled = b, "Enable Auto Buy"));
 
+        root.Widgets.Add(MyraCheckButton.CreateWithCallback(
+            profile.BuyAgentSubContainers, b => profile.BuyAgentSubContainers = b, "Include sub containers?",
+            "This will also count items inside containers in your backpack (Containers that have not been opened yet may not have an accurate count of contents)."));
+
         root.Widgets.Add(new MyraLabel("Options:", MyraLabel.TextStyle.H3));
         root.Widgets.Add(MyraHSlider.SliderWithLabel(
             "Max total items",

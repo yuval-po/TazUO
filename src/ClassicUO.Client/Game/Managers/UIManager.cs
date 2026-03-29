@@ -66,7 +66,9 @@ namespace ClassicUO.Game.Managers
             get => field;
             set
             {
+                field?.IsTopMost = false;
                 field = value;
+                field?.IsTopMost = true;
                 TopMostChanged?.Invoke(null, EventArgs.Empty);
             }
         }

@@ -10,6 +10,7 @@ namespace ClassicUO.Game.UI;
 
 public interface IGui
 {
+    bool IsTopMost { get; set; }
     bool AcceptKeyboardInput { get; set; }
     bool AcceptMouseInput { get; set; }
     bool HandlesKeyboardFocus { get; set; }

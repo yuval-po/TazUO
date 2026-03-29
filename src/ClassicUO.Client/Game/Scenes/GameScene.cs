@@ -1451,20 +1451,16 @@ namespace ClassicUO.Game.Scenes
 
             var selectionHue = new Vector3 { Z = 0.7f };
 
-            var selStart = new Point(
-                Math.Min(_selectionStart.X, Mouse.Position.X),
-                Math.Min(_selectionStart.Y, Mouse.Position.Y)
-            );
-            var selEnd = new Point(
-                Math.Max(_selectionStart.X, Mouse.Position.X),
-                Math.Max(_selectionStart.Y, Mouse.Position.Y)
-            );
-
-            // Convert to viewport-relative coordinates
-            selStart.X -= Camera.Bounds.X;
-            selStart.Y -= Camera.Bounds.Y;
-            selEnd.X -= Camera.Bounds.X;
-            selEnd.Y -= Camera.Bounds.Y;
+            // Convert to viewport-relative then to game space so the rectangle
+            // renders at the correct position after Camera.ViewTransformMatrix is applied.
+            var selStart = Camera.ScreenToWorld(new Point(
+                Math.Min(_selectionStart.X, Mouse.Position.X) - Camera.Bounds.X,
+                Math.Min(_selectionStart.Y, Mouse.Position.Y) - Camera.Bounds.Y
+            ));
+            var selEnd = Camera.ScreenToWorld(new Point(
+                Math.Max(_selectionStart.X, Mouse.Position.X) - Camera.Bounds.X,
+                Math.Max(_selectionStart.Y, Mouse.Position.Y) - Camera.Bounds.Y
+            ));
 
             var selectionRect = new Rectangle(
                 selStart.X,

@@ -1564,7 +1564,7 @@ namespace ClassicUO.LegionScripting
         /// Attempt to use the first item found by graphic(type).
         /// Example:
         /// ```py
-        /// API.UseType(0x3434, API.Backpack)
+        /// API.UseType(0x3434, container=API.Backpack)
         /// API.WaitForTarget()
         /// API.Target(API.Player)
         /// ```

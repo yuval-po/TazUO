@@ -21,7 +21,7 @@ You can now type `-updateapi` in game to download the latest API.py file.
 
 [Additional notes](../notes/)  
 
-*This was generated on `3/26/26`.*
+*This was generated on `3/29/26`.*
 
 ## Properties
 ### `Events`
@@ -1283,7 +1283,7 @@ You can now type `-updateapi` in game to download the latest API.py file.
  Attempt to use the first item found by graphic(type).
  Example:
  ```py
- API.UseType(0x3434, API.Backpack)
+ API.UseType(0x3434, container=API.Backpack)
  API.WaitForTarget()
  API.Target(API.Player)
  ```

@@ -38,6 +38,11 @@ namespace ClassicUO.Game.UI.Controls
 
     public virtual ClickPriority Priority { get; set; } = ClickPriority.Default;
 
+    /// <summary>
+    /// Do not set this manually, should only be set by UIManager
+    /// </summary>
+    public bool IsTopMost { get; set; }
+
     public uint ServerSerial { get; set; }
 
     public uint LocalSerial { get; set; }
