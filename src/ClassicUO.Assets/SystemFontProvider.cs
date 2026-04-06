@@ -51,6 +51,9 @@ public static class SystemFontProvider
     /// </returns>
     private static FontsByFamily? GetSystemFontsByFamily(FontFamily family)
     {
+        if (string.IsNullOrWhiteSpace(family.Name))
+            return null;
+
         if (!family.TryGetPaths(out IEnumerable<string> familyPaths))
         {
             Log.Warn($"Could not obtain physical font paths for family '{family.Name}'");

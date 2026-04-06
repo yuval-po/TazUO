@@ -37,7 +37,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using ClassicUO.IO.Cache;
+using ClassicUO.IO.Persistency;
 using ClassicUO.Utility.Logging;
 using FontStashSharp;
 
@@ -67,7 +67,7 @@ public static class EmbeddedFontNames
 
     static EmbeddedFontNames()
     {
-        // Effectivley a 'const'; Ideally, this entire class would've been a string enum but alas that cannot be done.
+        // Effectively a 'const'; Ideally, this entire class would've been a string enum but alas that cannot be done.
         Names = typeof(EmbeddedFontNames)
             .GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
             .Where(fi => fi.IsLiteral && !fi.IsInitOnly && fi.FieldType == typeof(string))
@@ -125,17 +125,17 @@ public class TrueTypeLoader
         int totalLoaded = 0;
         int familyCount = 0;
         bool needsCacheUpdate = false;
-        var cacheDefinition = new FontCacheDefinition();
+        var cacheDefinition = new FontPersistentDefinition();
+        FontCacheData cachedData = null;
 
         var stopwatch = Stopwatch.StartNew();
 
-        FontCacheData cachedData = CacheManager.Instance.Get(cacheDefinition);
-
         try
         {
+            cachedData = CacheManager.Instance.Get(cacheDefinition);
             foreach (FontsByFamily fontFamily in SystemFontProvider.GetSystemFonts())
             {
-                if (cachedData.DoNotLoadFamilies.Contains(fontFamily.FamilyName))
+                if (cachedData?.DoNotLoadFamilies?.Contains(fontFamily.FamilyName) == true)
                 {
                     Log.Debug($"Font family {fontFamily.FamilyName} is excluded from loading");
                     continue;
@@ -155,7 +155,7 @@ public class TrueTypeLoader
             Log.Error($"Failed to load system fonts - {e.Message}");
         }
 
-        if (needsCacheUpdate)
+        if (needsCacheUpdate && cachedData != null)
         {
             if (!CacheManager.Instance.Set(cacheDefinition, cachedData))
                 Log.WarnDebug($"Failed to update system font cache");
@@ -268,7 +268,7 @@ internal class FontCacheData
     public List<string> DoNotLoadFamilies { get; set; } = [];
 }
 
-internal class FontCacheDefinition : CacheItemDefinition<FontCacheData>
+internal class FontPersistentDefinition : PersistentItemDefinition<CacheType, FontCacheData>
 {
-    public override CacheType Key { get; } = CacheType.Font;
+    public override CacheType Key => CacheType.Font;
 }
