@@ -2,6 +2,10 @@
 All notable changes to TazUO will be recorded here.
 
 ---
+## In Development ( `dev` branch )
+
+### Misc
+* Added a few fixes to music filter system - ([bittiez](https://github.com/bittiez))
 
 ## V5.1.0
 
