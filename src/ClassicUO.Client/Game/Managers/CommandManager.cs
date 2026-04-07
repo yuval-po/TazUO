@@ -12,6 +12,7 @@ using ClassicUO.Game.Data;
 using ClassicUO.Game.UI.Gumps;
 using ClassicUO.Configuration;
 using ClassicUO.Game.UI;
+using ClassicUO.Game.UI.MyraWindows;
 using ClassicUO.LegionScripting;
 
 namespace ClassicUO.Game.Managers
@@ -281,6 +282,7 @@ namespace ClassicUO.Game.Managers
             Register("organize", (s) => OrganizerAgent.Instance?.OrganizerCommand(s));
             Register("organizer", (s) => OrganizerAgent.Instance?.OrganizerCommand(s));
             Register("organizerlist", (s) => OrganizerAgent.Instance?.ListOrganizers());
+            Register("test", (s) => UIManager.Add(new OptionsWindow()));
         }
 
 
