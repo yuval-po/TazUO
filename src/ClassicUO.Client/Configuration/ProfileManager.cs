@@ -23,24 +23,23 @@ namespace ClassicUO.Configuration
         public static Profile CurrentProfile { get; private set; }
         public static string ProfilePath { get; private set; }
 
-        private static string _rootPath;
-        private static string RootPath
+        public static string RootPath
         {
             get
             {
-                if (string.IsNullOrEmpty(_rootPath))
+                if (string.IsNullOrEmpty(field))
                 {
                     if (string.IsNullOrWhiteSpace(Settings.GlobalSettings.ProfilesPath))
                     {
-                        _rootPath = Path.Combine(CUOEnviroment.ExecutablePath, "Data", "Profiles");
+                        field = Path.Combine(CUOEnviroment.ExecutablePath, "Data", "Profiles");
                     }
                     else
                     {
-                        _rootPath = Settings.GlobalSettings.ProfilesPath;
+                        field = Settings.GlobalSettings.ProfilesPath;
                     }
                 }
 
-                return _rootPath;
+                return field;
             }
         }
 

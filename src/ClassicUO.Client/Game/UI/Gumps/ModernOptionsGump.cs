@@ -17,6 +17,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using ClassicUO.Common.Enums;
 using ClassicUO.Game.UI.Gumps.GridHighLight;
+using static ClassicUO.Configuration.ProfileManager;
 
 namespace ClassicUO.Game.UI.Gumps
 {
@@ -29,7 +30,7 @@ namespace ClassicUO.Game.UI.Gumps
         public ModernOptionsGump(World world) : base(world, 900, 700,
             Language.Instance.GetModernOptionsGumpLanguage.OptionsTitle)
         {
-            profile = ProfileManager.CurrentProfile;
+            profile = CurrentProfile;
 
             CenterXInScreen();
             CenterYInScreen();
@@ -4134,10 +4135,10 @@ namespace ClassicUO.Game.UI.Gumps
                     availableFonts,
                     maxFontNameLength,
                     lang.GetTazUO.InfobarFont,
-                    ProfileManager.CurrentProfile.InfoBarFont,
+                    CurrentProfile.InfoBarFont,
                     (i, s) =>
                     {
-                        ProfileManager.CurrentProfile.InfoBarFont = s;
+                        CurrentProfile.InfoBarFont = s;
                         InfoBarGump.UpdateAllOptions();
                     }
                 ), true, page
@@ -4168,8 +4169,8 @@ namespace ClassicUO.Game.UI.Gumps
                     availableFonts,
                     maxFontNameLength,
                     lang.GetTazUO.SystemChatFont,
-                    ProfileManager.CurrentProfile.GameWindowSideChatFont,
-                    (i, s) => { ProfileManager.CurrentProfile.GameWindowSideChatFont = s; }
+                    CurrentProfile.GameWindowSideChatFont,
+                    (i, s) => { CurrentProfile.GameWindowSideChatFont = s; }
                 ),
                 true, page
             );
@@ -4194,8 +4195,8 @@ namespace ClassicUO.Game.UI.Gumps
                     availableFonts,
                     maxFontNameLength,
                     lang.GetTazUO.TooltipFont,
-                    ProfileManager.CurrentProfile.SelectedToolTipFont,
-                    (i, s) => { ProfileManager.CurrentProfile.SelectedToolTipFont = s; }
+                    CurrentProfile.SelectedToolTipFont,
+                    (i, s) => { CurrentProfile.SelectedToolTipFont = s; }
                 ),
                 true, page
             );
@@ -4218,8 +4219,8 @@ namespace ClassicUO.Game.UI.Gumps
                     availableFonts,
                     maxFontNameLength,
                     lang.GetTazUO.OverheadFont,
-                    ProfileManager.CurrentProfile.OverheadChatFont,
-                    (i, s) => { ProfileManager.CurrentProfile.OverheadChatFont = s; }
+                    CurrentProfile.OverheadChatFont,
+                    (i, s) => { CurrentProfile.OverheadChatFont = s; }
                 ),
                 true, page
             );
@@ -4243,8 +4244,8 @@ namespace ClassicUO.Game.UI.Gumps
                     availableFonts,
                     maxFontNameLength,
                     lang.GetTazUO.JournalFont,
-                    ProfileManager.CurrentProfile.SelectedTTFJournalFont,
-                    (i, s) => { ProfileManager.CurrentProfile.SelectedTTFJournalFont = s; }
+                    CurrentProfile.SelectedTTFJournalFont,
+                    (i, s) => { CurrentProfile.SelectedTTFJournalFont = s; }
                 ),
                 true, page
             );
@@ -4267,8 +4268,8 @@ namespace ClassicUO.Game.UI.Gumps
                     availableFonts,
                     maxFontNameLength,
                     lang.GetTazUO.NameplateFont,
-                    ProfileManager.CurrentProfile.NamePlateFont,
-                    (i, s) => { ProfileManager.CurrentProfile.NamePlateFont = s; }
+                    CurrentProfile.NamePlateFont,
+                    (i, s) => { CurrentProfile.NamePlateFont = s; }
                 ),
                 true, page
             );
@@ -4291,8 +4292,8 @@ namespace ClassicUO.Game.UI.Gumps
                     availableFonts,
                     maxFontNameLength,
                     lang.GetTazUO.Optionsfont,
-                    ProfileManager.CurrentProfile.OptionsFont,
-                    (i, s) => { ProfileManager.CurrentProfile.OptionsFont = s; }
+                    CurrentProfile.OptionsFont,
+                    (i, s) => { CurrentProfile.OptionsFont = s; }
                 ),
                 true, page
             );
@@ -4405,7 +4406,7 @@ namespace ClassicUO.Game.UI.Gumps
                 if (e.Button == MouseButtonType.Left)
                 {
                     OverrideAllProfiles(locations);
-                    GameActions.Print(World, string.Format(lang.GetTazUO.OverrideSuccess, locations.Count - 1), 32,
+                    GameActions.Print(World, string.Format(lang.GetTazUO.OverrideSuccess, locations.Count - 1), Constants.HUE_SUCCESS,
                         Data.MessageType.System);
                 }
             };
@@ -4426,11 +4427,32 @@ namespace ClassicUO.Game.UI.Gumps
                 {
                     OverrideAllProfiles(sameServerLocations);
                     GameActions.Print(World,
-                        string.Format(lang.GetTazUO.OverrideSuccess, sameServerLocations.Count - 1), 32,
+                        string.Format(lang.GetTazUO.OverrideSuccess, sameServerLocations.Count - 1), Constants.HUE_SUCCESS,
                         Data.MessageType.System);
                 }
             };
 
+            content.AddToRight
+            (
+                c = new ModernButton
+                (0, 0, content.RightWidth - 20, 40, ButtonAction.Activate,
+                    string.Format(lang.GetTazUO.OverrideAllMacros, locations.Count - 1), ThemeSettings.BUTTON_FONT_COLOR)
+                {
+                    IsSelectable = true, IsSelected = true
+                }, true, page
+            );
+
+            c.MouseUp += (s, e) =>
+            {
+                if (e.Button == MouseButtonType.Left)
+                {
+                    OverrideAllMacros(locations);
+                    GameActions.Print(World, string.Format(lang.GetTazUO.OverrideSuccess, locations.Count - 1), Constants.HUE_SUCCESS,
+                        Data.MessageType.System);
+                }
+            };
+
+            /// Defaults:
             content.AddToRight
             (
                 c = new ModernButton(0, 0, content.RightWidth - 20, 40, ButtonAction.Activate,
@@ -4444,8 +4466,27 @@ namespace ClassicUO.Game.UI.Gumps
             {
                 if (e.Button == MouseButtonType.Left)
                 {
-                    ProfileManager.SetProfileAsDefault(ProfileManager.CurrentProfile);
-                    GameActions.Print(World, lang.GetTazUO.SetAsDefaultSuccess, 32, Data.MessageType.System);
+                    SetProfileAsDefault(CurrentProfile);
+                    GameActions.Print(World, lang.GetTazUO.SetAsDefaultSuccess, Constants.HUE_SUCCESS, Data.MessageType.System);
+                }
+            };
+
+            content.AddToRight
+            (
+                c = new ModernButton(0, 0, content.RightWidth - 20, 40, ButtonAction.Activate,
+                    lang.GetTazUO.SetMacrosAsDefault, ThemeSettings.BUTTON_FONT_COLOR)
+                {
+                    IsSelectable = true, IsSelected = true
+                }, true, page
+            );
+
+            c.MouseUp += (s, e) =>
+            {
+                if (e.Button == MouseButtonType.Left)
+                {
+                    SetProfileAsDefault(CurrentProfile);
+                    World.Macros.Save(Path.Combine(RootPath, "macros.xml"));
+                    GameActions.Print(World, lang.GetTazUO.SetMacrosAsDefaultSuccess, Constants.HUE_SUCCESS, Data.MessageType.System);
                 }
             };
 
@@ -4621,22 +4662,22 @@ namespace ClassicUO.Game.UI.Gumps
 
             //Gumps ish
             content.AddToRight(
-                GenHotKeyDisplay("Move gumps", "ALT", ewidth, ProfileManager.CurrentProfile.HoldAltToMoveGumps), true,
+                GenHotKeyDisplay("Move gumps", "ALT", ewidth, CurrentProfile.HoldAltToMoveGumps), true,
                 page);
 
             content.AddToRight(
                 GenHotKeyDisplay("Detatch anchored gumps", "ALT", ewidth,
-                    ProfileManager.CurrentProfile.HoldAltToMoveGumps), true, page);
+                    CurrentProfile.HoldAltToMoveGumps), true, page);
             content.AddToRight(GenHotKeyDisplay("Show lock button on various gumps", "ALT", ewidth), true, page);
             content.AddToRight(
                 GenHotKeyDisplay("Hold to close anchored gumps", "ALT", ewidth,
-                    ProfileManager.CurrentProfile.HoldDownKeyAltToCloseAnchored), true, page);
+                    CurrentProfile.HoldDownKeyAltToCloseAnchored), true, page);
             content.AddToRight(GenHotKeyDisplay("Lock gump if it's lockable", "ALT CTRL CLICK", ewidth), true, page);
             content.AddToRight(GenHotKeyDisplay("Show gump lock icon where applicable", "ALT HOVER", ewidth), true,
                 page);
             content.AddToRight(
                 GenHotKeyDisplay("Adjust gump opacity", "ALT SCROLL-WHEEL", ewidth,
-                    ProfileManager.CurrentProfile.EnableAlphaScrollingOnGumps), true, page);
+                    CurrentProfile.EnableAlphaScrollingOnGumps), true, page);
 
             //Grid container
             content.AddToRight(GenHotKeyDisplay("Grid container - move multiple items", "ALT CLICK-ITEM", ewidth), true,
@@ -4647,9 +4688,9 @@ namespace ClassicUO.Game.UI.Gumps
                 GenHotKeyDisplay
                 (
                     "Grid container - add item to autoloot", "SHIFT CLICK-ITEM", ewidth,
-                    ProfileManager.CurrentProfile.EnableAutoLoot &&
-                    !ProfileManager.CurrentProfile.HoldShiftForContext &&
-                    !ProfileManager.CurrentProfile.HoldShiftToSplitStack
+                    CurrentProfile.EnableAutoLoot &&
+                    !CurrentProfile.HoldShiftForContext &&
+                    !CurrentProfile.HoldShiftToSplitStack
                 ), true, page
             );
 
@@ -4662,27 +4703,27 @@ namespace ClassicUO.Game.UI.Gumps
             content.AddToRight(GenHotKeyDisplay("Remove item from counterbar", "ALT RIGHT-CLICK", ewidth), true, page);
             content.AddToRight(
                 GenHotKeyDisplay("Click a mobile to follow them", "ALT CLICK", ewidth,
-                    !ProfileManager.CurrentProfile.DisableAutoFollowAlt), true, page);
+                    !CurrentProfile.DisableAutoFollowAlt), true, page);
             content.AddToRight(
                 GenHotKeyDisplay("Activate chat", "ENTER", ewidth,
-                    ProfileManager.CurrentProfile.ActivateChatAfterEnter), true, page);
+                    CurrentProfile.ActivateChatAfterEnter), true, page);
             content.AddToRight(
                 GenHotKeyDisplay("Split item stacks", "SHIFT", ewidth,
-                    ProfileManager.CurrentProfile.HoldShiftToSplitStack), true, page);
+                    CurrentProfile.HoldShiftToSplitStack), true, page);
             content.AddToRight(GenHotKeyDisplay("Show name plates", "CTRL SHIFT", ewidth), true, page);
             content.AddToRight(
                 GenHotKeyDisplay("Pathfinding", "SHIFT CLICK/DOUBLE-CLICK", ewidth,
-                    ProfileManager.CurrentProfile.UseShiftToPathfind), true, page);
+                    CurrentProfile.UseShiftToPathfind), true, page);
             content.AddToRight(GenHotKeyDisplay("Buy/Sell all of an item at a shop", "SHIFT DOUBLE-CLICK", ewidth),
                 true, page);
             content.AddToRight(GenHotKeyDisplay("Item drag - Lock in position", "CTRL SCROL-WHEEL", ewidth), true,
                 page);
             content.AddToRight(
                 GenHotKeyDisplay("Zoom window", "CTRL SCROL-WHEEL", ewidth,
-                    ProfileManager.CurrentProfile.EnableMousewheelScaleZoom), true, page);
+                    CurrentProfile.EnableMousewheelScaleZoom), true, page);
             content.AddToRight(
                 GenHotKeyDisplay("Scroll through messages sent in chat", "CTRL q/w", ewidth,
-                    !ProfileManager.CurrentProfile.DisableCtrlQWBtn), true, page);
+                    !CurrentProfile.DisableCtrlQWBtn), true, page);
             content.AddToRight(GenHotKeyDisplay("Auto-start xml gump from menu", "CTRL CLICK", ewidth), true, page);
             content.AddToRight(GenHotKeyDisplay("World Map - Pathfind", "CTRL RIGHT-CLICK", ewidth), true, page);
             content.AddToRight(GenHotKeyDisplay("World Map - Add Marker", "CTRL CLICK", ewidth), true, page);
@@ -4727,15 +4768,20 @@ namespace ClassicUO.Game.UI.Gumps
         public override void Dispose()
         {
             base.Dispose();
-            ProfileManager.CurrentProfile?.Save(World, ProfileManager.ProfilePath);
+            CurrentProfile?.Save(World, ProfilePath);
         }
 
         private void OverrideAllProfiles(List<ProfileLocationData> allProfiles)
         {
             foreach (ProfileLocationData profile in allProfiles)
             {
-                ProfileManager.CurrentProfile.Save(World, profile.ToString(), false);
+                CurrentProfile.Save(World, profile.ToString(), false);
             }
+        }
+
+        private void OverrideAllMacros(List<ProfileLocationData> allProfiles)
+        {
+            foreach (ProfileLocationData profile in allProfiles) World.Macros.Save(Path.Combine(profile.ToString(), "macros.xml"));
         }
 
         private ComboBoxWithLabel GenerateFontSelector(
@@ -5825,25 +5871,25 @@ namespace ClassicUO.Game.UI.Gumps
 
                 CheckboxWithLabel cb;
                 PositionHelper.PositionControl(cb = AddCheckbox("Innocent", NameOverheadOptions.Innocent));
-                cb.TextLabel.Hue = ProfileManager.CurrentProfile.InnocentHue;
+                cb.TextLabel.Hue = CurrentProfile.InnocentHue;
                 PositionHelper.PositionExact(cb = AddCheckbox("Allied", NameOverheadOptions.Ally), rightPosX,
                     PositionHelper.LAST_Y);
-                cb.TextLabel.Hue = ProfileManager.CurrentProfile.FriendHue;
+                cb.TextLabel.Hue = CurrentProfile.FriendHue;
 
                 PositionHelper.PositionControl(cb = AddCheckbox("Attackable", NameOverheadOptions.Gray));
-                cb.TextLabel.Hue = ProfileManager.CurrentProfile.CanAttackHue;
+                cb.TextLabel.Hue = CurrentProfile.CanAttackHue;
                 PositionHelper.PositionExact(cb = AddCheckbox("Criminal", NameOverheadOptions.Criminal), rightPosX,
                     PositionHelper.LAST_Y);
-                cb.TextLabel.Hue = ProfileManager.CurrentProfile.CriminalHue;
+                cb.TextLabel.Hue = CurrentProfile.CriminalHue;
 
                 PositionHelper.PositionControl(cb = AddCheckbox("Enemy", NameOverheadOptions.Enemy));
-                cb.TextLabel.Hue = ProfileManager.CurrentProfile.EnemyHue;
+                cb.TextLabel.Hue = CurrentProfile.EnemyHue;
                 PositionHelper.PositionExact(cb = AddCheckbox("Murderer", NameOverheadOptions.Murderer), rightPosX,
                     PositionHelper.LAST_Y);
-                cb.TextLabel.Hue = ProfileManager.CurrentProfile.MurdererHue;
+                cb.TextLabel.Hue = CurrentProfile.MurdererHue;
 
                 PositionHelper.PositionControl(cb = AddCheckbox("Invulnerable", NameOverheadOptions.Invulnerable));
-                cb.TextLabel.Hue = ProfileManager.CurrentProfile.InvulnerableHue;
+                cb.TextLabel.Hue = CurrentProfile.InvulnerableHue;
             }
 
             private TextBox AddLabel(string name)

@@ -87,6 +87,10 @@ namespace ClassicUO.Game.UI.Gumps
                 }
             };
 
+            _button.MouseEnter += (sender, e) => _button.Alpha = 1f;
+            _button.MouseExit += (sender, e) => _button.Alpha = 0.3f;
+            _button.Alpha = 0.3f;
+
             _button.SetTooltip(ResGumps.ResizeGameWindow);
             Width = scene.Camera.Bounds.Width + borderOffset;
             Height = scene.Camera.Bounds.Height + borderOffset;
@@ -102,8 +106,8 @@ namespace ClassicUO.Game.UI.Gumps
             );
 
             Add(_borderControl);
-            Add(_button);
             Add(_systemChatControl);
+            Add(_button);
             Resize();
 
             if (ProfileManager.CurrentProfile.LastVersionHistoryShown != CUOEnviroment.Version.ToString())
@@ -310,12 +314,12 @@ namespace ClassicUO.Game.UI.Gumps
             int borderSize = isFullSize ? 0 : BORDER_WIDTH;
             int borderOffset = isFullSize ? 0 : BORDER_WIDTH * 2;
 
-            _borderControl.Width = Width;
-            _borderControl.Height = Height;
+            _borderControl.Width = _scene.Camera.Bounds.Width + borderOffset;
+            _borderControl.Height = _scene.Camera.Bounds.Height + borderOffset;
             _borderControl.IsVisible = !isFullSize;  // Hide border in full-size mode
 
-            _button.X = Width - (_button.Width >> 1);
-            _button.Y = Height - (_button.Height >> 1);
+            _button.X = Width - (_button.Width);
+            _button.Y = Height - (_button.Height);
             _button.IsVisible = !isFullSize;  // Hide resize button in full-size mode
 
             // Update system chat control position and size
@@ -325,7 +329,7 @@ namespace ClassicUO.Game.UI.Gumps
             _systemChatControl.Width = _scene.Camera.Bounds.Width;
             _systemChatControl.Height = _scene.Camera.Bounds.Height;
             _systemChatControl.Resize();
-            WantUpdateSize = true;
+            //WantUpdateSize = true;
 
             UpdateGameWindowPos();
         }
@@ -393,7 +397,7 @@ namespace ClassicUO.Game.UI.Gumps
                 Resize();
 
                 // Ensure viewport stays in bounds after resize
-                ClampViewportToWindowBounds();
+                //ClampViewportToWindowBounds();
             }
 
             return newSize;

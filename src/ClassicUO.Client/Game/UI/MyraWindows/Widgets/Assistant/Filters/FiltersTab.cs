@@ -10,6 +10,7 @@ public static class FiltersTab
         tabs.AddTab("Graphics", GraphicReplacementTabContent.Build);
         tabs.AddTab("Journal Filter", JournalFilterTabContent.Build);
         tabs.AddTab("Sound Filter", SoundFilterTabContent.Build);
+        tabs.AddTab("Music Filter", MusicFilterTabContent.Build);
         tabs.AddTab("Season Filter", SeasonFilterTabContent.Build);
         tabs.SelectFirst();
         return tabs;

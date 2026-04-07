@@ -2,8 +2,32 @@
 All notable changes to TazUO will be recorded here.
 
 ---
+## In Development ( `dev` branch )
 
-## Currently in `dev channel`
+### Misc
+* Added a few fixes to music filter system - ([bittiez](https://github.com/bittiez))
+* Added option to set current macros as default for new characters - ([bittiez](https://github.com/bittiez))
+* Added option to override all other character macros with current characters - ([bittiez](https://github.com/bittiez))
+* Updated some default profile settings - ([bittiez](https://github.com/bittiez))
+* * Lowered music volume defaults
+* * Changed default auto follow distance to 1
+* * Enabled ctrl scroll to zoom by default
+* * Enabled spell format by default
+* * Nameplates only show in warmode is now false
+* * Increased overhead chat width to 400(Up from 200)
+* * Disable dismount in warmode now on by default
+* Updated TazUO User and Channel areas to not stretch the entire screen when full - ([bittiez](https://github.com/bittiez))
+
+## V5.1.0
+
+### Assistant
+* Expanded sound filter to show last 5 sounds, and sound names to make them easier to identify - ([bittiez](https://github.com/bittiez))
+* Added music filter similar to sound filter - ([bittiez](https://github.com/bittiez))
+
+### Fixes
+* Fix accidentally broken game viewport - ([bittiez](https://github.com/bittiez))
+
+## V5.0.0
 
 ### Breaking Changes
 
@@ -106,7 +130,8 @@ All notable changes to TazUO will be recorded here.
 * Added a set last target macro - ([bittiez](https://github.com/bittiez))
 * Added a toggle auto walk macro - ([bittiez](https://github.com/bittiez))
 * Added optional quest arrow to tmap and sos bottles - ([bittiez](https://github.com/bittiez))
-* Disabled automatic viewport resizing - ([bittiez](https://github.com/bittiez))\
-* Improved map loading performance thanks to @mandlar's research
+* Disabled automatic viewport resizing - ([bittiez](https://github.com/bittiez))
+* Improved map loading performance thanks to @mandlar's research - ([bittiez](https://github.com/bittiez))
+* Update in-game version history gump - ([bittiez](https://github.com/bittiez))
 
 ---

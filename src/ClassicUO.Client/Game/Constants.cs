@@ -120,6 +120,7 @@ namespace ClassicUO.Game
             public const string GAME_SCALE = "game_scale";
             public const string AUTO_UNEQUIP_FOR_ACTIONS = "auto_unequip_for_actions";
             public const string SOUND_FILTER_IDS = "sound_filter_ids";
+            public const string MUSIC_FILTER_IDS = "music_filter_ids";
             public const string DISABLE_WEATHER = "disable_weather";
             public const string SEASON_FILTER = "season_filter";
             public const string ENABLE_ENHANCED_PACKETS = "enhanced_packets_enabled";

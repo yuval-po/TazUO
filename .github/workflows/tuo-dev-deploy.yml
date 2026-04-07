@@ -177,6 +177,8 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release delete ${{ env.TAG_NAME }} --yes --cleanup-tag || true
+          echo "Waiting for GitHub API to propagate deletion..."
+          sleep 15
 
       - name: Upload all zips to release
         uses: ncipollo/release-action@v1.20.0
