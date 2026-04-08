@@ -20,4 +20,15 @@ public static class MyraExtensions
             panel.Widgets.Add(w);
         return panel;
     }
+
+    public static ScrollViewer WrapInScroll(this Widget widget, int? maxHeight = null)
+    {
+        var scroll = new ScrollViewer();
+        scroll.Content = widget;
+
+        if(maxHeight != null)
+            scroll.MaxHeight = maxHeight.Value;
+
+        return scroll;
+    }
 }
