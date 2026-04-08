@@ -20,6 +20,7 @@ All notable changes to TazUO will be recorded here.
 * * Increased overhead chat width to 400(Up from 200)
 * * Disable dismount in warmode now on by default
 * Updated TazUO User and Channel areas to not stretch the entire screen when full - ([bittiez](https://github.com/bittiez))
+* Split stack gump now accepts spacebar in addition to enter to accept the amount - ([bittiez](https://github.com/bittiez))
 
 ## V5.1.0
 
@@ -29,9 +30,6 @@ All notable changes to TazUO will be recorded here.
 
 ### Fixes
 * Fix accidentally broken game viewport - ([bittiez](https://github.com/bittiez))
-
-### Misc
-* Split stack gump now accepts spacebar in addition to enter to accept the amount - ([bittiez](https://github.com/bittiez))
 
 ## V5.0.0
 
