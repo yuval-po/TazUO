@@ -61,13 +61,7 @@ public class MyraControl : IGui
     #region Event Handlers
     private void UIManagerOnTopMostChanged(object sender, EventArgs e) => _desktop.Opacity = UIManager.TopMostControl == this ? 1f : 0.8f;
 
-    private void OnRootWindowOnClosed(object s, EventArgs a)
-    {
-        if (IsDisposed)
-            return;
-
-        _disposeRequested = true;
-    }
+    private void OnRootWindowOnClosed(object s, EventArgs a) => Dispose();
 
     private void RootWindowOnSizeChanged(object sender = null, EventArgs e = null) => UpdateBoundsToContents(false);
 
@@ -272,6 +266,8 @@ public class MyraControl : IGui
     {
         if (IsDisposed)
             return;
+
+        IsVisible = false;
         _disposeRequested = true;
     }
 

@@ -60,6 +60,10 @@ public class ScriptManagerWindow : MyraControl
         {
             if (g is ScriptManagerWindow w)
             {
+                // The OpenLegionScriptingGump/CloseLegionScriptingGump actions consider IsVisible in regard to 'is the window currently open'.
+                // This somewhat conflicts with the Myra approach we currently have, so this is something of a hotfix.
+                w.IsVisible = true;
+
                 w.BringOnTop();
                 return;
             }
