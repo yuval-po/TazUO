@@ -214,15 +214,21 @@ namespace ClassicUO.Game.Scenes
             if (_lastLoginStep == newStep)
                 return;
 
-            Client.Game.UO.GameCursor.IsLoading = false;
-
             // This trick is to avoid UI flickering
             //
-            // Note that this callback may be run from the threadpool so using MT dispatch can help mitigate
-            // concurrent modification issues
+            // Note that this callback may be run from the threadpool so using MT dispatch can help mitigate concurrent modification issues
+            //
+            // This is a sort-of deferred refresh, not a strict state machine; The MT disposes the previous UI and renders
+            // whatever's right for the state that happens to be current when the callback is invoked
+            Gump g = _currentGump;
             MainThreadQueue.InvokeOnMainThread(() =>
             {
-                Gump g = _currentGump;
+                // Since this is slightly deferred, we could've been disposed in the time between enqueuing and invocation.
+                // We don't wanna mutate UI if that's the case
+                if (IsDestroyed)
+                    return;
+
+                Client.Game.UO.GameCursor.IsLoading = false;
                 UIManager.Add(_currentGump = GetGumpForStep());
                 g?.Dispose();
             });
