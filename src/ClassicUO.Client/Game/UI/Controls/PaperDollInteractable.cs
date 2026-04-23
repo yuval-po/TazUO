@@ -18,12 +18,6 @@ namespace ClassicUO.Game.UI.Controls
 {
     public class PaperDollInteractable : Control
     {
-        /// <summary>
-        /// Note: This array may get mutated by <see cref="GetOrderedLayers"/> to better fit niche edge
-        /// cases like Eventine's customer paperdoll backgrounds.
-        ///
-        /// The mutation saves time on re-orders but be careful not to strictly rely on the order of this member
-        /// </summary>
         private static readonly Layer[] _layerOrder =
         [
             Layer.Cloak,
@@ -51,12 +45,6 @@ namespace ClassicUO.Game.UI.Controls
             Layer.Talisman
         ];
 
-        /// <summary>
-        /// Note: This array may get mutated by <see cref="GetOrderedLayers"/> to better fit niche edge
-        /// cases like Eventine's customer paperdoll backgrounds.
-        ///
-        /// The mutation saves time on re-orders but be careful not to strictly rely on the order of this member
-        /// </summary>
         private static readonly Layer[] _layerOrderQuiverFix =
         [
             Layer.Shirt,
@@ -84,12 +72,6 @@ namespace ClassicUO.Game.UI.Controls
             Layer.Talisman
         ];
 
-        /// <summary>
-        /// Note: This array may get mutated by <see cref="GetOrderedLayers"/> to better fit niche edge
-        /// cases like Eventine's customer paperdoll backgrounds.
-        ///
-        /// The mutation saves time on re-orders but be careful not to strictly rely on the order of this member
-        /// </summary>
         private static readonly Layer[] _layerOrderParrotFix =
         [
             Layer.Shirt,
@@ -413,25 +395,21 @@ namespace ClassicUO.Game.UI.Controls
         }
 
         /// <summary>
-        /// Gets the paperdoll layers in the correct order.
-        /// Note that this method <b>mutates the static layer order</b> in order to avoid re-computation
+        ///     Gets the paperdoll layers in the correct order.
         /// </summary>
-        /// <param name="mob">The mobile who's paperdoll is being rendered</param>
-        /// <returns>An ordered array of layers. Note that this is <b>reference</b> to the static member so <b>do not modify it!</b></returns>
-        private Layer[] GetOrderedLayers(Mobile mob)
-        {
-            Layer[] layers = GetLayers(mob);
-            OrderLayersInPlace(layers);
-            return layers;
-        }
+        /// <param name="mob">The mobile whose's paperdoll is being rendered</param>
+        /// <returns>An ordered array of layers. Note that this is a <b>copy</b> of the static member</returns>
+        private Layer[] GetOrderedLayers(Mobile mob) => GetOrderedLayersCopy(GetLayers(mob));
 
         /// <summary>
-        /// Gets the paperdoll layers in the standard order
+        ///     Gets the paperdoll layers in the standard order
         /// </summary>
-        /// <param name="mob">The mobile who's paperdoll is being rendered</param>
+        /// <param name="mob">The mobile whose's paperdoll is being rendered</param>
         /// <returns>A <b>reference</b> to the relevant static layers order member</returns>
         private Layer[] GetLayers(Mobile mob)
         {
+            const int EVENTINE_CLOAK = 0xA413;
+
             Item cloak = mob.FindItemByLayer(Layer.Cloak);
             Item robe = mob.FindItemByLayer(Layer.Robe);
 
@@ -442,44 +420,54 @@ namespace ClassicUO.Game.UI.Controls
 
                 if (cloak.ItemData.IsContainer ||
                     (Settings.GlobalSettings.CustomServer == Settings.CustomServers.Eventine &&
-                     cloak.Graphic == 0xA413)
+                     cloak.Graphic == EVENTINE_CLOAK)
                    )
                     return _layerOrderQuiverFix;
 
                 return _layerOrder;
             }
 
-            if (
-                HasFakeItem
-                && Client.Game.UO.GameCursor.ItemHold.Enabled
-                && !Client.Game.UO.GameCursor.ItemHold.IsFixedPosition
-                && (byte)Layer.Cloak == Client.Game.UO.GameCursor.ItemHold.ItemData.Layer
-            )
-                return Client.Game.UO.GameCursor.ItemHold.ItemData.IsContainer
-                    ? _layerOrderQuiverFix
-                    : _layerOrder;
+            if (!HasFakeItem
+                || !Client.Game.UO.GameCursor.ItemHold.Enabled
+                || Client.Game.UO.GameCursor.ItemHold.IsFixedPosition
+                || (byte)Layer.Cloak != Client.Game.UO.GameCursor.ItemHold.ItemData.Layer)
+                return _layerOrder;
 
-            return _layerOrder;
+
+            bool isEventineCloak = Settings.GlobalSettings.CustomServer == Settings.CustomServers.Eventine
+                                   && Client.Game.UO.GameCursor.ItemHold.Graphic == EVENTINE_CLOAK;
+
+            return Client.Game.UO.GameCursor.ItemHold.ItemData.IsContainer || isEventineCloak
+                ? _layerOrderQuiverFix
+                : _layerOrder;
         }
 
         /// <summary>
-        /// Re-orders the given layers array <b>in place</b>.
+        /// Returns an ordered copy of the given layer array
         /// This allows for customizations for servers like Eventine where layers may deviate from the standard order.
         /// </summary>
-        /// <param name="layers">The layers array to sort <b>in place</b></param>
-        private static void OrderLayersInPlace(Layer[] layers)
+        /// <remarks>
+        /// The overhead for the copy here should be imperceptible, but if necessary, the hot flow
+        /// can be optimized back to using references to the static members instead
+        /// </remarks>
+        /// <param name="layers">The layer array to sort <b>in place</b></param>
+        private static Layer[] GetOrderedLayersCopy(Layer[] layers)
         {
-            // When dealing with Eventine, the legs layer is always the first one.
+            var copy = (Layer[])layers?.Clone();
+
+            // When dealing with Eventine, the 'legs' layer is always the first one.
             // Other server-specific ordering quirks can be added here later as necessary.
-            if (Settings.GlobalSettings.CustomServer != Settings.CustomServers.Eventine || layers == null || layers.Length < 2)
-                return;
+            if (Settings.GlobalSettings.CustomServer != Settings.CustomServers.Eventine || !(layers?.Length > 2))
+                return copy;
 
-            int legsLayerIdx = layers.FindIndex(l => l == Layer.Legs);
+            int legsLayerIdx = copy.FindIndex(l => l == Layer.Legs);
             if (legsLayerIdx <= 0)
-                return;
+                return copy;
 
-            Array.Copy(layers, 0, layers, 1, legsLayerIdx);
-            layers[0] = Layer.Legs;
+            Array.Copy(copy, 0, copy, 1, legsLayerIdx);
+            copy[0] = Layer.Legs;
+
+            return copy;
         }
 
         public void RequestUpdate() => _updateUi = true;
