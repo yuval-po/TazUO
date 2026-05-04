@@ -275,17 +275,14 @@ namespace ClassicUO.Game.UI.Controls
                     for (int i = 0; i < _gameText.Links.Count; i++)
                     {
                         WebLinkRect link = _gameText.Links[i];
+                        bool inbounds = link.Bounds.Contains(x, (_scrollBar?.Value ?? 0) + y);
 
-                        bool inbounds = link.Bounds.Contains(x, (_scrollBar == null ? 0 : _scrollBar.Value) + y);
-
-                        if (inbounds && Client.Game.UO.FileManager.Fonts.GetWebLink(link.LinkID, out WebLink result))
+                        if (inbounds && !string.IsNullOrEmpty(link.Url))
                         {
-                            Log.Info("LINK CLICKED: " + result.Link);
-
-                            PlatformHelper.LaunchBrowser(result.Link);
-
+                            Log.Info("LINK CLICKED: " + link.Url);
+                            Client.Game.UO.FileManager.Fonts.MarkVisited(link.Url);
+                            PlatformHelper.LaunchBrowser(link.Url);
                             _gameText.CreateTexture();
-
                             break;
                         }
                     }
