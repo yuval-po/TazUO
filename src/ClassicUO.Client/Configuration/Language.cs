@@ -133,6 +133,7 @@ namespace ClassicUO.Configuration
             public string SallosTooltip { get; set; } = "Sallos easy grab is not recommended with grid containers enabled.";
             public string ShowHouseContent { get; set; } = "Show house content";
             public string SmoothBoat { get; set; } = "Smooth boat movements";
+            public string ClientVersionLimitedTooltip { get; set; } = "Not all client versions support this feature";
             #endregion
 
             #region General->Mobiles
