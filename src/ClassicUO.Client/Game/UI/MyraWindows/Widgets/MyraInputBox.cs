@@ -2,6 +2,7 @@
 using System;
 using ClassicUO.Utility;
 using Myra.Graphics2D.UI;
+using Myra.Graphics2D.UI.WrapPanel;
 
 namespace ClassicUO.Game.UI.MyraWindows.Widgets;
 
@@ -44,7 +45,7 @@ public class MyraInputBox : TextBox
         return false;
     }
 
-    public static HorizontalStackPanel WithLabel(
+    public static WrapPanel LabeledHorizontalStackPanel(
         string labelText,
         out MyraInputBox input,
         int width = 150,
@@ -53,7 +54,13 @@ public class MyraInputBox : TextBox
         string? tooltip = null
     )
     {
-        var row = new HorizontalStackPanel { Spacing = 4 };
+        WrapPanel row = new()
+        {
+            Orientation = Orientation.Horizontal,
+            HorizontalSpacing = 4,
+            VerticalSpacing = 4
+        };
+
         row.Widgets.Add(new MyraLabel(labelText, MyraLabel.TextStyle.P));
         input = new MyraInputBox {Text = text ?? "", HintText = hintText ?? "", Width = width, Tooltip = tooltip };
         row.Widgets.Add(input);
