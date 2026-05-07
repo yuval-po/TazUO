@@ -15,7 +15,7 @@ using ClassicUO.Game.UI.Gumps.GridHighLight;
 
 namespace ClassicUO.Game.UI.Gumps
 {
-    public class GridLootGump : Gump
+    public partial class GridLootGump : Gump
     {
         private const int MAX_WIDTH = 300;
         private const int MAX_HEIGHT = 420;
@@ -409,7 +409,21 @@ namespace ClassicUO.Game.UI.Gumps
             }
         }
 
-        private string GetCorpseName() => _corpse.Name?.Length > 0 ? _corpse.Name : "a corpse";
+        /// <summary>
+        /// Gets the corpse's "name".
+        /// Will trim any HTML tags in the name.
+        /// </summary>
+        /// <returns>The corpse name, minus any HTML tags</returns>
+        private string GetCorpseName()
+        {
+            const string defaultName = "a corpse";
+
+            if (string.IsNullOrWhiteSpace(_corpse.Name))
+                return defaultName;
+
+            string name = HtmlStripRx().Replace(_corpse.Name, string.Empty).Trim();
+            return name.Length > 0 ? name : defaultName;
+        }
 
         private class GridLootItem : Control
         {
@@ -560,5 +574,8 @@ namespace ClassicUO.Game.UI.Gumps
                 return true;
             }
         }
+
+        [System.Text.RegularExpressions.GeneratedRegex("<[^>]*>")]
+        private static partial System.Text.RegularExpressions.Regex HtmlStripRx();
     }
 }
