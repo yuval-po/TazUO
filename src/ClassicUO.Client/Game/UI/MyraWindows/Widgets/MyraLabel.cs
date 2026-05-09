@@ -27,23 +27,23 @@ public sealed class MyraLabel : Label
         switch (style)
         {
             case TextStyle.H1:
-                styleSheet.Font = TrueTypeLoader.Instance.GetFont(TrueTypeLoader.EMBEDDED_FONT, 22);
+                styleSheet.Font = TrueTypeLoader.Instance.GetFont(EmbeddedFontNames.ROBOTO, 22);
                 break;
             case TextStyle.H2:
-                styleSheet.Font = TrueTypeLoader.Instance.GetFont(TrueTypeLoader.EMBEDDED_FONT, 20);
+                styleSheet.Font = TrueTypeLoader.Instance.GetFont(EmbeddedFontNames.ROBOTO, 20);
                 break;
             case TextStyle.H3:
-                styleSheet.Font = TrueTypeLoader.Instance.GetFont(TrueTypeLoader.EMBEDDED_FONT, 18);
+                styleSheet.Font = TrueTypeLoader.Instance.GetFont(EmbeddedFontNames.ROBOTO, 18);
                 styleSheet.Padding = new Thickness(4, 2);
                 break;
             case TextStyle.TableHeader:
-                styleSheet.Font = TrueTypeLoader.Instance.GetFont("Roboto-Bold", 16);
+                styleSheet.Font = TrueTypeLoader.Instance.GetFont(EmbeddedFontNames.ROBOTO_BOLD, 16);
                 styleSheet.Padding = new Thickness(4, 0);
                 styleSheet.Margin = new Thickness(2, 0);
                 break;
             case TextStyle.P:
             default:
-                styleSheet.Font = TrueTypeLoader.Instance.GetFont(TrueTypeLoader.EMBEDDED_FONT, 16);
+                styleSheet.Font = TrueTypeLoader.Instance.GetFont(EmbeddedFontNames.ROBOTO, 16);
                 styleSheet.Padding = new Thickness(4, 2);
                 break;
         }

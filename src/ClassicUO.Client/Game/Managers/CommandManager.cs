@@ -12,7 +12,7 @@ using ClassicUO.Game.Data;
 using ClassicUO.Game.UI.Gumps;
 using ClassicUO.Configuration;
 using ClassicUO.Game.UI;
-using ClassicUO.Game.UI.MyraWindows;
+using ClassicUO.Game.UI.MyraWindows.Options;
 using ClassicUO.LegionScripting;
 
 namespace ClassicUO.Game.Managers

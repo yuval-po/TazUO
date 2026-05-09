@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Text.Json;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace ClassicUO.Configuration
 {
@@ -88,6 +89,11 @@ namespace ClassicUO.Configuration
         public string ButtonZoom { get; set; } = "Zoom";
         public string ButtonLighting { get; set; } = "Lighting";
         public string ButtonShadows { get; set; } = "Shadows";
+
+        public string LabelViewport { get; set; } = "Viewport";
+        public string LabelSpells { get; set; } = "Spells";
+        public string LabelSpeech { get; set; } = "Speech";
+        public string LabelHue { get; set; } = "Hue";
 
         public General GetGeneral { get; set; } = new();
         public Video GetVideo { get; set; } = new();
@@ -365,6 +371,7 @@ namespace ClassicUO.Configuration
 
         public class InfoBars
         {
+            public string InfoBar { get; set; } = "Info bar";
             public string ShowInfoBar { get; set; } = "Show info bar";
             public string HighlightType { get; set; } = "Highlight type";
             public string HighLightOpt_TextColor { get; set; } = "Text color";
