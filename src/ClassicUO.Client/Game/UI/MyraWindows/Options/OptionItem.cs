@@ -54,7 +54,14 @@ internal class OptionItem : ContentControl
         return this;
     }
 
-    private void EnsureLayoutChild() => _layout.Child ??= _createWidget();
+    private void EnsureLayoutChild()
+    {
+        if (_layout.Child != null)
+            return;
+
+        _layout.Child = _createWidget();
+        _layout.Child.Enabled = Enabled; // Make sure enablement is propagated to the child.
+    }
 
     protected override Point InternalMeasure(Point availableSize)
     {
