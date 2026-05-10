@@ -24,7 +24,8 @@ public class VisualContainer : Container
         if (widgets?.Length > 0)
             Add(widgets);
 
-        Padding = new Thickness(4, 6, 4, 14);
+        Margin = new Thickness(4);
+        Padding = new Thickness(4, 6, 4, 12);
         Background = new SolidBrush(new Color(0, 0, 0, 25));
         Border = new SolidBrush(new Color(0, 0, 0, 75));
         BorderThickness = new Thickness(2);
@@ -35,23 +36,5 @@ public class VisualContainer : Container
     {
         foreach (Widget widget in widgets)
             Children.Add(widget);
-    }
-
-    public override void InternalRender(RenderContext context)
-    {
-        int a = 0;
-        base.InternalRender(context);
-    }
-
-    protected override Point InternalMeasure(Point availableSize)
-    {
-        int a = 0;
-        return base.InternalMeasure(availableSize);
-    }
-
-    protected override void InternalArrange()
-    {
-        int a = 0;
-        base.InternalArrange();
     }
 }

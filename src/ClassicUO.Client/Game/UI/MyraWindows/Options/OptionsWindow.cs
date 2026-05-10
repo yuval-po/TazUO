@@ -2,6 +2,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using ClassicUO.Common;
 using ClassicUO.Common.Enums;
 using ClassicUO.Configuration;
 using ClassicUO.Game.Managers;
@@ -42,8 +44,16 @@ public class OptionsWindow : MyraControl
         Padding = new Thickness(3, 0, 0, 10)
     };
 
-    private readonly WrapPanel _searchPanel = new() { Orientation = Orientation.Vertical };
-    private readonly WrapPanel _optionsStack = new() { Orientation = Orientation.Vertical };
+    private readonly WrapPanel _searchPanel = new()
+    {
+        UniformSizing = false,
+        Orientation = Orientation.Vertical
+    };
+    private readonly WrapPanel _optionsStack = new()
+    {
+        UniformSizing = false,
+        Orientation = Orientation.Vertical
+    };
 
     private readonly MyraInputBox _searchField = new()
     {
@@ -159,9 +169,8 @@ public class OptionsWindow : MyraControl
         {
             _searchPanel.Widgets.Clear();
             foreach ((string _, List<OptionItem> items) in _options)
-            foreach (OptionItem item in items)
-                if (item.MatchesSearch(search))
-                    _searchPanel.Widgets.Add(item);
+            foreach (OptionItem item in items.Where(item => item.MatchesSearch(search)))
+                _searchPanel.Widgets.Add(item);
 
             _optionsStack.Widgets.Clear();
             _optionsStack.Widgets.Add(_searchPanel);
@@ -225,18 +234,7 @@ public class OptionsWindow : MyraControl
 
         general.Add(OptionsFactory.CreateSpacer());
 
-        general.Add(
-            OptionsFactory
-                .CreateCheckboxOption(genLang.Pathfinding, profile.EnablePathfind, b => profile.EnablePathfind = b)
-                .SetTags("pathfinding, pathing, path")
-        );
-
-        general.Add(OptionsFactory
-            .CreateCheckboxOption(genLang.ShiftPathfinding, profile.UseShiftToPathfind,
-                b => profile.UseShiftToPathfind = b).SetTags("pathfinding, pathing, path"));
-        general.Add(OptionsFactory
-            .CreateCheckboxOption(genLang.SingleClickPathfind, profile.PathfindSingleClick,
-                b => profile.PathfindSingleClick = b).SetTags("pathfinding, pathing, path"));
+        general.Add(GetPathfindingSettingsGroup());
 
         general.Add(OptionsFactory.CreateSpacer());
 
@@ -281,6 +279,23 @@ public class OptionsWindow : MyraControl
         general.Add(OptionsFactory.CreateCheckboxOption(genLang.SmoothBoat, profile.UseSmoothBoatMovement,
             b => profile.UseSmoothBoatMovement = b, genLang.ClientVersionLimitedTooltip));
         //general.Add(OptionsFactory.CreateCheckboxOption(, , b =>  = b));
+    }
+
+    private static OptionItem GetPathfindingSettingsGroup()
+    {
+        Profile profile = ProfileManager.CurrentProfile;
+        ModernOptionsGumpLanguage.General lang = Language.Instance.GetModernOptionsGumpLanguage.GetGeneral;
+        const string tags = "pathfinding, pathing, path";
+
+        return new OptionItem(
+            lang.Pathfinding,
+            () => new CheckBoxGroup(
+                new PropertyBinder(new Accessor<bool>(() => profile.EnablePathfind), lang.Pathfinding),
+                OptionsFactory.CreateCheckboxOption(lang.ShiftPathfinding, profile.UseShiftToPathfind, b => profile.UseShiftToPathfind = b).SetTags(tags),
+                OptionsFactory.CreateCheckboxOption(lang.SingleClickPathfind, profile.PathfindSingleClick, b => profile.PathfindSingleClick = b).SetTags(tags)
+            ),
+            tags
+        );
     }
 
     private void SetupMobileOptions()
