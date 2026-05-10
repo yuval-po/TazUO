@@ -2,6 +2,7 @@
 #nullable enable
 
 using System;
+using ClassicUO.Common;
 using ClassicUO.Game.Managers;
 using ClassicUO.Game.UI.Gumps;
 using ClassicUO.Game.UI.MyraWindows.Widgets;
@@ -15,6 +16,9 @@ public static class OptionsFactory
     internal static OptionItem CreateCheckboxOption(string label, bool enabled, Action<bool> onChange,
         string? tooltip = null) =>
         new(label, () => MyraCheckButton.CreateWithCallback(enabled, onChange, label, tooltip));
+
+    internal static OptionItem CreateCheckboxOption(string label, Accessor<bool> backingProperty, string? tooltip = null) =>
+        new(label, () => MyraCheckButton.CreatePropBoundCheckButton(backingProperty, label, tooltip));
 
     internal static OptionItem CreateSliderOption(string label, float min, float max, float value,
         Action<float> onChange) =>

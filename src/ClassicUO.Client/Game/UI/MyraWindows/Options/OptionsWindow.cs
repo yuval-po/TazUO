@@ -894,24 +894,14 @@ public class OptionsWindow : MyraControl
 
         List<OptionItem> opt = _options[combatKey];
 
-        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetCombatSpells.HoldTabForCombat, profile.HoldDownKeyTab,
-            b => profile.HoldDownKeyTab = b));
-        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetCombatSpells.QueryBeforeAttack,
-            profile.EnabledCriminalActionQuery, b => profile.EnabledCriminalActionQuery = b));
-        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetCombatSpells.QueryBeforeBeneficial,
-            profile.EnabledBeneficialCriminalActionQuery, b => profile.EnabledBeneficialCriminalActionQuery = b));
+        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetCombatSpells.HoldTabForCombat, profile.HoldDownKeyTab, b => profile.HoldDownKeyTab = b));
+        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetCombatSpells.QueryBeforeAttack, profile.EnabledCriminalActionQuery, b => profile.EnabledCriminalActionQuery = b));
+        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetCombatSpells.QueryBeforeBeneficial, profile.EnabledBeneficialCriminalActionQuery, b => profile.EnabledBeneficialCriminalActionQuery = b));
+
         opt.Add(GetSpellSettingsGroup());
 
-        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetCombatSpells.EnableOverheadSpellHue,
-            profile.EnabledSpellHue, b => profile.EnabledSpellHue = b));
-        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetCombatSpells.SingleClickForSpellIcons,
-            profile.CastSpellsByOneClick, b => profile.CastSpellsByOneClick = b));
-        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetCombatSpells.ShowBuffDurationOnOldStyleBuffBar,
-            profile.BuffBarTime, b => profile.BuffBarTime = b));
-        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetCombatSpells.EnableFastSpellHotkeyAssigning,
-            profile.FastSpellsAssign, b => profile.FastSpellsAssign = b));
-        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetCombatSpells.EnableDPSCounter, profile.ShowDPS,
-            b => profile.ShowDPS = b));
+        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetCombatSpells.ShowBuffDurationOnOldStyleBuffBar, profile.BuffBarTime, b => profile.BuffBarTime = b));
+        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetCombatSpells.EnableDPSCounter, profile.ShowDPS, b => profile.ShowDPS = b));
 
         opt.Add(GetEntityHueSettingsGroup());
     }
@@ -925,10 +915,13 @@ public class OptionsWindow : MyraControl
             "spell",
             () => new VisualContainer(
                 new VisualContainerProps { LabelText = lang.LabelSpells },
-                OptionsFactory.CreateCheckboxOption(lang.GetCombatSpells.EnableOverheadSpellFormat,
-                    profile.EnabledSpellFormat, b => profile.EnabledSpellFormat = b),
-                OptionsFactory.CreateInputField(lang.GetCombatSpells.SpellOverheadFormat, profile.SpellDisplayFormat,
-                    s => profile.SpellDisplayFormat = s)
+                new CheckBoxGroup(
+                    new PropertyBinder(new Accessor<bool>(() => profile.EnabledSpellFormat), lang.GetCombatSpells.EnableOverheadSpellFormat),
+                    OptionsFactory.CreateInputField(lang.GetCombatSpells.SpellOverheadFormat, profile.SpellDisplayFormat, s => profile.SpellDisplayFormat = s)
+                ),
+                OptionsFactory.CreateCheckboxOption(lang.GetCombatSpells.EnableOverheadSpellHue, new Accessor<bool>(() => profile.EnabledSpellHue)),
+                OptionsFactory.CreateCheckboxOption(lang.GetCombatSpells.SingleClickForSpellIcons, new Accessor<bool>(() => profile.CastSpellsByOneClick)),
+                OptionsFactory.CreateCheckboxOption(lang.GetCombatSpells.EnableFastSpellHotkeyAssigning, new Accessor<bool>(() => profile.FastSpellsAssign))
             )
         );
     }
@@ -937,28 +930,21 @@ public class OptionsWindow : MyraControl
     {
         Profile profile = ProfileManager.CurrentProfile;
         ModernOptionsGumpLanguage lang = Language.Instance.GetModernOptionsGumpLanguage;
+        ModernOptionsGumpLanguage.CombatSpells? spellLang = lang.GetCombatSpells;
 
         return new OptionItem(
             "hue",
             () => new VisualContainer(
                 new VisualContainerProps { LabelText = lang.LabelHue },
-                OptionsFactory.CreateHuePicker(lang.GetCombatSpells.InnocentColor, profile.InnocentHue,
-                    b => profile.InnocentHue = b),
-                OptionsFactory.CreateHuePicker(lang.GetCombatSpells.BeneficialSpell, profile.BeneficHue,
-                    b => profile.BeneficHue = b),
-                OptionsFactory.CreateHuePicker(lang.GetCombatSpells.FriendColor, profile.FriendHue,
-                    b => profile.FriendHue = b),
-                OptionsFactory.CreateHuePicker(lang.GetCombatSpells.HarmfulSpell, profile.HarmfulHue,
-                    b => profile.HarmfulHue = b),
-                OptionsFactory.CreateHuePicker(lang.GetCombatSpells.Criminal, profile.CriminalHue,
-                    b => profile.CriminalHue = b),
-                OptionsFactory.CreateHuePicker(lang.GetCombatSpells.NeutralSpell, profile.NeutralHue,
-                    b => profile.NeutralHue = b),
-                OptionsFactory.CreateHuePicker(lang.GetCombatSpells.CanBeAttackedHue, profile.CanAttackHue,
-                    b => profile.CanAttackHue = b),
-                OptionsFactory.CreateHuePicker(lang.GetCombatSpells.Murderer, profile.MurdererHue,
-                    b => profile.MurdererHue = b),
-                OptionsFactory.CreateHuePicker(lang.GetCombatSpells.Enemy, profile.EnemyHue, b => profile.EnemyHue = b)
+                OptionsFactory.CreateHuePicker(spellLang.InnocentColor, profile.InnocentHue, b => profile.InnocentHue = b),
+                OptionsFactory.CreateHuePicker(spellLang.BeneficialSpell, profile.BeneficHue, b => profile.BeneficHue = b),
+                OptionsFactory.CreateHuePicker(spellLang.FriendColor, profile.FriendHue, b => profile.FriendHue = b),
+                OptionsFactory.CreateHuePicker(spellLang.HarmfulSpell, profile.HarmfulHue, b => profile.HarmfulHue = b),
+                OptionsFactory.CreateHuePicker(spellLang.Criminal, profile.CriminalHue, b => profile.CriminalHue = b),
+                OptionsFactory.CreateHuePicker(spellLang.NeutralSpell, profile.NeutralHue, b => profile.NeutralHue = b),
+                OptionsFactory.CreateHuePicker(spellLang.CanBeAttackedHue, profile.CanAttackHue, b => profile.CanAttackHue = b),
+                OptionsFactory.CreateHuePicker(spellLang.Murderer, profile.MurdererHue, b => profile.MurdererHue = b),
+                OptionsFactory.CreateHuePicker(spellLang.Enemy, profile.EnemyHue, b => profile.EnemyHue = b)
             )
         );
     }
