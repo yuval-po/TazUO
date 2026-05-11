@@ -105,6 +105,7 @@ public class OptionsWindow : MyraControl
         SetupTooltipOptions();
         SetupSpeechOptions();
         SetupCombatOptions();
+        SetupCounterOptions();
     }
 
     private void Build()
@@ -229,8 +230,7 @@ public class OptionsWindow : MyraControl
 
         ModernOptionsGumpLanguage.General genLang = lang.GetGeneral;
 
-        general.Add(OptionsFactory.CreateCheckboxOption(genLang.HighlightObjects, profile.HighlightGameObjects,
-            b => profile.HighlightGameObjects = b));
+        general.Add(OptionsFactory.CreateCheckboxOption(genLang.HighlightObjects, new Accessor<bool>(() => profile.HighlightGameObjects)));
 
         general.Add(OptionsFactory.CreateSpacer());
 
@@ -238,27 +238,22 @@ public class OptionsWindow : MyraControl
 
         general.Add(OptionsFactory.CreateSpacer());
 
-        general.Add(OptionsFactory.CreateCheckboxOption(genLang.AlwaysRun, profile.AlwaysRun,
-            b => profile.AlwaysRun = b));
-        general.Add(OptionsFactory.CreateCheckboxOption(genLang.RunUnlessHidden, profile.AlwaysRunUnlessHidden,
-            b => profile.AlwaysRunUnlessHidden = b));
+        general.Add(OptionsFactory.CreateCheckboxOption(genLang.AlwaysRun, new Accessor<bool>(() => profile.AlwaysRun)));
+        general.Add(OptionsFactory.CreateCheckboxOption(genLang.RunUnlessHidden, new Accessor<bool>(() => profile.AlwaysRunUnlessHidden)));
 
         general.Add(OptionsFactory.CreateSpacer());
 
-        general.Add(OptionsFactory.CreateCheckboxOption(genLang.AutoOpenDoors, profile.AutoOpenDoors,
-            b => profile.AutoOpenDoors = b));
-        general.Add(OptionsFactory.CreateCheckboxOption(genLang.AutoOpenPathfinding, profile.SmoothDoors,
-            b => profile.SmoothDoors = b));
+        general.Add(OptionsFactory.CreateCheckboxOption(genLang.AutoOpenDoors, new Accessor<bool>(() => profile.AutoOpenDoors)));
+        general.Add(OptionsFactory.CreateCheckboxOption(genLang.AutoOpenPathfinding, new Accessor<bool>(() => profile.SmoothDoors)));
 
         general.Add(OptionsFactory.CreateSpacer());
 
         general.Add(OptionsFactory
-            .CreateCheckboxOption(genLang.AutoOpenCorpse, profile.AutoOpenCorpses, b => profile.AutoOpenCorpses = b)
+            .CreateCheckboxOption(genLang.AutoOpenCorpse, new Accessor<bool>(() => profile.AutoOpenCorpses))
             .SetTags("corpse, loot"));
         general.Add(OptionsFactory.CreateSliderOption(genLang.CorpseOpenDistance, 0, 5, profile.AutoOpenCorpseRange,
             f => profile.AutoOpenCorpseRange = (int)f).SetTags("corpse, loot"));
-        general.Add(OptionsFactory.CreateCheckboxOption(genLang.CorpseSkipEmpty, profile.SkipEmptyCorpse,
-                b => profile.SkipEmptyCorpse = b,
+        general.Add(OptionsFactory.CreateCheckboxOption(genLang.CorpseSkipEmpty, new Accessor<bool>(() => profile.SkipEmptyCorpse),
                 "Most servers don't send corpse contents until it's opened.\nEnabling this will make this feature not work on most servers."
             )
             .SetTags("corpse, loot")
@@ -270,14 +265,10 @@ public class OptionsWindow : MyraControl
 
         general.Add(OptionsFactory.CreateSpacer());
 
-        general.Add(OptionsFactory.CreateCheckboxOption(genLang.OutRangeColor, profile.NoColorObjectsOutOfRange,
-            b => profile.NoColorObjectsOutOfRange = b));
-        general.Add(OptionsFactory.CreateCheckboxOption(genLang.SallosEasyGrab, profile.SallosEasyGrab,
-            b => profile.SallosEasyGrab = b, genLang.SallosTooltip));
-        general.Add(OptionsFactory.CreateCheckboxOption(genLang.ShowHouseContent, profile.ShowHouseContent,
-            b => profile.ShowHouseContent = b, genLang.ClientVersionLimitedTooltip));
-        general.Add(OptionsFactory.CreateCheckboxOption(genLang.SmoothBoat, profile.UseSmoothBoatMovement,
-            b => profile.UseSmoothBoatMovement = b, genLang.ClientVersionLimitedTooltip));
+        general.Add(OptionsFactory.CreateCheckboxOption(genLang.OutRangeColor, new Accessor<bool>(() => profile.NoColorObjectsOutOfRange)));
+        general.Add(OptionsFactory.CreateCheckboxOption(genLang.SallosEasyGrab, new Accessor<bool>(() => profile.SallosEasyGrab), genLang.SallosTooltip));
+        general.Add(OptionsFactory.CreateCheckboxOption(genLang.ShowHouseContent, new Accessor<bool>(() => profile.ShowHouseContent), genLang.ClientVersionLimitedTooltip));
+        general.Add(OptionsFactory.CreateCheckboxOption(genLang.SmoothBoat, new Accessor<bool>(() => profile.UseSmoothBoatMovement), genLang.ClientVersionLimitedTooltip));
         //general.Add(OptionsFactory.CreateCheckboxOption(, , b =>  = b));
     }
 
@@ -291,8 +282,8 @@ public class OptionsWindow : MyraControl
             lang.Pathfinding,
             () => new CheckBoxGroup(
                 new PropertyBinder(new Accessor<bool>(() => profile.EnablePathfind), lang.Pathfinding),
-                OptionsFactory.CreateCheckboxOption(lang.ShiftPathfinding, profile.UseShiftToPathfind, b => profile.UseShiftToPathfind = b).SetTags(tags),
-                OptionsFactory.CreateCheckboxOption(lang.SingleClickPathfind, profile.PathfindSingleClick, b => profile.PathfindSingleClick = b).SetTags(tags)
+                OptionsFactory.CreateCheckboxOption(lang.ShiftPathfinding, new Accessor<bool>(() => profile.UseShiftToPathfind)).SetTags(tags),
+                OptionsFactory.CreateCheckboxOption(lang.SingleClickPathfind, new Accessor<bool>(() => profile.PathfindSingleClick)).SetTags(tags)
             ),
             tags
         );
@@ -306,8 +297,7 @@ public class OptionsWindow : MyraControl
         if (!_options.ContainsKey("Mobiles")) _options.Add("Mobiles", new List<OptionItem>());
         List<OptionItem> mobiles = _options["Mobiles"];
         mobiles.Add(
-            OptionsFactory.CreateCheckboxOption(lang.GetGeneral.ShowMobileHP, profile.ShowMobilesHP,
-                    b => profile.ShowMobilesHP = b)
+            OptionsFactory.CreateCheckboxOption(lang.GetGeneral.ShowMobileHP, new Accessor<bool>(() => profile.ShowMobilesHP))
                 .SetTags("hp, health, hit point"));
         mobiles.Add(OptionsFactory.CreateComboBox(lang.GetGeneral.MobileHPType, profile.MobileHPType,
             [lang.GetGeneral.HPTypePerc, lang.GetGeneral.HPTypeBar, lang.GetGeneral.HPTypeNBoth],
@@ -319,29 +309,24 @@ public class OptionsWindow : MyraControl
         mobiles.Add(OptionsFactory.CreateSpacer());
 
         mobiles.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.HighlightPoisoned,
-            profile.HighlightMobilesByPoisoned,
-            b => profile.HighlightMobilesByPoisoned = b));
+            new Accessor<bool>(() => profile.HighlightMobilesByPoisoned)));
         mobiles.Add(
             OptionsFactory.CreateHuePicker(lang.GetGeneral.PoisonHighlightColor, profile.PoisonHue,
                 h => profile.PoisonHue = h));
 
         mobiles.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.HighlightPara,
-            profile.HighlightMobilesByParalize,
-            b => profile.HighlightMobilesByParalize = b));
+            new Accessor<bool>(() => profile.HighlightMobilesByParalize)));
         mobiles.Add(OptionsFactory.CreateHuePicker(lang.GetGeneral.ParaHighlightColor, profile.ParalyzedHue,
             h => profile.ParalyzedHue = h));
 
-        mobiles.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.HighlightInvul, profile.HighlightMobilesByInvul,
-            b => profile.HighlightMobilesByInvul = b));
+        mobiles.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.HighlightInvul, new Accessor<bool>(() => profile.HighlightMobilesByInvul)));
         mobiles.Add(OptionsFactory.CreateHuePicker(lang.GetGeneral.InvulHighlightColor, profile.InvulnerableHue,
             h => profile.InvulnerableHue = h));
 
         mobiles.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.IncomingMobiles,
-            profile.ShowNewMobileNameIncoming,
-            b => profile.ShowNewMobileNameIncoming = b));
+            new Accessor<bool>(() => profile.ShowNewMobileNameIncoming)));
         mobiles.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.IncomingCorpses,
-            profile.ShowNewCorpseNameIncoming,
-            b => profile.ShowNewCorpseNameIncoming = b));
+            new Accessor<bool>(() => profile.ShowNewCorpseNameIncoming)));
 
         mobiles.Add(OptionsFactory.CreateComboBox(lang.GetGeneral.AuraUnderFeet, profile.AuraUnderFeetType, [
                 lang.GetGeneral.AuraOptDisabled, lang.GetGeneral.AuroOptWarmode,
@@ -349,8 +334,7 @@ public class OptionsWindow : MyraControl
             ],
             i => profile.AuraUnderFeetType = i));
 
-        mobiles.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.AuraForParty, profile.PartyAura,
-            b => profile.PartyAura = b));
+        mobiles.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.AuraForParty, new Accessor<bool>(() => profile.PartyAura)));
         mobiles.Add(
             OptionsFactory.CreateHuePicker(lang.GetGeneral.AuraPartyColor, profile.PartyAuraHue,
                 h => profile.PartyAuraHue = h));
@@ -364,38 +348,28 @@ public class OptionsWindow : MyraControl
         if (!_options.ContainsKey("Interface")) _options.Add("Interface", new List<OptionItem>());
         List<OptionItem> opt = _options["Interface"];
 
-        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.DisableTopMenu, profile.TopbarGumpIsDisabled,
-            b => profile.TopbarGumpIsDisabled = b,
+        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.DisableTopMenu, new Accessor<bool>(() => profile.TopbarGumpIsDisabled),
             "The top menu is pretty vital in TazUO, we recommend leaving this unchecked."));
 
         opt.Add(OptionsFactory.CreateSpacer());
 
         opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.AltForAnchorsGumps,
-            profile.HoldDownKeyAltToCloseAnchored,
-            b => profile.HoldDownKeyAltToCloseAnchored = b));
-        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.AltToMoveGumps, profile.HoldAltToMoveGumps,
-            b => profile.HoldAltToMoveGumps = b));
+            new Accessor<bool>(() => profile.HoldDownKeyAltToCloseAnchored)));
+        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.AltToMoveGumps, new Accessor<bool>(() => profile.HoldAltToMoveGumps)));
         opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.CloseEntireAnchorWithRClick,
-            profile.CloseAllAnchoredGumpsInGroupWithRightClick,
-            b => profile.CloseAllAnchoredGumpsInGroupWithRightClick = b));
+            new Accessor<bool>(() => profile.CloseAllAnchoredGumpsInGroupWithRightClick)));
 
         opt.Add(OptionsFactory.CreateSpacer());
 
-        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.OriginalSkillsGump, profile.StandardSkillsGump,
-            b => profile.StandardSkillsGump = b));
-        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.OldStatusGump, profile.UseOldStatusGump,
-            b => profile.UseOldStatusGump = b));
-        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.PartyInviteGump, profile.PartyInviteGump,
-            b => profile.PartyInviteGump = b));
+        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.OriginalSkillsGump, new Accessor<bool>(() => profile.StandardSkillsGump)));
+        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.OldStatusGump, new Accessor<bool>(() => profile.UseOldStatusGump)));
+        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.PartyInviteGump, new Accessor<bool>(() => profile.PartyInviteGump)));
 
         opt.Add(OptionsFactory.CreateSpacer());
 
-        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.ModernHealthBars, profile.CustomBarsToggled,
-            b => profile.CustomBarsToggled = b));
-        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.ModernHPBlackBG, profile.CBBlackBGToggled,
-            b => profile.CBBlackBGToggled = b));
-        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.SaveHPBars, profile.SaveHealthbars,
-            b => profile.SaveHealthbars = b));
+        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.ModernHealthBars, new Accessor<bool>(() => profile.CustomBarsToggled)));
+        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.ModernHPBlackBG, new Accessor<bool>(() => profile.CBBlackBGToggled)));
+        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.SaveHPBars, new Accessor<bool>(() => profile.SaveHealthbars)));
         opt.Add(OptionsFactory.CreateComboBox(lang.GetGeneral.CloseHPGumpsWhen, profile.CloseHealthBarType, [
             lang.GetGeneral.CloseHPOptDisable, lang.GetGeneral.CloseHPOptOOR,
             lang.GetGeneral.CloseHPOptDead, lang.GetGeneral.CloseHPOptBoth
@@ -410,10 +384,8 @@ public class OptionsWindow : MyraControl
 
         opt.Add(OptionsFactory.CreateSpacer());
 
-        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.ShiftContext, profile.HoldShiftForContext,
-            b => profile.HoldShiftForContext = b));
-        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.ShiftSplit, profile.HoldShiftToSplitStack,
-            b => profile.HoldShiftToSplitStack = b));
+        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.ShiftContext, new Accessor<bool>(() => profile.HoldShiftForContext)));
+        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.ShiftSplit, new Accessor<bool>(() => profile.HoldShiftToSplitStack)));
     }
 
     private void SetupMiscOptions()
@@ -427,8 +399,8 @@ public class OptionsWindow : MyraControl
 
         List<OptionItem> opt = _options[miscKey];
 
-        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.EnableCOT, profile.UseCircleOfTransparency,
-            b => profile.UseCircleOfTransparency = b).SetTags("cot, circle of transparency"));
+        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.EnableCOT, new Accessor<bool>(() => profile.UseCircleOfTransparency))
+            .SetTags("cot, circle of transparency"));
         opt.Add(OptionsFactory.CreateSliderOption(lang.GetGeneral.COTDistance,
             Constants.MIN_CIRCLE_OF_TRANSPARENCY_RADIUS,
             Constants.MAX_CIRCLE_OF_TRANSPARENCY_RADIUS, profile.CircleOfTransparencyRadius,
@@ -441,19 +413,14 @@ public class OptionsWindow : MyraControl
         opt.Add(OptionsFactory.CreateSpacer());
 
         opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.HideScreenshotMessage,
-            profile.HideScreenshotStoredInMessage,
-            b => profile.HideScreenshotStoredInMessage = b));
-        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.ObjFade, profile.UseObjectsFading,
-            b => profile.UseObjectsFading = b));
-        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.TextFade, profile.TextFading,
-            b => profile.TextFading = b));
-        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.CursorRange, profile.ShowTargetRangeIndicator,
-            b => profile.ShowTargetRangeIndicator = b));
+            new Accessor<bool>(() => profile.HideScreenshotStoredInMessage)));
+        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.ObjFade, new Accessor<bool>(() => profile.UseObjectsFading)));
+        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.TextFade, new Accessor<bool>(() => profile.TextFading)));
+        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.CursorRange, new Accessor<bool>(() => profile.ShowTargetRangeIndicator)));
 
         opt.Add(OptionsFactory.CreateSpacer());
 
-        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.DragSelectHP, profile.EnableDragSelect,
-            b => profile.EnableDragSelect = b));
+        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.DragSelectHP, new Accessor<bool>(() => profile.EnableDragSelect)));
         opt.Add(OptionsFactory.CreateComboBox(lang.GetGeneral.DragKeyMod, profile.DragSelectModifierKey, [
             lang.GetGeneral.SharedNone, lang.GetGeneral.SharedCtrl, lang.GetGeneral.SharedShift,
             lang.GetGeneral.SharedAlt
@@ -483,11 +450,9 @@ public class OptionsWindow : MyraControl
         opt.Add(OptionsFactory.CreateSpacer());
 
         opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.ShowStatsChangedMsg,
-            profile.ShowStatsChangedMessage,
-            b => profile.ShowStatsChangedMessage = b));
+            new Accessor<bool>(() => profile.ShowStatsChangedMessage)));
         opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.ShowSkillsChangedMsg,
-            profile.ShowSkillsChangedMessage,
-            b => profile.ShowSkillsChangedMessage = b));
+            new Accessor<bool>(() => profile.ShowSkillsChangedMessage)));
         opt.Add(OptionsFactory.CreateSliderOption(lang.GetGeneral.ChangeVolume, 0, 100,
             profile.ShowSkillsChangedDeltaValue,
             f => profile.ShowSkillsChangedDeltaValue = (int)f));
@@ -503,10 +468,8 @@ public class OptionsWindow : MyraControl
 
         opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.HideRoof, !profile.DrawRoofs,
             b => profile.DrawRoofs = !b));
-        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.TreesToStump, profile.TreeToStumps,
-            b => profile.TreeToStumps = b));
-        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.HideVegetation, profile.HideVegetation,
-            b => profile.HideVegetation = b));
+        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.TreesToStump, new Accessor<bool>(() => profile.TreeToStumps)));
+        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.HideVegetation, new Accessor<bool>(() => profile.HideVegetation)));
         opt.Add(OptionsFactory.CreateComboBox(lang.GetGeneral.MagicFieldType, profile.FieldsType, [
             lang.GetGeneral.MagicFieldOpt_Normal, lang.GetGeneral.MagicFieldOpt_Static,
             lang.GetGeneral.MagicFieldOpt_Tile
@@ -523,24 +486,18 @@ public class OptionsWindow : MyraControl
 
         List<OptionItem> opt = _options["Sound"];
 
-        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetSound.EnableSound, profile.EnableSound,
-            b => profile.EnableSound = b));
+        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetSound.EnableSound, new Accessor<bool>(() => profile.EnableSound)));
         opt.Add(OptionsFactory.CreateSliderOption(lang.GetSound.SharedVolume, 0, 100, profile.SoundVolume,
             f => profile.SoundVolume = (int)f));
-        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetSound.EnableMusic, profile.EnableMusic,
-            b => profile.EnableMusic = b));
+        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetSound.EnableMusic, new Accessor<bool>(() => profile.EnableMusic)));
         opt.Add(OptionsFactory.CreateSliderOption(lang.GetSound.SharedVolume, 0, 100, profile.MusicVolume,
             f => profile.MusicVolume = (int)f));
-        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetSound.LoginMusic, Settings.GlobalSettings.LoginMusic,
-            b => Settings.GlobalSettings.LoginMusic = b));
+        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetSound.LoginMusic, new Accessor<bool>(() => Settings.GlobalSettings.LoginMusic)));
         opt.Add(OptionsFactory.CreateSliderOption(lang.GetSound.SharedVolume, 0, 100,
             Settings.GlobalSettings.LoginMusicVolume, f => Settings.GlobalSettings.LoginMusicVolume = (int)f));
-        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetSound.PlayFootsteps, profile.EnableFootstepsSound,
-            b => profile.EnableFootstepsSound = b));
-        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetSound.CombatMusic, profile.EnableCombatMusic,
-            b => profile.EnableCombatMusic = b));
-        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetSound.BackgroundMusic, profile.ReproduceSoundsInBackground,
-            b => profile.ReproduceSoundsInBackground = b));
+        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetSound.PlayFootsteps, new Accessor<bool>(() => profile.EnableFootstepsSound)));
+        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetSound.CombatMusic, new Accessor<bool>(() => profile.EnableCombatMusic)));
+        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetSound.BackgroundMusic, new Accessor<bool>(() => profile.ReproduceSoundsInBackground)));
 
         opt.Add(OptionsFactory.CreateSpacer());
 
@@ -576,8 +533,7 @@ public class OptionsWindow : MyraControl
                 Settings.GlobalSettings.FPS = (int)f;
                 Client.Game.SetRefreshRate((int)f);
             }));
-        optionsList.Add(OptionsFactory.CreateCheckboxOption(lang.GetVideo.BackgroundFPS, profile.ReduceFPSWhenInactive,
-            b => profile.ReduceFPSWhenInactive = b));
+        optionsList.Add(OptionsFactory.CreateCheckboxOption(lang.GetVideo.BackgroundFPS, new Accessor<bool>(() => profile.ReduceFPSWhenInactive)));
         optionsList.Add(OptionsFactory.CreateCheckboxOption(lang.GetVideo.EnableVSync, profile.EnableVSync, b =>
         {
             profile.EnableVSync = b;
@@ -600,15 +556,13 @@ public class OptionsWindow : MyraControl
                 profile.DefaultScale = Client.Game.Scene.Camera.Zoom =
                     (int)f * Client.Game.Scene.Camera.ZoomStep + Client.Game.Scene.Camera.ZoomMin;
             }));
-        optionsList.Add(OptionsFactory.CreateCheckboxOption(lang.GetVideo.ZoomWheel, profile.EnableMousewheelScaleZoom,
-            b => profile.EnableMousewheelScaleZoom = b));
+        optionsList.Add(OptionsFactory.CreateCheckboxOption(lang.GetVideo.ZoomWheel, new Accessor<bool>(() => profile.EnableMousewheelScaleZoom)));
         optionsList.Add(OptionsFactory.CreateCheckboxOption(lang.GetVideo.ReturnDefaultZoom,
-            profile.RestoreScaleAfterUnpressCtrl, b => profile.RestoreScaleAfterUnpressCtrl = b));
+            new Accessor<bool>(() => profile.RestoreScaleAfterUnpressCtrl)));
 
         optionsList.Add(OptionsFactory.CreateSpacer());
 
-        optionsList.Add(OptionsFactory.CreateCheckboxOption(lang.GetVideo.AltLights, profile.UseAlternativeLights,
-            b => profile.UseAlternativeLights = b));
+        optionsList.Add(OptionsFactory.CreateCheckboxOption(lang.GetVideo.AltLights, new Accessor<bool>(() => profile.UseAlternativeLights)));
         optionsList.Add(OptionsFactory.CreateCheckboxOption(lang.GetVideo.CustomLLevel, profile.UseCustomLightLevel,
             b =>
             {
@@ -647,24 +601,17 @@ public class OptionsWindow : MyraControl
         optionsList.Add(OptionsFactory.CreateComboBox(lang.GetVideo.LightType, profile.LightLevelType, [
             lang.GetVideo.LightType_Absolute, lang.GetVideo.LightType_Minimum
         ], i => profile.LightLevelType = i));
-        optionsList.Add(OptionsFactory.CreateCheckboxOption(lang.GetVideo.DarkNight, profile.UseDarkNights,
-            b => profile.UseDarkNights = b));
-        optionsList.Add(OptionsFactory.CreateCheckboxOption(lang.GetVideo.ColoredLight, profile.UseColoredLights,
-            b => profile.UseColoredLights = b));
+        optionsList.Add(OptionsFactory.CreateCheckboxOption(lang.GetVideo.DarkNight, new Accessor<bool>(() => profile.UseDarkNights)));
+        optionsList.Add(OptionsFactory.CreateCheckboxOption(lang.GetVideo.ColoredLight, new Accessor<bool>(() => profile.UseColoredLights)));
 
         optionsList.Add(OptionsFactory.CreateSpacer());
 
-        optionsList.Add(OptionsFactory.CreateCheckboxOption(lang.GetVideo.EnableDeathScreen, profile.EnableDeathScreen,
-            b => profile.EnableDeathScreen = b));
-        optionsList.Add(OptionsFactory.CreateCheckboxOption(lang.GetVideo.BWDead, profile.EnableBlackWhiteEffect,
-            b => profile.EnableBlackWhiteEffect = b));
+        optionsList.Add(OptionsFactory.CreateCheckboxOption(lang.GetVideo.EnableDeathScreen, new Accessor<bool>(() => profile.EnableDeathScreen)));
+        optionsList.Add(OptionsFactory.CreateCheckboxOption(lang.GetVideo.BWDead, new Accessor<bool>(() => profile.EnableBlackWhiteEffect)));
         optionsList.Add(OptionsFactory.CreateCheckboxOption(lang.GetVideo.MouseThread,
-            Settings.GlobalSettings.RunMouseInASeparateThread,
-            b => Settings.GlobalSettings.RunMouseInASeparateThread = b));
-        optionsList.Add(OptionsFactory.CreateCheckboxOption(lang.GetVideo.TargetAura, profile.AuraOnMouse,
-            b => profile.AuraOnMouse = b));
-        optionsList.Add(OptionsFactory.CreateCheckboxOption(lang.GetVideo.AnimWater, profile.AnimatedWaterEffect,
-            b => profile.AnimatedWaterEffect = b));
+            new Accessor<bool>(() => Settings.GlobalSettings.RunMouseInASeparateThread)));
+        optionsList.Add(OptionsFactory.CreateCheckboxOption(lang.GetVideo.TargetAura, new Accessor<bool>(() => profile.AuraOnMouse)));
+        optionsList.Add(OptionsFactory.CreateCheckboxOption(lang.GetVideo.AnimWater, new Accessor<bool>(() => profile.AnimatedWaterEffect)));
         optionsList.Add(OptionsFactory.CreateCheckboxOption("Enable post processing effects",
             profile.EnablePostProcessingEffects, b =>
             {
@@ -679,10 +626,8 @@ public class OptionsWindow : MyraControl
             }));
 
         optionsList.Add(OptionsFactory.CreateSpacer());
-        optionsList.Add(OptionsFactory.CreateCheckboxOption(lang.GetVideo.EnableShadows, profile.ShadowsEnabled,
-            b => profile.ShadowsEnabled = b));
-        optionsList.Add(OptionsFactory.CreateCheckboxOption(lang.GetVideo.RockTreeShadows, profile.ShadowsStatics,
-            b => profile.ShadowsStatics = b));
+        optionsList.Add(OptionsFactory.CreateCheckboxOption(lang.GetVideo.EnableShadows, new Accessor<bool>(() => profile.ShadowsEnabled)));
+        optionsList.Add(OptionsFactory.CreateCheckboxOption(lang.GetVideo.RockTreeShadows, new Accessor<bool>(() => profile.ShadowsStatics)));
         optionsList.Add(OptionsFactory.CreateSliderOption(lang.GetVideo.TerrainShadowLevel,
             Constants.MIN_TERRAIN_SHADOWS_LEVEL, Constants.MAX_TERRAIN_SHADOWS_LEVEL, profile.TerrainShadowsLevel,
             f => profile.TerrainShadowsLevel = (int)f));
@@ -736,8 +681,7 @@ public class OptionsWindow : MyraControl
                     ),
                     OptionsFactory.CreateCheckboxOption(
                         lang.GetVideo.LockViewport,
-                        profile.GameWindowLock,
-                        b => profile.GameWindowLock = b
+                        new Accessor<bool>(() => profile.GameWindowLock)
                     ),
                     OptionsFactory.CreateSliderOption(
                         lang.GetVideo.ViewportX,
@@ -826,30 +770,24 @@ public class OptionsWindow : MyraControl
             _options.Add(speechKey, []);
         List<OptionItem> opt = _options[speechKey];
 
-        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetSpeech.ScaleSpeechDelay, profile.ScaleSpeechDelay,
-            b => profile.ScaleSpeechDelay = b));
+        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetSpeech.ScaleSpeechDelay, new Accessor<bool>(() => profile.ScaleSpeechDelay)));
         opt.Add(OptionsFactory.CreateSliderOption(lang.GetSpeech.SpeechDelay, 0, 1000, profile.SpeechDelay,
             f => profile.SpeechDelay = (int)f));
-        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetSpeech.SaveJournalE, profile.SaveJournalToFile,
-            b => profile.SaveJournalToFile = b));
+        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetSpeech.SaveJournalE, new Accessor<bool>(() => profile.SaveJournalToFile)));
 
         opt.Add(OptionsFactory.CreateSpacer());
 
-        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetSpeech.ChatEnterActivation, profile.ActivateChatAfterEnter,
-            b => profile.ActivateChatAfterEnter = b));
+        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetSpeech.ChatEnterActivation, new Accessor<bool>(() => profile.ActivateChatAfterEnter)));
         opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetSpeech.ChatEnterSpecial,
-            profile.ActivateChatAdditionalButtons, b => profile.ActivateChatAdditionalButtons = b));
+            new Accessor<bool>(() => profile.ActivateChatAdditionalButtons)));
         opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetSpeech.ShiftEnterChat,
-            profile.ActivateChatShiftEnterSupport, b => profile.ActivateChatShiftEnterSupport = b));
+            new Accessor<bool>(() => profile.ActivateChatShiftEnterSupport)));
 
         opt.Add(OptionsFactory.CreateSpacer());
 
-        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetSpeech.ChatGradient, profile.HideChatGradient,
-            b => profile.HideChatGradient = b));
-        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetSpeech.HideGuildChat, profile.IgnoreGuildMessages,
-            b => profile.IgnoreGuildMessages = b));
-        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetSpeech.HideAllianceChat, profile.IgnoreAllianceMessages,
-            b => profile.IgnoreAllianceMessages = b));
+        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetSpeech.ChatGradient, new Accessor<bool>(() => profile.HideChatGradient)));
+        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetSpeech.HideGuildChat, new Accessor<bool>(() => profile.IgnoreGuildMessages)));
+        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetSpeech.HideAllianceChat, new Accessor<bool>(() => profile.IgnoreAllianceMessages)));
 
         opt.Add(OptionsFactory.CreateSpacer());
 
@@ -894,16 +832,28 @@ public class OptionsWindow : MyraControl
 
         List<OptionItem> opt = _options[combatKey];
 
-        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetCombatSpells.HoldTabForCombat, profile.HoldDownKeyTab, b => profile.HoldDownKeyTab = b));
-        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetCombatSpells.QueryBeforeAttack, profile.EnabledCriminalActionQuery, b => profile.EnabledCriminalActionQuery = b));
-        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetCombatSpells.QueryBeforeBeneficial, profile.EnabledBeneficialCriminalActionQuery, b => profile.EnabledBeneficialCriminalActionQuery = b));
+        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetCombatSpells.HoldTabForCombat, new Accessor<bool>(() => profile.HoldDownKeyTab)));
+        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetCombatSpells.QueryBeforeAttack, new Accessor<bool>(() => profile.EnabledCriminalActionQuery)));
+        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetCombatSpells.QueryBeforeBeneficial, new Accessor<bool>(() => profile.EnabledBeneficialCriminalActionQuery)));
 
         opt.Add(GetSpellSettingsGroup());
 
-        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetCombatSpells.ShowBuffDurationOnOldStyleBuffBar, profile.BuffBarTime, b => profile.BuffBarTime = b));
-        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetCombatSpells.EnableDPSCounter, profile.ShowDPS, b => profile.ShowDPS = b));
+        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetCombatSpells.ShowBuffDurationOnOldStyleBuffBar, new Accessor<bool>(() => profile.BuffBarTime)));
+        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetCombatSpells.EnableDPSCounter, new Accessor<bool>(() => profile.ShowDPS)));
 
         opt.Add(GetEntityHueSettingsGroup());
+    }
+
+    private void SetupCounterOptions()
+    {
+        const string countersKey = "Counters";
+
+        if (!_options.ContainsKey(countersKey))
+            _options.Add(countersKey, []);
+
+        List<OptionItem> options = _options[countersKey];
+
+        options.Add(GetCountersSettingsSection());
     }
 
     private static OptionItem GetSpellSettingsGroup()
@@ -930,7 +880,7 @@ public class OptionsWindow : MyraControl
     {
         Profile profile = ProfileManager.CurrentProfile;
         ModernOptionsGumpLanguage lang = Language.Instance.GetModernOptionsGumpLanguage;
-        ModernOptionsGumpLanguage.CombatSpells? spellLang = lang.GetCombatSpells;
+        ModernOptionsGumpLanguage.CombatSpells spellLang = lang.GetCombatSpells;
 
         return new OptionItem(
             "hue",
@@ -945,6 +895,27 @@ public class OptionsWindow : MyraControl
                 OptionsFactory.CreateHuePicker(spellLang.CanBeAttackedHue, profile.CanAttackHue, b => profile.CanAttackHue = b),
                 OptionsFactory.CreateHuePicker(spellLang.Murderer, profile.MurdererHue, b => profile.MurdererHue = b),
                 OptionsFactory.CreateHuePicker(spellLang.Enemy, profile.EnemyHue, b => profile.EnemyHue = b)
+            )
+        );
+    }
+
+    private static OptionItem GetCountersSettingsSection()
+    {
+        Profile profile = ProfileManager.CurrentProfile;
+        ModernOptionsGumpLanguage lang = Language.Instance.GetModernOptionsGumpLanguage;
+        ModernOptionsGumpLanguage.Counters counterLang = lang.GetCounters;
+
+        return new OptionItem(
+            "counters",
+            () => new VisualContainer(
+                new VisualContainerProps { LabelText = lang.LabelCounters },
+                new CheckBoxGroup(
+                    new PropertyBinder(new Accessor<bool>(() => profile.CounterBarEnabled), counterLang.EnableCounters)),
+                    OptionsFactory.CreateCheckboxOption(counterLang.HighlightItemsOnUse, new Accessor<bool>(() => profile.CounterBarHighlightOnUse)),
+                    new CheckBoxGroup(
+                        new PropertyBinder(new Accessor<bool>(() => profile.CounterBarDisplayAbbreviatedAmount), counterLang.AbbreviatedValues),
+                        OptionsFactory.PropBoundNumericInput(counterLang.AbbreviateIfAmountExceeds, new Accessor<int>(() => profile.CounterBarAbbreviatedAmount))
+                )
             )
         );
     }

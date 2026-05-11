@@ -94,6 +94,7 @@ namespace ClassicUO.Configuration
         public string LabelSpells { get; set; } = "Spells";
         public string LabelSpeech { get; set; } = "Speech";
         public string LabelHue { get; set; } = "Hue";
+        public string LabelCounters { get; set; } = "Counters";
 
         public General GetGeneral { get; set; } = new();
         public Video GetVideo { get; set; } = new();

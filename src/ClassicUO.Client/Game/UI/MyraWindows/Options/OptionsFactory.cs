@@ -66,14 +66,26 @@ public static class OptionsFactory
             return item.PlaceBefore(new MyraLabel(label, MyraLabel.TextStyle.P));
         });
 
-    internal static OptionItem CreateInputField(string label, string text, Action<string> onChange,
-        string? tooltip = null) => new(label, () =>
+    internal static OptionItem CreateInputField(string label, string text, Action<string> onChange, string? tooltip = null) => new(label, () =>
     {
-        WrapPanel wid =
-            MyraInputBox.LabeledHorizontalStackPanel(label, out MyraInputBox inputBox, text: text, tooltip: tooltip);
+        WrapPanel wid = MyraInputBox.LabeledHorizontalStackPanel(label, out MyraInputBox inputBox, text: text, tooltip: tooltip);
         inputBox.TextChangedByUser += (_, _) => onChange(inputBox.Text);
         return wid;
     });
+
+    internal static OptionItem PropBoundNumericInput(
+        string label,
+        Accessor<int> backingProp,
+        int min = 0,
+        int max = 1_000_000,
+        string? tooltip = null
+    ) =>
+        new(label, () =>
+        {
+            var numericInput = new LabeledNumericInput(backingProp.Get(), label) { Tooltip = tooltip };
+            numericInput.ValueChanged += (_, e) => backingProp.Set(e.NewValue);
+            return numericInput;
+        });
 
     internal static OptionItem CreateSpacer() => new(string.Empty, () => new MyraSpacer(1, 4), skipSearch: true);
 }
