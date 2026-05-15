@@ -22,13 +22,13 @@ public static class AutoSellAgentTabContent
             profile.SellAgentEnabled, b => profile.SellAgentEnabled = b, "Enable Auto Sell"));
 
         root.Widgets.Add(new MyraLabel("Options:", MyraLabel.TextStyle.H3));
-        root.Widgets.Add(MyraHSlider.SliderWithLabel(
+        root.Widgets.Add(LabeledHorizontalSlider.SliderWithLabel(
             "Max total items",
             out _,
             v => profile.SellAgentMaxItems = (int)v,
             0, 1000,
             profile.SellAgentMaxItems));
-        root.Widgets.Add(MyraHSlider.SliderWithLabel(
+        root.Widgets.Add(LabeledHorizontalSlider.SliderWithLabel(
             "Max unique items",
             out _,
             v => profile.SellAgentMaxUniques = (int)v,

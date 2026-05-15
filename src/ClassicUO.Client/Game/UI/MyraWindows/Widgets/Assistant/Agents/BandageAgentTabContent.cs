@@ -75,7 +75,7 @@ public static class BandageAgentTabContent
             b => profile.BandageAgentCheckForBuff = b,
             "Use bandaging buff", "Use bandaging buff instead of delay"));
 
-        root.Widgets.Add(MyraHSlider.SliderWithLabel(
+        root.Widgets.Add(LabeledHorizontalSlider.SliderWithLabel(
             "HP percentage threshold",
             out _,
             v => profile.BandageAgentHPPercentage = (int)v,

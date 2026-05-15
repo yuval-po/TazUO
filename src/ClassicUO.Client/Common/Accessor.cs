@@ -12,6 +12,12 @@ public class Accessor<T>
     private readonly Action<T> _setter;
     private readonly Func<T> _getter;
 
+    public Accessor(Func<T> getter, Action<T> setter)
+    {
+        _getter = getter;
+        _setter = setter;
+    }
+
     public Accessor(Expression<Func<T>> expr)
     {
         ArgumentNullException.ThrowIfNull(expr);

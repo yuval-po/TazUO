@@ -94,7 +94,9 @@ namespace ClassicUO.Configuration
         public string LabelSpells { get; set; } = "Spells";
         public string LabelSpeech { get; set; } = "Speech";
         public string LabelHue { get; set; } = "Hue";
+        public string LabelTooltips { get; set; } = "Tooltips";
         public string LabelCounters { get; set; } = "Counters";
+        public string LabelContainers { get; set; } = "Containers";
 
         public General GetGeneral { get; set; } = new();
         public Video GetVideo { get; set; } = new();
@@ -362,6 +364,7 @@ namespace ClassicUO.Configuration
             public string HighlightItemsOnUse { get; set; } = "Highlight items on use";
             public string AbbreviatedValues { get; set; } = "Use abbreviated values";
             public string AbbreviateIfAmountExceeds { get; set; } = "When amount exceeds";
+            public string SectionHighlightingLabel { get; set; } = "Counter Highlighting";
             public string HighlightRedWhenAmountIsLow { get; set; } = "Highlight red when amount is low";
             public string HighlightRedIfAmountIsBelow { get; set; } = "Highlight red if amount is below";
             public string CounterLayout { get; set; } = "Counter layout";
@@ -386,6 +389,8 @@ namespace ClassicUO.Configuration
 
         public class Containers
         {
+            public string LabelOriginalContainers { get; set; } = "Original Containers";
+            public string LabelGridContainers { get; set; } = "Grid Containers";
             public string Description { get; set; } = "These settings are for original container gumps, for grid container settings visit the TazUO section";
             public string CharacterBackpackStyle { get; set; } = "Character backpack style";
             public string BackpackOpt_Default { get; set; } = "Default";

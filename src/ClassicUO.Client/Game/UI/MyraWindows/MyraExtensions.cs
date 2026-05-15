@@ -1,4 +1,5 @@
 using Myra.Graphics2D.UI;
+using Myra.Graphics2D.UI.WrapPanel;
 
 namespace ClassicUO.Game.UI.MyraWindows;
 
@@ -30,5 +31,12 @@ public static class MyraExtensions
             scroll.MaxHeight = maxHeight.Value;
 
         return scroll;
+    }
+
+    public static WrapPanel AddRange(this WrapPanel panel, params Widget[] children)
+    {
+        foreach (Widget child in children)
+            panel.Widgets.Add(child);
+        return panel;
     }
 }

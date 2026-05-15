@@ -26,13 +26,13 @@ public static class AutoBuyAgentTabContent
             "This will also count items inside containers in your backpack (Containers that have not been opened yet may not have an accurate count of contents)."));
 
         root.Widgets.Add(new MyraLabel("Options:", MyraLabel.TextStyle.H3));
-        root.Widgets.Add(MyraHSlider.SliderWithLabel(
+        root.Widgets.Add(LabeledHorizontalSlider.SliderWithLabel(
             "Max total items",
             out _,
             v => profile.BuyAgentMaxItems = (int)v,
             0, 1000,
             profile.BuyAgentMaxItems));
-        root.Widgets.Add(MyraHSlider.SliderWithLabel(
+        root.Widgets.Add(LabeledHorizontalSlider.SliderWithLabel(
             "Max unique items",
             out _,
             v => profile.BuyAgentMaxUniques = (int)v,

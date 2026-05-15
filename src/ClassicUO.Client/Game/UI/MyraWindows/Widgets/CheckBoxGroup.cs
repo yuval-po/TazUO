@@ -1,6 +1,5 @@
 using System;
 using ClassicUO.Common;
-using Microsoft.Xna.Framework;
 using Myra.Graphics2D;
 using Myra.Graphics2D.UI;
 
@@ -24,7 +23,11 @@ public class CheckBoxGroup : Panel
 {
     private readonly PropertyBinder _primaryControlProp;
     private readonly VerticalStackPanel _primaryPanel = new();
-    private readonly VerticalStackPanel _dependentsPanel = new() { Margin = new Thickness(20, 0, 0, 0) };
+    private readonly VerticalStackPanel _dependentsPanel = new()
+    {
+        Margin = new Thickness(20, 0, 0, 0),
+        Spacing = MyraStyle.STANDARD_SPACING,
+    };
 
     public CheckBoxGroup(PropertyBinder controlProp, params Widget[] widgets)
     {
@@ -62,13 +65,14 @@ public class CheckBoxGroup : Panel
         UpdateChildrenEnablement(isChecked);
     }
 
-    private void UpdateChildrenEnablement(bool enabled)
-    {
-        // When the primary checkbox is checked, enable all dependent widgets.
-        // Note this will miss changes done to the property outside of this control flow.
-        //
-        // Can be expanded with INotifyPropertyChanged for more robust handling but not necessary for now.
-        foreach (Widget widget in _dependentsPanel.Widgets)
-            widget.Enabled = enabled;
-    }
+    /// <summary>
+    /// Updates the enablement of all dependent widgets.
+    /// </summary>
+    /// <remarks>
+    ///     When the primary checkbox is checked, enable all dependent widgets.
+    ///     Note this will miss changes done to the property outside of this control flow.
+    ///     Can be expanded with INotifyPropertyChanged for more robust handling but not necessary for now.
+    /// </remarks>
+    /// <param name="enabled">Whether to enable or disable the dependents</param>
+    private void UpdateChildrenEnablement(bool enabled) => _dependentsPanel.Enabled = enabled;
 }

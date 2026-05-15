@@ -30,4 +30,10 @@ public static class StyleConstantsDefaults
     public const string RESET_LABEL_ICON_TEXT = "⭯";
 
     public const int TOOLBAR_BUTTON_SIZE = 28;
+
+    #region Inputs
+
+    public const int NUMERIC_INPUT_BOX_WIDTH = 80;
+
+    #endregion
 }

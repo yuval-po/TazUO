@@ -26,9 +26,9 @@ public static class PathfindingTabContent
                 "Long-Distance Pathfinding",
                 "This is currently in beta."));
 
-        HorizontalStackPanel genTimeRow = MyraHSlider.SliderWithLabel(
+        HorizontalStackPanel genTimeRow = LabeledHorizontalSlider.SliderWithLabel(
             "Pathfinding Gen Time (ms)",
-            out MyraHSlider genTimeSlider,
+            out LabeledHorizontalSlider genTimeSlider,
             v =>
             {
                 int ms = (int)v;
@@ -85,9 +85,9 @@ public static class PathfindingTabContent
 
         var rightSide = new VerticalStackPanel { Spacing = MyraStyle.STANDARD_SPACING };
 
-        HorizontalStackPanel zLevelSliderWidget = MyraHSlider.SliderWithLabel(
+        HorizontalStackPanel zLevelSliderWidget = LabeledHorizontalSlider.SliderWithLabel(
             "Pathfinding Z level difference",
-            out MyraHSlider zLevelSlider, v
+            out LabeledHorizontalSlider zLevelSlider, v
                 => { ProfileManager.CurrentProfile?.PathfindingZLevelDiff = (int)v; },
             1,
             50,

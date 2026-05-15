@@ -18,7 +18,7 @@ internal class OptionItem : ContentControl
 
     public override Widget Content
     {
-        get => _layout.Child ??= _createWidget();
+        get => _layout.Child ?? CreateOrUpdateChild();
         set => _layout.Child = value;
     }
 
@@ -54,24 +54,22 @@ internal class OptionItem : ContentControl
         return this;
     }
 
-    private void EnsureLayoutChild()
+    private Widget CreateOrUpdateChild()
     {
-        if (_layout.Child != null)
-            return;
-
-        _layout.Child = _createWidget();
+        _layout.Child ??= _createWidget();
         _layout.Child.Enabled = Enabled; // Make sure enablement is propagated to the child.
+        return _layout.Child;
     }
 
     protected override Point InternalMeasure(Point availableSize)
     {
-        EnsureLayoutChild();
+        CreateOrUpdateChild();
         return base.InternalMeasure(availableSize);
     }
 
     public override void InternalRender(RenderContext context)
     {
-        EnsureLayoutChild();
+        CreateOrUpdateChild();
         base.InternalRender(context);
     }
 }

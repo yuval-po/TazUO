@@ -22,7 +22,7 @@ public static class OptionsFactory
 
     internal static OptionItem CreateSliderOption(string label, float min, float max, float value,
         Action<float> onChange) =>
-        new(label, () => MyraHSlider.SliderWithLabel(label, out _, onChange, min, max, value));
+        new(label, () => LabeledHorizontalSlider.SliderWithLabel(label, out _, onChange, min, max, value));
 
     internal static OptionItem CreateComboBox(string label, int value, string[] options, Action<int> onChange,
         string? tooltip = null)
@@ -59,6 +59,9 @@ public static class OptionsFactory
             var item = new MyraArtTexture(0x0FAB) { Tooltip = $"Current hue: {hue}" };
             item.TouchUp += (_, _) =>
             {
+                if (!item.Enabled)
+                    return;
+
                 UIManager.GetGump<ModernColorPicker>()?.Dispose();
                 UIManager.Add(new ModernColorPicker(World.Instance, onChange));
             };
