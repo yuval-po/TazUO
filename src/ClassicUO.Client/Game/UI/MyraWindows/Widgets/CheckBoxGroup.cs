@@ -44,6 +44,7 @@ public class CheckBoxGroup : Panel
             Add(widgets);
 
         UpdateChildrenEnablement(_primaryControlProp.BackingProperty.Get());
+        EnabledChanged += (_, _) => UpdateChildrenEnablement(Enabled && primaryCheckBox.IsChecked);
 
         Children.Add(_primaryPanel);
         ChildrenLayout = new StackPanelLayout(Orientation.Vertical);
@@ -69,17 +70,5 @@ public class CheckBoxGroup : Panel
         // Can be expanded with INotifyPropertyChanged for more robust handling but not necessary for now.
         foreach (Widget widget in _dependentsPanel.Widgets)
             widget.Enabled = enabled;
-    }
-
-    protected override void InternalArrange()
-    {
-        int a = 0;
-        base.InternalArrange();
-    }
-
-    protected override Point InternalMeasure(Point availableSize)
-    {
-        int a = 0;
-        return base.InternalMeasure(availableSize);
     }
 }

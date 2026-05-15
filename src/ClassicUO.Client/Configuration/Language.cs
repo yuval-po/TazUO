@@ -360,8 +360,8 @@ namespace ClassicUO.Configuration
         {
             public string EnableCounters { get; set; } = "Enable counters";
             public string HighlightItemsOnUse { get; set; } = "Highlight items on use";
-            public string AbbreviatedValues { get; set; } = "Abbreviated values";
-            public string AbbreviateIfAmountExceeds { get; set; } = "Abbreviate if amount exceeds";
+            public string AbbreviatedValues { get; set; } = "Use abbreviated values";
+            public string AbbreviateIfAmountExceeds { get; set; } = "When amount exceeds";
             public string HighlightRedWhenAmountIsLow { get; set; } = "Highlight red when amount is low";
             public string HighlightRedIfAmountIsBelow { get; set; } = "Highlight red if amount is below";
             public string CounterLayout { get; set; } = "Counter layout";

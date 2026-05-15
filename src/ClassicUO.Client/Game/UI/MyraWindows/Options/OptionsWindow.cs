@@ -910,11 +910,22 @@ public class OptionsWindow : MyraControl
             () => new VisualContainer(
                 new VisualContainerProps { LabelText = lang.LabelCounters },
                 new CheckBoxGroup(
-                    new PropertyBinder(new Accessor<bool>(() => profile.CounterBarEnabled), counterLang.EnableCounters)),
+                    new PropertyBinder(new Accessor<bool>(() => profile.CounterBarEnabled), counterLang.EnableCounters),
                     OptionsFactory.CreateCheckboxOption(counterLang.HighlightItemsOnUse, new Accessor<bool>(() => profile.CounterBarHighlightOnUse)),
                     new CheckBoxGroup(
                         new PropertyBinder(new Accessor<bool>(() => profile.CounterBarDisplayAbbreviatedAmount), counterLang.AbbreviatedValues),
-                        OptionsFactory.PropBoundNumericInput(counterLang.AbbreviateIfAmountExceeds, new Accessor<int>(() => profile.CounterBarAbbreviatedAmount))
+                        new LabeledIntegerInput(
+                            counterLang.AbbreviateIfAmountExceeds,
+                            new Accessor<int>(() => profile.CounterBarAbbreviatedAmount)
+                        ) { InputBoxWidth = 80, MinValue = 999, MaxValue = 999999999 }
+                    ),
+                    new CheckBoxGroup(
+                        new PropertyBinder(new Accessor<bool>(() => profile.CounterBarHighlightOnAmount), counterLang.HighlightRedWhenAmountIsLow),
+                        new LabeledIntegerInput(
+                            counterLang.HighlightRedIfAmountIsBelow,
+                            new Accessor<int>(() => profile.CounterBarHighlightAmount)
+                        ) { InputBoxWidth = 80, MinValue = 1, MaxValue = 60000 }
+                    )
                 )
             )
         );

@@ -82,9 +82,7 @@ public static class OptionsFactory
     ) =>
         new(label, () =>
         {
-            var numericInput = new LabeledNumericInput(backingProp.Get(), label) { Tooltip = tooltip };
-            numericInput.ValueChanged += (_, e) => backingProp.Set(e.NewValue);
-            return numericInput;
+            return new LabeledIntegerInput(label, backingProp.Get(), backingProp.Set) { Tooltip = tooltip };
         });
 
     internal static OptionItem CreateSpacer() => new(string.Empty, () => new MyraSpacer(1, 4), skipSearch: true);

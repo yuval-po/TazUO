@@ -65,14 +65,12 @@ internal class OptionItem : ContentControl
 
     protected override Point InternalMeasure(Point availableSize)
     {
-        int a = 0;
         EnsureLayoutChild();
         return base.InternalMeasure(availableSize);
     }
 
     public override void InternalRender(RenderContext context)
     {
-        int a = 0;
         EnsureLayoutChild();
         base.InternalRender(context);
     }
