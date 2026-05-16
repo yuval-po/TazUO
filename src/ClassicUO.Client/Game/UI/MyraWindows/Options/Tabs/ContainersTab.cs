@@ -1,7 +1,9 @@
+using System;
 using ClassicUO.Common;
 using ClassicUO.Configuration;
 using ClassicUO.Game.Managers;
 using ClassicUO.Game.UI.Gumps;
+using ClassicUO.Game.UI.Gumps.GridHighLight;
 using ClassicUO.Game.UI.MyraWindows.Widgets;
 using ClassicUO.Utility;
 using Myra.Graphics2D.UI.WrapPanel;
@@ -143,79 +145,185 @@ public static class ContainersTab
         ModernOptionsGumpLanguage.TazUO tuoLang = lang.GetTazUO;
 
         return new VisualContainer(
-            new VisualContainerProps { LabelText = containerLang.LabelGridContainers },
-            new CheckBoxGroup(
-                new PropertyBinder(
-                    new Accessor<bool>(() => profile.UseGridLayoutContainerGumps),
-                    tuoLang.EnableGridContainers
-                ),
-                OptionsFactory.CreateCheckboxOption(
-                    tuoLang.GridContainersDefaultToOldStyleView,
-                    new Accessor<bool>(() => profile.GridContainersDefaultToOldStyleView)
-                ),
-                OptionsFactory.CreateSliderOption(
-                    tuoLang.GridContainerScale,
-                    50,
-                    200,
-                    profile.GridContainersScale,
-                    i => profile.GridContainersScale = (byte)i
-                ),
-                OptionsFactory.CreateCheckboxOption(
-                    tuoLang.AlsoScaleItems,
-                    new Accessor<bool>(() => profile.GridContainerScaleItems)
-                ),
-                OptionsFactory.CreateSliderOption(
-                    tuoLang.GridItemBorderOpacity,
-                    0,
-                    100,
-                    profile.GridBorderAlpha,
-                    i =>
-                    {
-                        profile.GridBorderAlpha = (byte)i;
-                        GridContainer.GridItem.StaticGridContainerSettingUpdated();
-                    }
-                ),
-                OptionsFactory.CreateHuePicker(
-                    tuoLang.BorderColor,
-                    profile.GridBorderHue,
-                    h =>
-                    {
-                        profile.GridBorderHue = h;
-                        GridContainer.GridItem.StaticGridContainerSettingUpdated();
-                    }
-                ),
-                OptionsFactory.CreateSliderOption(
-                    tuoLang.ContainerOpacity,
-                    0,
-                    100,
-                    profile.ContainerOpacity,
-                    i =>
-                    {
-                        profile.ContainerOpacity = (byte)i;
-                        GridContainer.UpdateAllGridContainers();
-                    }
-                ),
-                OptionsFactory.CreateHuePicker(
-                    tuoLang.BackgroundColor,
-                    profile.AltGridContainerBackgroundHue,
-                    h =>
-                    {
-                        profile.AltGridContainerBackgroundHue = h;
-                        GridContainer.UpdateAllGridContainers();
-                    }
-                ),
-                OptionsFactory.CreateCheckboxOption(
-                    tuoLang.UseContainersHue,
-                    new Accessor<bool>(
-                        () => profile.Grid_UseContainerHue,
-                        b =>
-                        {
-                            profile.Grid_UseContainerHue = b;
-                            GridContainer.UpdateAllGridContainers();
-                        }
-                    )
+            new VisualContainerProps { LabelText = containerLang.LabelGridContainers, LabelLink = "https://tazuo.org/wiki/tazuogrid-containers/" },
+            OptionTabCommons.StyledWrapPanel(
+                new CheckBoxGroup(
+                    new PropertyBinder(
+                        new Accessor<bool>(() => profile.UseGridLayoutContainerGumps),
+                        tuoLang.EnableGridContainers
+                    ),
+                    OptionsFactory.CreateCheckboxOption(
+                        tuoLang.GridContainersDefaultToOldStyleView,
+                        new Accessor<bool>(() => profile.GridContainersDefaultToOldStyleView)
+                    ),
+                    OptionsFactory.CreateComboBox(
+                        tuoLang.SearchStyle,
+                        profile.GridContainerSearchMode,
+                        [tuoLang.OnlyShow, tuoLang.Highlight],
+                        i => profile.GridContainerSearchMode = i
+                    ),
+                    OptionsFactory.CreateCheckboxOption(
+                        tuoLang.EnableContainerPreview,
+                        new Accessor<bool>(() => profile.GridEnableContPreview),
+                        tuoLang.TooltipPreview
+                    ),
+                    OptionsFactory.CreateCheckboxOption(
+                        tuoLang.MakeAnchorable,
+                        new Accessor<bool>(
+                            () => profile.EnableGridContainerAnchor,
+                            b =>
+                            {
+                                profile.EnableGridContainerAnchor = b;
+                                GridContainer.UpdateAllGridContainers();
+                            }
+                        ),
+                        tuoLang.TooltipGridAnchor
+                    ),
+                    OptionsFactory.CreateCheckboxOption(
+                        tuoLang.GridDisableTargeting,
+                        new Accessor<bool>(() => profile.DisableTargetingGridContainers)
+                    ),
+                    GetGridContainerStylingSection(),
+                    GetGridContainerHighlightingSection()
                 )
             )
+        );
+    }
+
+    private static VisualContainer GetGridContainerStylingSection()
+    {
+        Profile profile = ProfileManager.CurrentProfile;
+        ModernOptionsGumpLanguage lang = Language.Instance.GetModernOptionsGumpLanguage;
+        ModernOptionsGumpLanguage.Containers containerLang = lang.GetContainers;
+        ModernOptionsGumpLanguage.TazUO tuoLang = lang.GetTazUO;
+
+        return new VisualContainer(
+            new VisualContainerProps { LabelText = containerLang.LabelGridContainerStyling },
+            OptionsFactory.CreateComboBox(
+                tuoLang.ContainerStyle,
+                profile.Grid_BorderStyle,
+                Enum.GetNames<GridContainer.BorderStyle>(),
+                i =>
+                {
+                    profile.Grid_BorderStyle = i;
+                    GridContainer.UpdateAllGridContainers();
+                }
+            ),
+            OptionsFactory.CreateSliderOption(
+                tuoLang.GridContainerScale,
+                50,
+                200,
+                profile.GridContainersScale,
+                i => profile.GridContainersScale = (byte)i
+            ),
+            OptionsFactory.CreateCheckboxOption(
+                tuoLang.AlsoScaleItems,
+                new Accessor<bool>(() => profile.GridContainerScaleItems)
+            ),
+            OptionsFactory.CreateSliderOption(
+                tuoLang.GridItemBorderOpacity,
+                0,
+                100,
+                profile.GridBorderAlpha,
+                i =>
+                {
+                    profile.GridBorderAlpha = (byte)i;
+                    GridContainer.GridItem.StaticGridContainerSettingUpdated();
+                }
+            ),
+            OptionsFactory.CreateHuePicker(
+                tuoLang.BorderColor,
+                profile.GridBorderHue,
+                h =>
+                {
+                    profile.GridBorderHue = h;
+                    GridContainer.GridItem.StaticGridContainerSettingUpdated();
+                }
+            ),
+            OptionsFactory.CreateSliderOption(
+                tuoLang.ContainerOpacity,
+                0,
+                100,
+                profile.ContainerOpacity,
+                i =>
+                {
+                    profile.ContainerOpacity = (byte)i;
+                    GridContainer.UpdateAllGridContainers();
+                }
+            ),
+            OptionsFactory.CreateHuePicker(
+                tuoLang.BackgroundColor,
+                profile.AltGridContainerBackgroundHue,
+                h =>
+                {
+                    profile.AltGridContainerBackgroundHue = h;
+                    GridContainer.UpdateAllGridContainers();
+                }
+            ),
+            OptionsFactory.CreateCheckboxOption(
+                tuoLang.UseContainersHue,
+                new Accessor<bool>(
+                    () => profile.Grid_UseContainerHue,
+                    b =>
+                    {
+                        profile.Grid_UseContainerHue = b;
+                        GridContainer.UpdateAllGridContainers();
+                    }
+                )
+            ),
+            OptionsFactory.CreateCheckboxOption(
+                tuoLang.HideBorders,
+                new Accessor<bool>(
+                    () => profile.Grid_HideBorder,
+                    b =>
+                    {
+                        profile.Grid_HideBorder = b;
+                        GridContainer.UpdateAllGridContainers();
+                    }
+                )
+            ),
+            OptionsFactory.CreateSliderOption(
+                tuoLang.DefaultGridRows,
+                1,
+                20,
+                profile.Grid_DefaultRows,
+                i => profile.Grid_DefaultRows = (int)i
+            ),
+            OptionsFactory.CreateSliderOption(
+                tuoLang.DefaultGridColumns,
+                1,
+                20,
+                profile.Grid_DefaultColumns,
+                i => profile.Grid_DefaultColumns = (int)i
+            )
+        );
+    }
+
+    private static VisualContainer GetGridContainerHighlightingSection()
+    {
+        Profile profile = ProfileManager.CurrentProfile;
+        ModernOptionsGumpLanguage lang = Language.Instance.GetModernOptionsGumpLanguage;
+        ModernOptionsGumpLanguage.Containers containerLang = lang.GetContainers;
+        ModernOptionsGumpLanguage.TazUO tuoLang = lang.GetTazUO;
+
+        return new VisualContainer(
+            new VisualContainerProps { LabelText = containerLang.LabelGridContainerHighlighting, LabelLink = "https://tazuo.org/wiki/grid-highlighting/" },
+            OptionsFactory.CreateSliderOption(
+                tuoLang.GridHighlightSize,
+                1,
+                5,
+                profile.GridHighlightSize,
+                i => profile.GridHighlightSize = (int)i
+            ),
+            OptionsFactory.CreateCheckboxOption(
+                tuoLang.GridHighlightProperties,
+                new Accessor<bool>(() => profile.GridHighlightProperties)
+            ),
+            OptionsFactory.CreateCheckboxOption(
+                tuoLang.GridHighlightShowRuleName,
+                new Accessor<bool>(() => profile.GridHighlightShowRuleName)
+            ),
+            new MyraButton(tuoLang.GridHighlightSettings, () => GridHighlightMenu.Open(World.Instance))
         );
     }
 }

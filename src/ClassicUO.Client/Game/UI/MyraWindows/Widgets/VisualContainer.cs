@@ -9,6 +9,7 @@ public record struct VisualContainerProps()
 {
     public Orientation Orientation { get; init; } = Orientation.Vertical;
     public string LabelText { get; init; } = null;
+    public string LabelLink { get; init; } = null;
 }
 
 public class VisualContainer : Container
@@ -17,7 +18,10 @@ public class VisualContainer : Container
     {
         if (!string.IsNullOrWhiteSpace(props.LabelText))
         {
-            Children.Add(new MyraLabel(props.LabelText, MyraLabel.TextStyle.P));
+            if (string.IsNullOrWhiteSpace(props.LabelLink))
+                Children.Add(new MyraLabel(props.LabelText, MyraLabel.TextStyle.P));
+            else
+                Children.Add(new LinkLabel(props.LabelText, props.LabelLink, MyraLabel.TextStyle.P));
             Children.Add(new MyraSpacer(0, 2));
         }
 

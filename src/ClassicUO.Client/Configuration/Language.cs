@@ -389,6 +389,8 @@ namespace ClassicUO.Configuration
 
         public class Containers
         {
+            public string LabelGridContainerStyling { get; set; } = "Grid Container Styling";
+            public string LabelGridContainerHighlighting { get; set; } = "Grid Container Highlighting";
             public string LabelOriginalContainers { get; set; } = "Original Containers";
             public string LabelGridContainers { get; set; } = "Grid Containers";
             public string Description { get; set; } = "These settings are for original container gumps, for grid container settings visit the TazUO section";

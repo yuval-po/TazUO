@@ -362,7 +362,11 @@ public class MyraControl : IGui
         if (!IsVisible || !IsEnabled || IsDisposed || !AcceptMouseInput)
             return;
 
-        if (Bounds.Contains(position.X, position.Y) || Contains(position.X, position.Y))
+        if (
+            _rootWindow?.HitTest(position) != null ||
+            Bounds.Contains(position.X, position.Y) ||
+            Contains(position.X, position.Y)
+        )
         {
             res = this;
             OnHitTestSuccess(position.X, position.Y, ref res);

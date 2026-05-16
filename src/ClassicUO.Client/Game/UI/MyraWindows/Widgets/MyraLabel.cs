@@ -5,7 +5,7 @@ using Myra.Graphics2D.UI.Styles;
 
 namespace ClassicUO.Game.UI.MyraWindows.Widgets;
 
-public sealed class MyraLabel : Label
+public class MyraLabel : Label
 {
     public MyraLabel(string text, int fontSize)
     {
