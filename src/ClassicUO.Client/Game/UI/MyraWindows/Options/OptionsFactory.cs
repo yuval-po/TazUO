@@ -20,6 +20,9 @@ public static class OptionsFactory
     internal static OptionItem CreateCheckboxOption(string label, Accessor<bool> backingProperty, string? tooltip = null) =>
         new(label, () => MyraCheckButton.CreatePropBoundCheckButton(backingProperty, label, tooltip));
 
+    internal static OptionItem PropBoundSliderOption(string label, Accessor<float> backingProperty, float min, float max) =>
+        CreateSliderOption(label, min, max, backingProperty.Get(), backingProperty.Set);
+
     internal static OptionItem CreateSliderOption(string label, float min, float max, float value,
         Action<float> onChange) =>
         new(label, () => LabeledHorizontalSlider.SliderWithLabel(label, out _, onChange, min, max, value));

@@ -94,6 +94,7 @@ namespace ClassicUO.Configuration
         public string LabelViewport { get; set; } = "Viewport";
         public string LabelSpells { get; set; } = "Spells";
         public string LabelSpeech { get; set; } = "Speech";
+        public string LabelChat { get; set; } = "Chat";
         public string LabelHue { get; set; } = "Hue";
         public string LabelTooltips { get; set; } = "Tooltips";
         public string LabelCounters { get; set; } = "Counters";

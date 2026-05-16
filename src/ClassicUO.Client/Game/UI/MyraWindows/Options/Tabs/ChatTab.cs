@@ -1,12 +1,33 @@
+using System;
 using ClassicUO.Common;
 using ClassicUO.Configuration;
+using ClassicUO.Game.UI.Gumps;
 using ClassicUO.Game.UI.MyraWindows.Widgets;
 
 namespace ClassicUO.Game.UI.MyraWindows.Options.Tabs;
 
-public static class SpeechTab
+public static class ChatTab
 {
     internal static OptionItem GetContent()
+    {
+        ModernOptionsGumpLanguage gumpLang = Language.Instance.GetModernOptionsGumpLanguage;
+        return new OptionItem(gumpLang.LabelChat, GetChatMenuTabs);
+    }
+
+    private static MyraTabControl GetChatMenuTabs()
+    {
+        ModernOptionsGumpLanguage gumpLang = Language.Instance.GetModernOptionsGumpLanguage;
+        ModernOptionsGumpLanguage.TazUO tuoLang = Language.Instance.GetModernOptionsGumpLanguage.GetTazUO;
+
+        var tabs = new MyraTabControl();
+        tabs.AddTab(gumpLang.LabelSpeech, GetSpeechSubTabContent);
+        tabs.AddTab(tuoLang.Journal, GetJournalSubTabContent);
+        return tabs;
+    }
+
+    #region Speech
+
+    private static OptionItem GetSpeechSubTabContent()
     {
         Profile profile = ProfileManager.CurrentProfile;
         ModernOptionsGumpLanguage lang = Language.Instance.GetModernOptionsGumpLanguage;
@@ -15,7 +36,6 @@ public static class SpeechTab
             lang.LabelSpeech,
             () => OptionTabCommons.StyledWrapPanel(
                 GetDelaySection(),
-                OptionsFactory.CreateCheckboxOption(lang.GetSpeech.SaveJournalE, new Accessor<bool>(() => profile.SaveJournalToFile)),
                 OptionsFactory.CreateSpacer(),
                 GetActivationSection(),
                 OptionsFactory.CreateSpacer(),
@@ -68,4 +88,71 @@ public static class SpeechTab
             OptionsFactory.CreateHuePicker(lang.GetSpeech.CharColor, profile.ChatMessageHue, b => profile.ChatMessageHue = b)
         );
     }
+
+    #endregion
+
+    #region Jouranl
+
+    private static VisualContainer GetJournalSubTabContent()
+    {
+        Profile profile = ProfileManager.CurrentProfile;
+        ModernOptionsGumpLanguage.TazUO tuoLang = Language.Instance.GetModernOptionsGumpLanguage.GetTazUO;
+        ModernOptionsGumpLanguage.Speech speechLang = Language.Instance.GetModernOptionsGumpLanguage.GetSpeech;
+
+        return new VisualContainer(
+            new VisualContainerProps { LabelText = tuoLang.Journal, LabelLink = "https://tazuo.org/wiki/tazuojournal/" },
+            OptionsFactory.CreateSliderOption(
+                tuoLang.MaxJournalEntries,
+                100,
+                2000,
+                profile.MaxJournalEntries,
+                newValue => profile.MaxJournalEntries = (int)newValue
+            ),
+            OptionsFactory.CreateSliderOption(
+                tuoLang.JournalOpacity,
+                0,
+                100,
+                profile.JournalOpacity,
+                newValue =>
+                {
+                    profile.JournalOpacity = (byte)newValue;
+                    ResizableJournal.UpdateJournalOptions();
+                }
+            ),
+            OptionsFactory.CreateComboBox(
+                tuoLang.JournalStyle,
+                profile.JournalStyle,
+                Enum.GetNames<ResizableJournal.BorderStyle>(),
+                newValue => profile.JournalStyle = newValue
+            ),
+            OptionsFactory.CreateHuePicker(
+                tuoLang.JournalBackgroundColor,
+                profile.AltJournalBackgroundHue,
+                h =>
+                {
+                    profile.AltJournalBackgroundHue = h;
+                    ResizableJournal.UpdateJournalOptions();
+                }
+            ),
+            OptionsFactory.CreateCheckboxOption(tuoLang.JournalHideBorders, new Accessor<bool>(() => profile.HideJournalBorder)),
+            OptionsFactory.CreateCheckboxOption(tuoLang.HideTimestamp, new Accessor<bool>(() => profile.HideJournalTimestamp)),
+            OptionsFactory.CreateCheckboxOption(tuoLang.JournalHideSystemPrefix, new Accessor<bool>(() => profile.HideJournalSystemPrefix)),
+            OptionsFactory.CreateCheckboxOption(tuoLang.MakeAnchorable, new Accessor<bool>(() => profile.JournalAnchorEnabled)),
+            OptionsFactory.CreateCheckboxOption(speechLang.SaveJournalE, new Accessor<bool>(() => profile.SaveJournalToFile))
+        );
+    }
+
+    #endregion
 }
+
+/*
+ *  new ComboBoxWithLabel
+                  (World,
+                      lang.GetTazUO.JournalStyle, 0, ThemeSettings.COMBO_BOX_WIDTH,
+                      Enum.GetNames(typeof(ResizableJournal.BorderStyle)), profile.JournalStyle, (i, s) =>
+                      {
+                          profile.JournalStyle = i;
+                          ResizableJournal.UpdateJournalOptions();
+                      }
+                  ),
+*/

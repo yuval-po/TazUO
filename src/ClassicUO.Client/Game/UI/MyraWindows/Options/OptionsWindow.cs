@@ -104,7 +104,7 @@ public class OptionsWindow : MyraControl
         SetupVideo();
         SetupInfoBarOptions();
         SetupTooltipOptions();
-        SetupSpeechOptions();
+        SetupChatOptions();
         SetupCombatOptions();
         SetupCounterOptions();
         SetupContainerOptions();
@@ -829,15 +829,15 @@ public class OptionsWindow : MyraControl
         opt.Add(TooltipsTab.GetContent());
     }
 
-    private void SetupSpeechOptions()
+    private void SetupChatOptions()
     {
-        const string speechKey = "Speech";
+        const string speechKey = "Chat";
 
         if (!_options.ContainsKey(speechKey))
             _options.Add(speechKey, []);
         List<OptionItem> opt = _options[speechKey];
 
-        opt.Add(SpeechTab.GetContent());
+        opt.Add(ChatTab.GetContent());
     }
 
     private void SetupCombatOptions()
