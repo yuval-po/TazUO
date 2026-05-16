@@ -306,6 +306,8 @@ namespace ClassicUO.Configuration
 
         public class ToolTips
         {
+            public string LabelTooltipOverrides { get; set; } = "Tooltip Overrides";
+            public string LabelOpenOverridesConfig { get; set; } = "Open Overrides Config";
             public string EnableToolTips { get; set; } = "Enable tooltips";
             public string ToolTipDelay { get; set; } = "Tooltip delay";
             public string ToolTipBG { get; set; } = "Tooltip background opacity";
@@ -391,8 +393,8 @@ namespace ClassicUO.Configuration
         {
             public string LabelGridContainerStyling { get; set; } = "Grid Container Styling";
             public string LabelGridContainerHighlighting { get; set; } = "Grid Container Highlighting";
-            public string LabelOriginalContainers { get; set; } = "Original Containers";
-            public string LabelGridContainers { get; set; } = "Grid Containers";
+            public string LabelOriginalContainers { get; set; } = "Original";
+            public string LabelGridContainers { get; set; } = "Grid";
             public string Description { get; set; } = "These settings are for original container gumps, for grid container settings visit the TazUO section";
             public string CharacterBackpackStyle { get; set; } = "Character backpack style";
             public string BackpackOpt_Default { get; set; } = "Default";

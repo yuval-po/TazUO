@@ -80,6 +80,9 @@ public static class OptionsFactory
             return textureButton.PlaceBefore(new MyraLabel(label, MyraLabel.TextStyle.P));
         });
 
+    internal static OptionItem PropBoundInputField(string label, Accessor<string> backingProp, string? tooltip = null) =>
+        CreateInputField(label, backingProp.Get(), backingProp.Set, tooltip);
+
     internal static OptionItem CreateInputField(string label, string text, Action<string> onChange, string? tooltip = null) => new(label, () =>
     {
         WrapPanel wid = MyraInputBox.LabeledHorizontalStackPanel(label, out MyraInputBox inputBox, text: text, tooltip: tooltip);

@@ -1,5 +1,7 @@
 using ClassicUO.Common;
 using ClassicUO.Configuration;
+using ClassicUO.Game.Managers;
+using ClassicUO.Game.UI.Gumps;
 using ClassicUO.Game.UI.MyraWindows.Widgets;
 using Myra.Graphics2D.UI;
 
@@ -40,7 +42,13 @@ public static class TooltipsTab
             OptionsFactory.PropBoundHuePicker(tooltipLang.ToolTipFont, new Accessor<ushort>(() => profile.TooltipTextHue)),
             OptionsFactory.PropBoundHuePicker(tuoMiscLang.BackgroundHue, new Accessor<ushort>(() => profile.ToolTipBGHue)),
             OptionsFactory.CreateCheckboxOption(tuoMiscLang.AlignTooltipsToTheLeftSide, new Accessor<bool>(() => profile.LeftAlignToolTips)),
-            OptionsFactory.CreateCheckboxOption(tuoMiscLang.AlignMobileTooltipsToCenter, new Accessor<bool>(() => profile.ForceCenterAlignTooltipMobiles))
+            OptionsFactory.CreateCheckboxOption(tuoMiscLang.AlignMobileTooltipsToCenter, new Accessor<bool>(() => profile.ForceCenterAlignTooltipMobiles)),
+            OptionsFactory.CreateCheckboxOption(tuoMiscLang.ForcedTooltips, new Accessor<bool>(() => profile.ForceTooltipsOnOldClients)),
+            OptionsFactory.PropBoundInputField(tuoMiscLang.HeaderFormatItemName, new Accessor<string>(() => profile.TooltipHeaderFormat)),
+            new VisualContainer(
+                new VisualContainerProps { LabelText = tooltipLang.LabelTooltipOverrides, LabelLink = "https://tazuo.org/wiki/tooltip-override/" },
+                new MyraButton(tooltipLang.LabelOpenOverridesConfig, () => UIManager.Add(new TooltipConfigGump()))
+            )
         ];
     }
 }
