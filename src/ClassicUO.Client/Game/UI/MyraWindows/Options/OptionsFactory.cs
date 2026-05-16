@@ -53,20 +53,31 @@ public static class OptionsFactory
         return new OptionItem(label, () => new MyraLabel(label, MyraLabel.TextStyle.P).PlaceBefore(comboView));
     }
 
-    internal static OptionItem CreateHuePicker(string label, ushort hue, Action<ushort> onChange) =>
+    internal static OptionItem PropBoundHuePicker(string label, Accessor<ushort> backingProperty) =>
+        CreateHuePicker(label, backingProperty.Get(), backingProperty.Set, 20);
+
+    internal static OptionItem CreateHuePicker(string label, ushort hue, Action<ushort> onChange, int maxSize = 36) =>
         new(label, () =>
         {
-            var item = new MyraArtTexture(0x0FAB) { Tooltip = $"Current hue: {hue}" };
-            item.TouchUp += (_, _) =>
+            var textureButton = new MyraArtTexture(0x0FAB, hue, maxSize) { Tooltip = $"Current hue: {hue}" };
+            textureButton.TouchUp += (_, _) =>
             {
-                if (!item.Enabled)
+                if (!textureButton.Enabled)
                     return;
 
                 UIManager.GetGump<ModernColorPicker>()?.Dispose();
-                UIManager.Add(new ModernColorPicker(World.Instance, onChange));
+                UIManager.Add(new ModernColorPicker(
+                    World.Instance,
+                    newHue =>
+                    {
+                        textureButton.SetColorByHue(newHue);
+                        onChange(newHue);
+                    },
+                    isClickable: true
+                ));
             };
 
-            return item.PlaceBefore(new MyraLabel(label, MyraLabel.TextStyle.P));
+            return textureButton.PlaceBefore(new MyraLabel(label, MyraLabel.TextStyle.P));
         });
 
     internal static OptionItem CreateInputField(string label, string text, Action<string> onChange, string? tooltip = null) => new(label, () =>

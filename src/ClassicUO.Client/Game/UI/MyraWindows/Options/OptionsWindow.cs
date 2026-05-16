@@ -1147,25 +1147,7 @@ public class OptionsWindow : MyraControl
             _options.Add(tooltipKey, []);
         List<OptionItem> opt = _options[tooltipKey];
 
-        opt.Add(
-            new OptionItem(
-                lang.LabelTooltips,
-                () => new CheckBoxGroup(
-                    new PropertyBinder(new Accessor<bool>(() => profile.UseTooltip), lang.GetToolTips.EnableToolTips),
-                    OptionsFactory.CreateSliderOption(
-                        lang.GetToolTips.ToolTipDelay, 0, 1000, profile.TooltipDelayBeforeDisplay,
-                        f => profile.TooltipDelayBeforeDisplay = (int)f
-                    ),
-                    OptionsFactory.CreateSliderOption(
-                        lang.GetToolTips.ToolTipBG, 0, 100, profile.TooltipBackgroundOpacity,
-                        f => profile.TooltipBackgroundOpacity = (int)f
-                    ),
-                    OptionsFactory.CreateHuePicker(
-                        lang.GetToolTips.ToolTipFont, profile.TooltipTextHue, h => profile.TooltipTextHue = h
-                    )
-                )
-            )
-        );
+        opt.Add(TooltipsTab.GetContent());
     }
 
     private void SetupSpeechOptions()

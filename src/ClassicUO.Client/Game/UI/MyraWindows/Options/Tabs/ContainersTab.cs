@@ -15,14 +15,17 @@ public static class ContainersTab
     internal static OptionItem GetContent()
     {
         ModernOptionsGumpLanguage lang = Language.Instance.GetModernOptionsGumpLanguage;
+        return new OptionItem(lang.LabelContainers, GetContainerMenuTabs);
+    }
 
-        return new OptionItem(
-            lang.LabelContainers,
-            () => OptionTabCommons.StyledWrapPanel(
-                GetStandardContainerSection(),
-                GetGridContainerSection()
-            )
-        );
+    private static MyraTabControl GetContainerMenuTabs()
+    {
+        ModernOptionsGumpLanguage.Containers containerLang = Language.Instance.GetModernOptionsGumpLanguage.GetContainers;
+
+        var tabs = new MyraTabControl();
+        tabs.AddTab(containerLang.LabelOriginalContainers, GetStandardContainerSection);
+        tabs.AddTab(containerLang.LabelGridContainers, GetGridContainerSection);
+        return tabs;
     }
 
     private static VisualContainer GetStandardContainerSection()
