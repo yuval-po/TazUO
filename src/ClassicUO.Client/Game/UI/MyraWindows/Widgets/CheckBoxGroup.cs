@@ -39,6 +39,7 @@ public class CheckBoxGroup : Panel
             OnPrimaryCheckBoxChanged,
             _primaryControlProp.Label
         );
+        primaryCheckBox.Margin = new Thickness(0, 0, 0, 8);
 
         _primaryPanel.Widgets.Add(primaryCheckBox);
         _primaryPanel.Widgets.Add(_dependentsPanel);

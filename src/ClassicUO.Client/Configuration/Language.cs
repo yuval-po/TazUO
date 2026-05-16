@@ -90,6 +90,7 @@ namespace ClassicUO.Configuration
         public string ButtonLighting { get; set; } = "Lighting";
         public string ButtonShadows { get; set; } = "Shadows";
 
+        public string LabelVideo { get; set; } = "Video";
         public string LabelViewport { get; set; } = "Viewport";
         public string LabelSpells { get; set; } = "Spells";
         public string LabelSpeech { get; set; } = "Speech";
@@ -254,6 +255,9 @@ namespace ClassicUO.Configuration
         public class Video
         {
             #region GameWindow
+            public string EnablePostProcessing { get; set; } = "Enable post processing effects";
+            public string PostProcessingEffectType { get; set; } = "Processing type";
+            public string LabelRenderer { get; set; } = "Renderer";
             public string FPSCap { get; set; } = "FPS Cap";
             public string BackgroundFPS { get; set; } = "Reduce FPS when game is not in focus";
             public string EnableVSync { get; set; } = "Enable VSync";
@@ -267,6 +271,7 @@ namespace ClassicUO.Configuration
             #endregion
 
             #region Zoom
+            public string Zoom { get; set; } = "Zoom";
             public string DefaultZoom { get; set; } = "Default zoom";
             public string ZoomWheel { get; set; } = "Enable zooming with ctrl + mousewheel";
             public string ReturnDefaultZoom { get; set; } = "Return to default zoom after ctrl is released";
@@ -276,6 +281,7 @@ namespace ClassicUO.Configuration
             public string AltLights { get; set; } = "Alternative lights";
             public string CustomLLevel { get; set; } = "Custom light level";
             public string Level { get; set; } = "Light level";
+            public string LabelLighting { get; set; } = "Lighting";
             public string LightType { get; set; } = "Light level type";
             public string LightType_Absolute { get; set; } = "Absolute";
             public string LightType_Minimum { get; set; } = "Minimum";
