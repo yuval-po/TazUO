@@ -329,7 +329,7 @@ namespace ClassicUO.Game.UI.Gumps
             Add(_paperDollInteractable);
 
             if (showPaperdollBooks)
-                AddPaperdollBooks(showPaperdollBooks);
+                AddPaperdollBooks(showRacialAbilitiesBook);
 
             Mobile mob = World.Mobiles.Get(LocalSerial);
             // Name and title
