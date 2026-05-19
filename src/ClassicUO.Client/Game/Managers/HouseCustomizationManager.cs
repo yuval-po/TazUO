@@ -7,9 +7,8 @@ using System.Linq;
 using ClassicUO.Assets;
 using ClassicUO.Game.Data;
 using ClassicUO.Game.GameObjects;
-using ClassicUO.Game.Scenes;
 using ClassicUO.Game.UI.Gumps;
-using ClassicUO.IO;
+using ClassicUO.Input;
 using ClassicUO.Network;
 using Microsoft.Xna.Framework;
 
@@ -736,7 +735,9 @@ namespace ClassicUO.Game.Managers
             switch (type)
             {
                 case CUSTOM_HOUSE_BUILD_TYPE.CHBT_STAIR:
-                    EraseStair(place, house, foundationItem, z);
+                    // When holding Ctrl, we delete only the specific stair piece, otherwise, we delete the entire stair group
+                    // This preserves existing, most-compatible behavior while still supporting newer servers that allow for individual pieces to be removed.
+                    EraseStair(place, house, foundationItem, z, !Keyboard.Ctrl);
                     break;
                 case CUSTOM_HOUSE_BUILD_TYPE.CHBT_ROOF:
                     EraseRoof(place, foundationItem, z);
@@ -750,14 +751,20 @@ namespace ClassicUO.Game.Managers
         }
 
         /// <summary>
-        /// Erases a stair component, potentially deleting the entire stair group if requested.
+        ///     Erases a stair component, potentially deleting the entire stair group if requested.
         /// </summary>
         /// <param name="place">The targeted stair piece.</param>
         /// <param name="house">The house object.</param>
         /// <param name="foundationItem">The foundation item.</param>
         /// <param name="z">The relative Z coordinate for erasure.</param>
-        /// <param name="deleteEntireGroup">If true, attempts to find and delete all connected stair pieces.</param>
-        private void EraseStair(GameObject place, House house, Item foundationItem, int z, bool deleteEntireGroup = false)
+        /// <param name="deleteEntireGroup">
+        ///     <para>If true, attempts to find and delete all connected stair pieces.</para>
+        ///     <para>
+        ///         Note that this logic has a "life of its own" and may not always behave the same way.
+        ///         Something to improve upon, perhaps.
+        ///     </para>
+        /// </param>
+        private void EraseStair(GameObject place, House house, Item foundationItem, int z, bool deleteEntireGroup = true)
         {
             List<Multi> stairPieces;
 
