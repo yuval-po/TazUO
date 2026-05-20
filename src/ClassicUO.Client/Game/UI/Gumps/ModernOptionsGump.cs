@@ -16,6 +16,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using ClassicUO.Common.Enums;
+using ClassicUO.Game.Managers.SpellVisualRange;
 using ClassicUO.Game.UI.Gumps.GridHighLight;
 using static ClassicUO.Configuration.ProfileManager;
 
