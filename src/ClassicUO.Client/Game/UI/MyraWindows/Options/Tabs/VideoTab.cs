@@ -5,6 +5,7 @@ using ClassicUO.Game.Scenes;
 using ClassicUO.Game.UI.Gumps;
 using ClassicUO.Game.UI.MyraWindows.Widgets;
 using Microsoft.Xna.Framework;
+using Myra.Graphics2D.UI;
 using Myra.Graphics2D.UI.WrapPanel;
 
 namespace ClassicUO.Game.UI.MyraWindows.Options.Tabs;
@@ -125,6 +126,7 @@ public static class VideoTab
         tabs.AddTab(videoLang.Zoom, GetZoomSubTabContent);
         tabs.AddTab(videoLang.LabelLighting, GetLightningSubTabContent);
         tabs.AddTab(gumpLang.ButtonShadows, GetShadowSubTabContent);
+        tabs.AddTab(gumpLang.ButtonScaling, GetScalingSubTabContent);
         tabs.AddTab(gumpLang.ButtonMisc, GetMiscSubTabContent);
         return tabs;
     }
@@ -321,6 +323,50 @@ public static class VideoTab
                     {
                         profile.PostProcessingType = (ushort)i;
                         GameScene.Instance?.SetPostProcessingSettings();
+                    }
+                )
+            )
+        );
+    }
+
+    private static VisualContainer GetScalingSubTabContent()
+    {
+        Profile profile = ProfileManager.CurrentProfile;
+        ModernOptionsGumpLanguage lang = Language.Instance.GetModernOptionsGumpLanguage;
+        ModernOptionsGumpLanguage.Video videoLang = Language.Instance.GetModernOptionsGumpLanguage.GetVideo;
+
+        float? previousScale = null;
+        float? scale = null;
+
+        return new VisualContainer(
+            new VisualContainerProps { LabelText = lang.ButtonScaling, LabelLink = "https://tazuo.org/wiki/tazuoglobal-scaling/" },
+            OptionsFactory.CreateSliderOption(
+                videoLang.PaperdollScaling,
+                50,
+                300,
+                (int)(profile.PaperdollScale * 100),
+                f => profile.PaperdollScale = f / 100
+            ),
+            OptionTabCommons.StyledStackPanel(
+                Orientation.Horizontal,
+                OptionsFactory.CreateSliderOption(
+                    videoLang.GlobalScaling,
+                    50,
+                    175,
+                    Client.Game.RenderScale * 100,
+                    newValue => scale = Math.Clamp(newValue / 100, 0.5f, 1.75f)
+                ),
+                // Apply button for renderer (global) scale
+                new MyraButton(
+                    lang.Apply,
+                    () =>
+                    {
+                        if (scale == null || scale.Equals(previousScale))
+                            return;
+
+                        previousScale = scale;
+                        Client.Game.SetScale(scale.Value);
+                        Client.Settings.SetAsync(SettingsScope.Global, Constants.SqlSettings.GAME_SCALE, scale);
                     }
                 )
             )

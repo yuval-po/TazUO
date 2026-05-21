@@ -89,12 +89,15 @@ namespace ClassicUO
             SDL.SDL_StartTextInput(Window.Handle);
         }
 
-        private float _renderScale = 1f;
+        public const float MIN_RENDER_SCALE = 0.1f;
+        public const float MAX_RENDER_SCALE = 1.75f;
+
         public float RenderScale
         {
-            get => _renderScale;
-            set => _renderScale = Math.Max(value, 0.1f);
-        }
+            get;
+            set => field = Math.Clamp(value, MIN_RENDER_SCALE, MAX_RENDER_SCALE);
+        } = 1f;
+
         public Scene Scene { get; private set; }
         public AudioManager Audio { get; private set; }
         public UltimaOnline UO { get; } = new UltimaOnline();

@@ -1616,7 +1616,7 @@ def Msg(message: "str") -> None:
      Say a message outloud.
      Example:
      ```py
-     API.Say("Hello friend!")
+     API.Msg("Hello friend!")
      ```
     
     """

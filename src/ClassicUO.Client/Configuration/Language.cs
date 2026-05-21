@@ -65,7 +65,7 @@ namespace ClassicUO.Configuration
     {
         public string OptionsTitle { get; set; } = "Options";
         public string Search { get; set; } = "Search";
-
+        public string Apply { get; set; } = "Apply";
         public string ButtonGeneral { get; set; } = "General";
         public string ButtonSound { get; set; } = "Sound";
         public string ButtonVideo { get; set; } = "Video";
@@ -89,6 +89,7 @@ namespace ClassicUO.Configuration
         public string ButtonZoom { get; set; } = "Zoom";
         public string ButtonLighting { get; set; } = "Lighting";
         public string ButtonShadows { get; set; } = "Shadows";
+        public string ButtonScaling { get; set; } = "Scaling";
 
         public string LabelVideo { get; set; } = "Video";
         public string LabelViewport { get; set; } = "Viewport";
@@ -302,6 +303,13 @@ namespace ClassicUO.Configuration
             public string EnableShadows { get; set; } = "Enable shadows";
             public string RockTreeShadows { get; set; } = "Rock and tree shadows";
             public string TerrainShadowLevel { get; set; } = "Terrain shadow level";
+            #endregion
+
+            #region Scaling
+
+            public string PaperdollScaling { get; set; } = "Paperdoll scaling";
+            public string GlobalScaling { get; set; } = "Global scaling";
+
             #endregion
         }
 

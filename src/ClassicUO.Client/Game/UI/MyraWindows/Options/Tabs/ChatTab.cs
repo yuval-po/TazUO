@@ -31,6 +31,7 @@ public static class ChatTab
     {
         Profile profile = ProfileManager.CurrentProfile;
         ModernOptionsGumpLanguage lang = Language.Instance.GetModernOptionsGumpLanguage;
+        ModernOptionsGumpLanguage.TazUO tuoLang = Language.Instance.GetModernOptionsGumpLanguage.GetTazUO;
 
         return new OptionItem(
             lang.LabelSpeech,
@@ -42,6 +43,7 @@ public static class ChatTab
                 OptionsFactory.CreateCheckboxOption(lang.GetSpeech.ChatGradient, new Accessor<bool>(() => profile.HideChatGradient)),
                 OptionsFactory.CreateCheckboxOption(lang.GetSpeech.HideGuildChat, new Accessor<bool>(() => profile.IgnoreGuildMessages)),
                 OptionsFactory.CreateCheckboxOption(lang.GetSpeech.HideAllianceChat, new Accessor<bool>(() => profile.IgnoreAllianceMessages)),
+                OptionsFactory.CreateCheckboxOption(tuoLang.DisableSystemChat, new Accessor<bool>(() => profile.DisableSystemChat)),
                 OptionsFactory.CreateSpacer(),
                 GetColorSection()
             )
