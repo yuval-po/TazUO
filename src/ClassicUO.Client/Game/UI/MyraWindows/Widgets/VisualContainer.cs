@@ -5,11 +5,20 @@ using Myra.Graphics2D.UI;
 
 namespace ClassicUO.Game.UI.MyraWindows.Widgets;
 
+public enum VisualContainerSpacing
+{
+    Standard,
+    Dense,
+    Comfortable,
+    Sparse
+}
+
 public record struct VisualContainerProps()
 {
     public Orientation Orientation { get; init; } = Orientation.Vertical;
     public string LabelText { get; init; } = null;
     public string LabelLink { get; init; } = null;
+    public VisualContainerSpacing? Spacing { get; init; } = VisualContainerSpacing.Comfortable;
 }
 
 public class VisualContainer : Container
@@ -21,7 +30,7 @@ public class VisualContainer : Container
             if (string.IsNullOrWhiteSpace(props.LabelLink))
                 Children.Add(new MyraLabel(props.LabelText, MyraLabel.TextStyle.P));
             else
-                Children.Add(new LinkLabel(props.LabelText, props.LabelLink, MyraLabel.TextStyle.P));
+                Children.Add(new LinkLabel(props.LabelText, props.LabelLink));
             Children.Add(new MyraSpacer(0, 2));
         }
 
@@ -33,7 +42,16 @@ public class VisualContainer : Container
         Background = new SolidBrush(new Color(0, 0, 0, 25));
         Border = new SolidBrush(new Color(0, 0, 0, 75));
         BorderThickness = new Thickness(2);
-        ChildrenLayout = new StackPanelLayout(props.Orientation) { Spacing = MyraStyle.STANDARD_SPACING };
+
+        int spacing = props.Spacing switch
+        {
+            VisualContainerSpacing.Dense => 2,
+            VisualContainerSpacing.Comfortable => 4,
+            VisualContainerSpacing.Sparse => 8,
+            _ => MyraStyle.STANDARD_SPACING
+        };
+
+        ChildrenLayout = new StackPanelLayout(props.Orientation) { Spacing = spacing };
     }
 
     public void Add(params Widget[] widgets)

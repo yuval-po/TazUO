@@ -1,7 +1,7 @@
 #nullable enable
 using System;
-using Myra.Graphics2D.UI;
 using Myra.Graphics2D;
+using Myra.Graphics2D.UI;
 
 namespace ClassicUO.Game.UI.MyraWindows.Widgets;
 
@@ -11,14 +11,14 @@ public class MyraButton : Button
 
     public string Text { get; }
 
-    public MyraButton(string text, Action? onClick = null)
+    public MyraButton(string text, Action? onClick = null, MyraLabel.TextStyle style = MyraLabel.TextStyle.P)
     {
         _onClick = onClick;
         Text = text;
         Margin = new Thickness(2);
         VerticalAlignment = VerticalAlignment.Center;
 
-        Build();
+        Build(style);
     }
 
     public override void OnTouchDown()
@@ -27,5 +27,5 @@ public class MyraButton : Button
         _onClick?.Invoke();
     }
 
-    private void Build() => Content = new MyraLabel(Text, MyraLabel.TextStyle.P);
+    private void Build(MyraLabel.TextStyle style) => Content = new MyraLabel(Text, style);
 }

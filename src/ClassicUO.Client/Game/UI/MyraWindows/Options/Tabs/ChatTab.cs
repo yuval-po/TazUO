@@ -35,7 +35,7 @@ public static class ChatTab
 
         return new OptionItem(
             lang.LabelSpeech,
-            () => OptionTabCommons.StyledWrapPanel(
+            () => OptionTabCommons.StyledVerticalWrapPanel(
                 GetDelaySection(),
                 OptionsFactory.CreateSpacer(),
                 GetActivationSection(),

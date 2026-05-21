@@ -89,13 +89,13 @@ namespace ClassicUO
             SDL.SDL_StartTextInput(Window.Handle);
         }
 
-        public const float MIN_RENDER_SCALE = 0.1f;
-        public const float MAX_RENDER_SCALE = 1.75f;
+        public readonly float MinRenderScale = 0.1f;
+        public readonly float MaxRenderScale = 1.75f;
 
         public float RenderScale
         {
             get;
-            set => field = Math.Clamp(value, MIN_RENDER_SCALE, MAX_RENDER_SCALE);
+            set => field = Math.Clamp(value, MinRenderScale, MaxRenderScale);
         } = 1f;
 
         public Scene Scene { get; private set; }

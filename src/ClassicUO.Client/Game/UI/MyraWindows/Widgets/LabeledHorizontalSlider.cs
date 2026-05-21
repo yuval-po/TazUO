@@ -99,7 +99,13 @@ public class LabeledHorizontalSlider : Grid
 
     public static LabeledHorizontalSlider CreateSliderWithCallback(float min, float max, float value, Action<float>? onChanged)
     {
-        var slider = new LabeledHorizontalSlider { Minimum = min, Maximum = max, Value = value };
+        var slider = new LabeledHorizontalSlider
+        {
+            Minimum = min,
+            Maximum = max,
+            Value = value,
+            VerticalAlignment = VerticalAlignment.Center
+        };
 
         if (onChanged != null)
             slider.ValueChangedByUser += (_, _) => onChanged(Math.Clamp(slider.Value, min, max));
@@ -110,7 +116,7 @@ public class LabeledHorizontalSlider : Grid
     public static HorizontalStackPanel SliderWithLabel(string label, out LabeledHorizontalSlider slider, Action<float>? onChanged = null, float min = 0f,
         float max = 100f, float value = 0f)
     {
-        HorizontalStackPanel stack = new();
+        HorizontalStackPanel stack = new() { VerticalAlignment = VerticalAlignment.Center };
         LabeledHorizontalSlider s = slider = CreateSliderWithCallback(min, max, value, onChanged);
         stack.Widgets.Add(s);
         stack.Widgets.Add(new MyraLabel(label, MyraLabel.TextStyle.P));

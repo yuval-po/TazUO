@@ -22,7 +22,7 @@ public class MyraLabel : Label
         VerticalAlignment = VerticalAlignment.Center;
 
         var styleSheet = Stylesheet.Current.LabelStyle.Clone() as LabelStyle;
-        if(styleSheet == null) return;
+        if (styleSheet == null) return;
 
         switch (style)
         {
@@ -35,6 +35,18 @@ public class MyraLabel : Label
             case TextStyle.H3:
                 styleSheet.Font = TrueTypeLoader.Instance.GetFont(EmbeddedFontNames.ROBOTO, 18);
                 styleSheet.Padding = new Thickness(4, 2);
+                break;
+            case TextStyle.H4:
+                styleSheet.Font = TrueTypeLoader.Instance.GetFont(EmbeddedFontNames.ROBOTO, 16);
+                styleSheet.Padding = new Thickness(3, 1);
+                break;
+            case TextStyle.H5:
+                styleSheet.Font = TrueTypeLoader.Instance.GetFont(EmbeddedFontNames.ROBOTO, 14);
+                styleSheet.Padding = new Thickness(3, 1);
+                break;
+            case TextStyle.H6:
+                styleSheet.Font = TrueTypeLoader.Instance.GetFont(EmbeddedFontNames.ROBOTO, 12);
+                styleSheet.Padding = new Thickness(2, 0);
                 break;
             case TextStyle.TableHeader:
                 styleSheet.Font = TrueTypeLoader.Instance.GetFont(EmbeddedFontNames.ROBOTO_BOLD, 16);
@@ -53,7 +65,7 @@ public class MyraLabel : Label
         {
             AlignMode.Center => HorizontalAlignment.Center,
             AlignMode.Right => HorizontalAlignment.Right,
-            _ => HorizontalAlignment.Left,
+            _ => HorizontalAlignment.Left
         };
     }
 
@@ -62,14 +74,17 @@ public class MyraLabel : Label
         H1,
         H2,
         H3,
+        H4,
+        H5,
+        H6,
         P,
-        TableHeader,
+        TableHeader
     }
 
     public enum AlignMode
     {
         Left,
         Center,
-        Right,
+        Right
     }
 }

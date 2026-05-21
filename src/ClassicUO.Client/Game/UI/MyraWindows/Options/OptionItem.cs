@@ -35,6 +35,7 @@ internal class OptionItem : ContentControl
         _tags = tags;
         _layout = new SingleItemLayout<Widget>(this);
         ChildrenLayout = _layout;
+        VerticalAlignment = VerticalAlignment.Center;
     }
 
     public bool MatchesSearch(string text)

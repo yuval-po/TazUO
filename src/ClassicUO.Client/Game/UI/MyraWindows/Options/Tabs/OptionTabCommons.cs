@@ -1,5 +1,3 @@
-using System;
-using ClassicUO.Game.UI.MyraWindows.Widgets;
 using ClassicUO.Utility;
 using Myra.Graphics2D.UI;
 using Myra.Graphics2D.UI.WrapPanel;
@@ -8,15 +6,13 @@ namespace ClassicUO.Game.UI.MyraWindows.Options.Tabs;
 
 public static class OptionTabCommons
 {
-    public static WrapPanel StyledWrapPanel(params Widget[] children)
+    public static WrapPanel StyledVerticalWrapPanel(params Widget[] children) => StyledWrapPanel(Orientation.Vertical, children);
+
+    public static WrapPanel StyledHorizontalWrapPanel(params Widget[] children) => StyledWrapPanel(Orientation.Horizontal, children);
+
+    public static WrapPanel StyledWrapPanel(Orientation orientation, params Widget[] children)
     {
-        var panel = new WrapPanel
-        {
-            Orientation = Orientation.Vertical,
-            UniformSizing = false,
-            Aligned = false,
-            VerticalSpacing = MyraStyle.STANDARD_SPACING * 2
-        };
+        var panel = new WrapPanel { Orientation = orientation, UniformSizing = false, Aligned = false, VerticalSpacing = MyraStyle.STANDARD_SPACING };
 
         if (children?.Length > 0)
             panel.AddRange(children);

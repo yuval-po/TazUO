@@ -132,7 +132,7 @@ public static class VideoTab
     }
 
     private static WrapPanel GetGameWindowSubTabContent() =>
-        OptionTabCommons.StyledWrapPanel(
+        OptionTabCommons.StyledVerticalWrapPanel(
             OptionsFactory.CreateSpacer(),
             GetRendererSection(),
             GetViewportSettingsGroup()
@@ -188,7 +188,7 @@ public static class VideoTab
                 / Client.Game.Scene.Camera.ZoomStep
             );
 
-        return OptionTabCommons.StyledWrapPanel(
+        return OptionTabCommons.StyledVerticalWrapPanel(
             OptionsFactory.CreateSpacer(),
             OptionsFactory.CreateSliderOption(
                 videoLang.DefaultZoom,
@@ -218,7 +218,7 @@ public static class VideoTab
         ModernOptionsGumpLanguage lang = Language.Instance.GetModernOptionsGumpLanguage;
         ModernOptionsGumpLanguage.Video videoLang = lang.GetVideo;
 
-        return OptionTabCommons.StyledWrapPanel(
+        return OptionTabCommons.StyledVerticalWrapPanel(
             OptionsFactory.CreateSpacer(),
             OptionsFactory.CreateCheckboxOption(videoLang.AltLights, new Accessor<bool>(() => profile.UseAlternativeLights)),
             new CheckBoxGroup(
@@ -293,7 +293,7 @@ public static class VideoTab
         ModernOptionsGumpLanguage.Video videoLang = lang.GetVideo;
 
 
-        return OptionTabCommons.StyledWrapPanel(
+        return OptionTabCommons.StyledVerticalWrapPanel(
             OptionsFactory.CreateSpacer(),
             OptionsFactory.CreateCheckboxOption(
                 videoLang.EnableDeathScreen,
@@ -339,22 +339,26 @@ public static class VideoTab
         float? scale = null;
 
         return new VisualContainer(
-            new VisualContainerProps { LabelText = lang.ButtonScaling, LabelLink = "https://tazuo.org/wiki/tazuoglobal-scaling/" },
+            new VisualContainerProps
+            {
+                LabelText = lang.ButtonScaling, LabelLink = "https://tazuo.org/wiki/tazuoglobal-scaling/", Spacing = VisualContainerSpacing.Comfortable
+            },
             OptionsFactory.CreateSliderOption(
                 videoLang.PaperdollScaling,
                 50,
                 300,
                 (int)(profile.PaperdollScale * 100),
-                f => profile.PaperdollScale = f / 100
+                newValue => profile.PaperdollScale = Math.Clamp(newValue / 100, 0.5f, 3.0f)
             ),
             OptionTabCommons.StyledStackPanel(
                 Orientation.Horizontal,
                 OptionsFactory.CreateSliderOption(
                     videoLang.GlobalScaling,
-                    50,
-                    175,
+                    50, // Limiting min scale to something sane at the UI level, even though render supports it
+                    Client.Game.MaxRenderScale *
+                    100, // For max scale, there's a hard cap at the property level to avoid outright crashing systems when accidentally setting too high
                     Client.Game.RenderScale * 100,
-                    newValue => scale = Math.Clamp(newValue / 100, 0.5f, 1.75f)
+                    newValue => scale = Math.Clamp(newValue / 100, 0.5f, Client.Game.MaxRenderScale)
                 ),
                 // Apply button for renderer (global) scale
                 new MyraButton(
@@ -366,8 +370,9 @@ public static class VideoTab
 
                         previousScale = scale;
                         Client.Game.SetScale(scale.Value);
-                        Client.Settings.SetAsync(SettingsScope.Global, Constants.SqlSettings.GAME_SCALE, scale);
-                    }
+                        _ = Client.Settings.SetAsync(SettingsScope.Global, Constants.SqlSettings.GAME_SCALE, scale);
+                    },
+                    MyraLabel.TextStyle.H5
                 )
             )
         );
@@ -378,7 +383,7 @@ public static class VideoTab
         Profile profile = ProfileManager.CurrentProfile;
         ModernOptionsGumpLanguage lang = Language.Instance.GetModernOptionsGumpLanguage;
 
-        return OptionTabCommons.StyledWrapPanel(
+        return OptionTabCommons.StyledVerticalWrapPanel(
             OptionsFactory.CreateSpacer(),
             OptionsFactory.CreateCheckboxOption(lang.GetVideo.EnableShadows, new Accessor<bool>(() => profile.ShadowsEnabled)),
             OptionsFactory.CreateCheckboxOption(lang.GetVideo.RockTreeShadows, new Accessor<bool>(() => profile.ShadowsStatics)),

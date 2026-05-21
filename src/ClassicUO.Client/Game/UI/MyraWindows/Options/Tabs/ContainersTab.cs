@@ -76,7 +76,7 @@ public static class ContainersTab
         ModernOptionsGumpLanguage lang = Language.Instance.GetModernOptionsGumpLanguage;
         ModernOptionsGumpLanguage.Containers containerLang = lang.GetContainers;
 
-        return OptionTabCommons.StyledWrapPanel(
+        return OptionTabCommons.StyledVerticalWrapPanel(
             OptionsFactory.CreateCheckboxOption(
                 containerLang.DoubleClickToLootItemsInsideContainers,
                 new Accessor<bool>(() => profile.DoubleClickToLootInsideContainers)
@@ -149,7 +149,7 @@ public static class ContainersTab
 
         return new VisualContainer(
             new VisualContainerProps { LabelText = containerLang.LabelGridContainers, LabelLink = "https://tazuo.org/wiki/tazuogrid-containers/" },
-            OptionTabCommons.StyledWrapPanel(
+            OptionTabCommons.StyledVerticalWrapPanel(
                 new CheckBoxGroup(
                     new PropertyBinder(
                         new Accessor<bool>(() => profile.UseGridLayoutContainerGumps),
