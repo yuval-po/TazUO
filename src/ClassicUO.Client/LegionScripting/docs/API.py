@@ -40,7 +40,7 @@ class ApiGameObject:
     IsDestroyed: bool = None
     __class__: str = None
 
-    def SetOutlineColor(self, htmlColor: "str") -> None:
+    def SetOutlineColor(self, htmlColor: "str" = None) -> None:
         """
          Set an object's outline color using HTML hex colors.
          Example:

@@ -87,7 +87,7 @@ description:  Base class for all Python-accessible game world objects.  Encapsul
 
 | Name | Type | Optional | Description |
 | --- | --- | --- | --- |
-| `htmlColor` | `string` | ❌ No | The color to set. Pass `null` to remove the outline. |
+| `htmlColor` | `string` | ✅ Yes | The color to set. Pass `null` to remove the outline. |
 
 **Return Type:** `void` *(Does not return anything)*
 

@@ -93,12 +93,12 @@ public class ApiGameObject
     /// ```
     /// </summary>
     /// <param name="htmlColor">The color to set. Pass <c>null</c> to remove the outline.</param>
-    public void SetOutlineColor(string htmlColor)
+    public void SetOutlineColor(string htmlColor = null)
     {
         if (_gameObject == null || _gameObject.IsDestroyed)
             return;
 
-        MainThreadQueue.InvokeOnMainThread(() =>
+        MainThreadQueue.BubblingInvokeOnMainThread(() =>
         {
             _gameObject.OutlineColor = string.IsNullOrWhiteSpace(htmlColor) ? null : htmlColor.FromHtmlHex();
         });
