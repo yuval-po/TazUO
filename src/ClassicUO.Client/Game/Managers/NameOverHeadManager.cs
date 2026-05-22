@@ -10,11 +10,14 @@ using ClassicUO.Utility.Logging;
 using SDL3;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Xml;
 using ClassicUO.Game.UI.MyraWindows.Options.Editors.Profile;
+using ClassicUO.Utility;
 
 namespace ClassicUO.Game.Managers
 {
@@ -424,13 +427,15 @@ namespace ClassicUO.Game.Managers
 
     public class NameOverheadOption : IProfile
     {
-        public NameOverheadOption(string name, SDL.SDL_Keycode key, bool alt, bool ctrl, bool shift, int optionflagscode) : this(name)
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public NameOverheadOption(string name, SDL.SDL_Keycode key, bool alt, bool ctrl, bool shift, int optionFlagsCode) : this(name)
         {
             Key = key;
             Alt = alt;
             Ctrl = ctrl;
             Shift = shift;
-            NameOverheadOptionFlags = (NameOverheadOptions)optionflagscode;
+            NameOverheadOptionFlags = (NameOverheadOptions)optionFlagsCode;
         }
 
         public NameOverheadOption(string name)
@@ -438,19 +443,24 @@ namespace ClassicUO.Game.Managers
             Name = name;
         }
 
-        public NameOverheadOption(string name, int optionflagcode)
+        public NameOverheadOption(string name, int optionFlagCode)
         {
             Name = name;
-            NameOverheadOptionFlags = (NameOverheadOptions)optionflagcode;
+            NameOverheadOptionFlags = (NameOverheadOptions)optionFlagCode;
         }
 
         public string Name { get; }
 
-        public SDL.SDL_Keycode Key { get; set; }
-        public bool Alt { get; set; }
-        public bool Ctrl { get; set; }
-        public bool Shift { get; set; }
-        public NameOverheadOptions NameOverheadOptionFlags { get; set; }
+        public SDL.SDL_Keycode Key { get; set => SetField(ref field, value); }
+        public bool Alt { get; set => SetField(ref field, value); }
+        public bool Ctrl { get; set => SetField(ref field, value); }
+        public bool Shift { get; set => SetField(ref field, value); }
+
+        public NameOverheadOptions NameOverheadOptionFlags
+        {
+            get;
+            set => SetField(ref field, value);
+        }
 
         public bool Equals(NameOverheadOption other)
         {
@@ -470,7 +480,7 @@ namespace ClassicUO.Game.Managers
             writer.WriteAttributeString("alt", Alt.ToString());
             writer.WriteAttributeString("ctrl", Ctrl.ToString());
             writer.WriteAttributeString("shift", Shift.ToString());
-            writer.WriteAttributeString("optionflagscode", NameOverheadOptionFlags.ToString());
+            writer.WriteAttributeString("optionflagscode", NameOverheadOptionFlags.ToInt().ToString());
 
             writer.WriteEndElement();
         }
@@ -486,7 +496,20 @@ namespace ClassicUO.Game.Managers
             Alt = bool.Parse(xml.GetAttribute("alt"));
             Ctrl = bool.Parse(xml.GetAttribute("ctrl"));
             Shift = bool.Parse(xml.GetAttribute("shift"));
+
             NameOverheadOptionFlags = (NameOverheadOptions)int.Parse(xml.GetAttribute("optionflagscode"));
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+        protected bool SetField<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, value))
+                return false;
+
+            field = value;
+            OnPropertyChanged(propertyName);
+            return true;
         }
     }
 }

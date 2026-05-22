@@ -1,4 +1,5 @@
 using ClassicUO.Common;
+using ClassicUO.Common.Enums;
 using ClassicUO.Configuration;
 using ClassicUO.Game.Managers;
 using ClassicUO.Game.UI.MyraWindows.Options.Editors.Profile;
@@ -38,18 +39,29 @@ public static class NameplatesTab
         ModernOptionsGumpLanguage.TazUO tuoLang = lang.GetTazUO;
         ModernOptionsGumpLanguage.General genLang = lang.GetGeneral;
 
-        WrapPanel firstHorizontalPanel = OptionTabCommons.StyledHorizontalWrapPanel(
+        WrapPanel settingsPanel = OptionTabCommons.StyledHorizontalWrapPanel(
             GetItemsBoxesPanel(profile),
             GetCorpseBoxesPanel(profile),
             GetMobilesByTypeBoxesPanel(profile),
             GetMobilesByNotorietyBoxesPanel(profile)
         );
-        firstHorizontalPanel.HorizontalAlignment = HorizontalAlignment.Left;
-        firstHorizontalPanel.Aligned = false;
-        firstHorizontalPanel.UniformSizing = false;
+        settingsPanel.HorizontalAlignment = HorizontalAlignment.Left;
+        settingsPanel.Aligned = false;
+        settingsPanel.UniformSizing = false;
 
         return OptionTabCommons.StyledVerticalWrapPanel(
-            firstHorizontalPanel
+            OptionTabCommons.StyledStackPanel(
+                Orientation.Horizontal,
+                new MyraButton(
+                    "Check All",
+                    () => profile.NameOverheadOptionFlags = EnumUtils.AllBits<NameOverheadOptions>()
+                ),
+                new MyraButton(
+                    "Uncheck All",
+                    () => profile.NameOverheadOptionFlags = NameOverheadOptions.None
+                )
+            ),
+            settingsPanel
         );
     }
 

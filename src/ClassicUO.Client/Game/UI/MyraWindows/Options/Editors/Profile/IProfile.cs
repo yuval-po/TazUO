@@ -1,6 +1,8 @@
+using System.ComponentModel;
+
 namespace ClassicUO.Game.UI.MyraWindows.Options.Editors.Profile;
 
-public interface IProfile
+public interface IProfile : INotifyPropertyChanged
 {
     string Name { get; }
 }

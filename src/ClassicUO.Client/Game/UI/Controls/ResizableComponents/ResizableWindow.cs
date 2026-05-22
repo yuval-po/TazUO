@@ -20,8 +20,28 @@ namespace ClassicUO.Game.UI.Controls.ResizableComponents;
 
 public class ResizableWindowProps : MyraCommonProps
 {
-    public ResizeBehavior Resize { get; set; } = new();
-    public bool Minimizable { get; set; } = true;
+    public ResizeBehavior Resize
+    {
+        get;
+        set
+        {
+            ResizeBehavior oldValue = field;
+            if (SetField(ref field, value))
+            {
+                field.PropertyChanged += OnResizePropertyChanged;
+                if (oldValue != null)
+                    oldValue.PropertyChanged -= OnResizePropertyChanged;
+            }
+        }
+    } = new();
+    public bool Minimizable { get; set => SetField(ref field, value); } = true;
+
+    public ResizableWindowProps()
+    {
+        Resize?.PropertyChanged += OnResizePropertyChanged;
+    }
+
+    private void OnResizePropertyChanged(object sender, PropertyChangedEventArgs e) => OnPropertyChanged(nameof(Resize));
 }
 
 #endregion
@@ -37,33 +57,33 @@ public class ResizableWindow : Window, IDisposable
     #region Accessors
 
     /// <summary>
-    /// Gets the properties that define the behavior and configuration
-    /// of the resizable window, including resize behavior and minimization settings.
+    ///     Gets the properties that define the behavior and configuration
+    ///     of the resizable window, including resize behavior and minimization settings.
     /// </summary>
     public ResizableWindowProps Props { get; }
 
     /// <summary>
-    /// Gets a value indicating whether the current instance has been disposed.
+    ///     Gets a value indicating whether the current instance has been disposed.
     /// </summary>
     public bool IsDisposed { get; private set; }
 
     /// <summary>
-    /// Gets a value indicating whether the window is currently minimized.
-    /// When minimized, the window's content is hidden, and its size settings are temporarily overridden.
+    ///     Gets a value indicating whether the window is currently minimized.
+    ///     When minimized, the window's content is hidden, and its size settings are temporarily overridden.
     /// </summary>
     public bool IsMinimized { get; private set; }
 
     /// <summary>
-    /// Gets a value indicating whether the window is currently resizable.
+    ///     Gets a value indicating whether the window is currently resizable.
     /// </summary>
     /// <remarks>
-    /// A window is considered resizable if resizing is enabled via the configuration
-    /// properties and the window is not minimized.
+    ///     A window is considered resizable if resizing is enabled via the configuration
+    ///     properties and the window is not minimized.
     /// </remarks>
     public bool IsCurrentlyResizable => Props.Resize.Enabled && !IsMinimized;
 
     /// <summary>
-    /// The window's title text
+    ///     The window's title text
     /// </summary>
     [Category("Appearance")]
     public new string Title
@@ -76,6 +96,12 @@ public class ResizableWindow : Window, IDisposable
             _titlePanelFullWidth = TitlePanel.Measure(new Point(2000, 2000)).X;
             UpdateTitleLabelVisibility();
         }
+    }
+
+    public HorizontalAlignment TitleLabelAlignment
+    {
+        get => _titleLabel.HorizontalAlignment;
+        set => _titleLabel.HorizontalAlignment = value;
     }
 
     private string MinMaxButtonText => IsMinimized ? "□" : "−";
@@ -127,6 +153,7 @@ public class ResizableWindow : Window, IDisposable
     public ResizableWindow(ResizableWindowProps props = null)
     {
         Props = props ?? new ResizableWindowProps();
+        Props.PropertyChanged += OnPropsChanged;
         Configure();
     }
 
@@ -333,9 +360,14 @@ public class ResizableWindow : Window, IDisposable
 
         if (Props.Minimizable)
             ConfigureMinMaxButton();
+        else
+            RemoveMinMaxButton();
+
 
         if (Props.Resize.Enabled)
             ConfigureResizeResetButton();
+        else
+            RemoveResizeResetButton();
     }
 
     /// <summary>
@@ -376,6 +408,9 @@ public class ResizableWindow : Window, IDisposable
     /// </summary>
     private void ConfigureMinMaxButton(int index = 0)
     {
+        if (_minMaxButton != null)
+            return;
+
         _minMaxButtonLabel = new MyraLabel(MinMaxButtonText, 24)
         {
             Font = MinMaxButtonFont,
@@ -403,11 +438,26 @@ public class ResizableWindow : Window, IDisposable
         TitlePanel.TouchDoubleClick += OnMinMaxButtonClick;
     }
 
+    private void RemoveMinMaxButton()
+    {
+        if (_minMaxButton == null)
+            return;
+
+        _minMaxButton.TouchDown -= OnMinMaxButtonClick;
+        TitlePanel.TouchDoubleClick -= OnMinMaxButtonClick;
+        TitlePanel.Widgets.Remove(_minMaxButton);
+        _minMaxButton = null;
+        _minMaxButtonLabel = null;
+    }
+
     /// <summary>
     ///     Initializes and adds the reset-window-size button to the title panel.
     /// </summary>
     private void ConfigureResizeResetButton(int index = 1)
     {
+        if (_resetSizeButton != null)
+            return;
+
         var label = new MyraLabel(StyleConstantsDefaults.RESET_LABEL_ICON_TEXT, 24)
         {
             Font = TrueTypeLoader.Instance.GetFont(EmbeddedFontNames.NOTO_SANS_2_SYMBOLS, 24),
@@ -431,6 +481,16 @@ public class ResizableWindow : Window, IDisposable
 
         _resetSizeButton.TouchDown += OnResetSizeButtonClick;
         TitlePanel.Widgets.Insert(index, _resetSizeButton);
+    }
+
+    private void RemoveResizeResetButton()
+    {
+        if (_resetSizeButton == null)
+            return;
+
+        _resetSizeButton.TouchDown -= OnResetSizeButtonClick;
+        TitlePanel.Widgets.Remove(_resetSizeButton);
+        _resetSizeButton = null;
     }
 
     /// <summary>
@@ -767,6 +827,8 @@ public class ResizableWindow : Window, IDisposable
         Client.Game.UO.GameCursor.ForceSetCursorVisualStyle(null);
         _isOverridingCursorStyle = false;
     }
+
+    private void OnPropsChanged(object sender, PropertyChangedEventArgs e) => Configure();
 
     #endregion
 }
