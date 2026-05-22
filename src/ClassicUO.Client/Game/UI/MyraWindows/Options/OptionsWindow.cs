@@ -96,13 +96,12 @@ public class OptionsWindow : MyraControl
     private void SetupOptions()
     {
         SetupGeneralOptions();
+        SetupGameplayTab();
         SetupMobileOptions();
         SetupInterfaceOptions();
         SetupMiscOptions();
-        SetupTerrainStatics();
         SetupSound();
         SetupVideo();
-        SetupInfoBarOptions();
         SetupTooltipOptions();
         SetupChatOptions();
         SetupCombatOptions();
@@ -427,59 +426,11 @@ public class OptionsWindow : MyraControl
 
     private void SetupInterfaceOptions()
     {
-        Profile profile = ProfileManager.CurrentProfile;
-        ModernOptionsGumpLanguage lang = Language.Instance.GetModernOptionsGumpLanguage;
-        ModernOptionsGumpLanguage.General genLang = lang.GetGeneral;
+        const string interfaceKey = "Interface";
+        if (!_options.ContainsKey(interfaceKey)) _options.Add(interfaceKey, []);
+        List<OptionItem> opt = _options[interfaceKey];
 
-        if (!_options.ContainsKey("Interface")) _options.Add("Interface", []);
-        List<OptionItem> opt = _options["Interface"];
-
-        opt.Add(OptionsFactory.CreateCheckboxOption(genLang.DisableTopMenu, new Accessor<bool>(() => profile.TopbarGumpIsDisabled),
-            "The top menu is pretty vital in TazUO, we recommend leaving this unchecked."));
-
-        opt.Add(OptionsFactory.CreateSpacer());
-
-        opt.Add(OptionsFactory.CreateCheckboxOption(genLang.AltForAnchorsGumps,
-            new Accessor<bool>(() => profile.HoldDownKeyAltToCloseAnchored)));
-        opt.Add(OptionsFactory.CreateCheckboxOption(genLang.AltToMoveGumps, new Accessor<bool>(() => profile.HoldAltToMoveGumps)));
-        opt.Add(OptionsFactory.CreateCheckboxOption(genLang.CloseEntireAnchorWithRClick,
-            new Accessor<bool>(() => profile.CloseAllAnchoredGumpsInGroupWithRightClick)));
-
-        opt.Add(OptionsFactory.CreateSpacer());
-
-        opt.Add(OptionsFactory.CreateCheckboxOption(genLang.OriginalSkillsGump, new Accessor<bool>(() => profile.StandardSkillsGump)));
-        opt.Add(OptionsFactory.CreateCheckboxOption(genLang.OldStatusGump, new Accessor<bool>(() => profile.UseOldStatusGump)));
-        opt.Add(OptionsFactory.CreateCheckboxOption(genLang.PartyInviteGump, new Accessor<bool>(() => profile.PartyInviteGump)));
-
-        opt.Add(OptionsFactory.CreateSpacer());
-
-        opt.Add(
-            new OptionItem(
-                genLang.ModernHealthBars,
-                () => new CheckBoxGroup(
-                    new PropertyBinder(new Accessor<bool>(() => profile.CustomBarsToggled), genLang.ModernHealthBars),
-                    OptionsFactory.CreateCheckboxOption(genLang.ModernHPBlackBG, new Accessor<bool>(() => profile.CBBlackBGToggled))
-                )
-            )
-        );
-
-        opt.Add(OptionsFactory.CreateCheckboxOption(genLang.SaveHPBars, new Accessor<bool>(() => profile.SaveHealthbars)));
-        opt.Add(OptionsFactory.CreateComboBox(genLang.CloseHPGumpsWhen, profile.CloseHealthBarType, [
-            genLang.CloseHPOptDisable, genLang.CloseHPOptOOR,
-            genLang.CloseHPOptDead, genLang.CloseHPOptBoth
-        ], b => profile.CloseHealthBarType = b));
-
-        opt.Add(OptionsFactory.CreateSpacer());
-
-        opt.Add(OptionsFactory.CreateComboBox(genLang.GridLoot, profile.GridLootType, [
-            genLang.GridLootOptDisable, genLang.GridLootOptOnly,
-            genLang.GridLootOptBoth
-        ], i => profile.GridLootType = i, "This is not the same as grid containers."));
-
-        opt.Add(OptionsFactory.CreateSpacer());
-
-        opt.Add(OptionsFactory.CreateCheckboxOption(genLang.ShiftContext, new Accessor<bool>(() => profile.HoldShiftForContext)));
-        opt.Add(OptionsFactory.CreateCheckboxOption(genLang.ShiftSplit, new Accessor<bool>(() => profile.HoldShiftToSplitStack)));
+        opt.Add(InterfaceTab.GetContent());
     }
 
     private void SetupMiscOptions()
@@ -648,22 +599,13 @@ public class OptionsWindow : MyraControl
         );
     }
 
-    private void SetupTerrainStatics()
+    private void SetupGameplayTab()
     {
-        Profile profile = ProfileManager.CurrentProfile;
-        ModernOptionsGumpLanguage lang = Language.Instance.GetModernOptionsGumpLanguage;
+        const string gameplayKey = "Gameplay";
+        if (!_options.ContainsKey(gameplayKey)) _options.Add(gameplayKey, []);
+        List<OptionItem> opt = _options[gameplayKey];
 
-        if (!_options.ContainsKey("Terrain & Statics")) _options.Add("Terrain & Statics", new List<OptionItem>());
-        List<OptionItem> opt = _options["Terrain & Statics"];
-
-        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.HideRoof, !profile.DrawRoofs,
-            b => profile.DrawRoofs = !b));
-        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.TreesToStump, new Accessor<bool>(() => profile.TreeToStumps)));
-        opt.Add(OptionsFactory.CreateCheckboxOption(lang.GetGeneral.HideVegetation, new Accessor<bool>(() => profile.HideVegetation)));
-        opt.Add(OptionsFactory.CreateComboBox(lang.GetGeneral.MagicFieldType, profile.FieldsType, [
-            lang.GetGeneral.MagicFieldOpt_Normal, lang.GetGeneral.MagicFieldOpt_Static,
-            lang.GetGeneral.MagicFieldOpt_Tile
-        ], i => profile.FieldsType = i));
+        opt.Add(GameplayTab.GetContent());
     }
 
     private void SetupSound()
@@ -803,17 +745,6 @@ public class OptionsWindow : MyraControl
 
         List<OptionItem> optionsList = _options[videoKey];
         optionsList.Add(VideoTab.GetContent());
-    }
-
-    private void SetupInfoBarOptions()
-    {
-        ModernOptionsGumpLanguage lang = Language.Instance.GetModernOptionsGumpLanguage;
-        const string infoBarKey = "Info bar";
-
-        if (!_options.ContainsKey(infoBarKey))
-            _options.Add(infoBarKey, []);
-
-        _options[infoBarKey].Add(new OptionItem(lang.GetInfoBars.InfoBar, InfoBarOptionsContent.Build));
     }
 
     private void SetupTooltipOptions()

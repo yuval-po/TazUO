@@ -84,23 +84,24 @@ public class TrueTypeLoader
     private const uint MAX_NUMBER_OF_SYS_FONT_FAMILIES = 1000;
 
     private readonly Dictionary<string, FontSystem> _fonts = new();
+
+    private Lazy<(string[], int)> _orderedFontNames;
+
     /// <summary>
-    /// Contains the names of all available system fonts.
-    /// This can be used to render a font list without loading the fonts into memory
+    ///     Contains the names of all available system fonts.
+    ///     This can be used to render a font list without loading the fonts into memory
     /// </summary>
     private HashSet<string> _availableSystemFontFamilyNames = [];
 
     private TrueTypeLoader()
     {
+        _orderedFontNames = new Lazy<(string[], int)>(GetOrderedFontNames);
     }
 
     private static TrueTypeLoader _instance;
     public static TrueTypeLoader Instance => _instance ??= new TrueTypeLoader();
 
-    private readonly FontSystemSettings _fontSysSettings = new()
-    {
-        FontResolutionFactor = 2, KernelWidth = 2, KernelHeight = 2
-    };
+    private readonly FontSystemSettings _fontSysSettings = new() { FontResolutionFactor = 2, KernelWidth = 2, KernelHeight = 2 };
 
     public void Load()
     {
@@ -168,7 +169,8 @@ public class TrueTypeLoader
                 // A quick check to keep the cache small and load times manageable
                 if (familyCount > MAX_NUMBER_OF_SYS_FONT_FAMILIES)
                 {
-                    Log.Warn($"Exceeded maximum number of allowed system font families ({MAX_NUMBER_OF_SYS_FONT_FAMILIES}). Will not load any more system fonts.");
+                    Log.Warn(
+                        $"Exceeded maximum number of allowed system font families ({MAX_NUMBER_OF_SYS_FONT_FAMILIES}). Will not load any more system fonts.");
                     break;
                 }
             }
@@ -186,10 +188,10 @@ public class TrueTypeLoader
     }
 
     /// <summary>
-    /// Gets the font cache data object
+    ///     Gets the font cache data object
     /// </summary>
     /// <param name="definition">The cache definition to use</param>
-    /// <returns>A fully usable <see cref="FontCacheData"/> object with all properties initialized</returns>
+    /// <returns>A fully usable <see cref="FontCacheData" /> object with all properties initialized</returns>
     private static FontCacheData GetFontCacheData(FontPersistentDefinition definition)
     {
         // The result of .Get can't actually be null but doesn't hurt to be defensive.
@@ -201,8 +203,8 @@ public class TrueTypeLoader
     }
 
     /// <summary>
-    /// Updates the font cache file with the given values.
-    /// Cache update timestamp is automatically updated
+    ///     Updates the font cache file with the given values.
+    ///     Cache update timestamp is automatically updated
     /// </summary>
     /// <param name="cacheDefinition">The cache definition to use</param>
     /// <param name="cacheData">The data to store</param>
@@ -220,7 +222,8 @@ public class TrueTypeLoader
     ///     Updates the cache with the results (either a valid or invalid family name) and returns the number of fonts loaded
     /// </summary>
     /// <remarks>
-    ///     This method does not attempt to retain loaded fonts, it simply updates the cache and discards the font system afterward.
+    ///     This method does not attempt to retain loaded fonts, it simply updates the cache and discards the font system
+    ///     afterward.
     /// </remarks>
     /// <param name="cachedData">The cache to update</param>
     /// <param name="fontFamily">The font family to load</param>
@@ -344,7 +347,7 @@ public class TrueTypeLoader
     }
 
     /// <summary>
-    /// Attempts to get, from disk, a system font by family name
+    ///     Attempts to get, from disk, a system font by family name
     /// </summary>
     /// <param name="familyName">The font family to obtain</param>
     /// <param name="size">The requested font face size</param>
@@ -417,10 +420,41 @@ public class TrueTypeLoader
             return fontNames.Concat(_availableSystemFontFamilyNames).ToArray();
         }
     }
+
+    public (string[] Names, int MaxNameLength) OrderedFontNames => _orderedFontNames.Value;
+
+    /// <summary>
+    ///     Retrieves an ordered collection of font names along with the maximum length of all font names.
+    ///     The font names are sorted to prioritize embedded fonts, followed by alphabetical order.
+    /// </summary>
+    /// <returns>
+    ///     A tuple containing:
+    ///     <ul>
+    ///         <li> An array of ordered font names.</li>
+    ///         <li>The maximum length of any font name in the collection.</li>
+    ///     </ul>
+    /// </returns>
+    private (string[] Names, int MaxNameLength) GetOrderedFontNames()
+    {
+        int maxLength = 0;
+
+        string[] availableFonts = Fonts
+            .Select(font =>
+            {
+                // Keep track of the max name length
+                maxLength = Math.Max(maxLength, font.Length);
+                return font;
+            })
+            .OrderBy(font => EmbeddedFontNames.Names.Contains(font) ? 0 : 1) // Embedded fonts should be first in line, ordered by name
+            .ThenBy(font => font) // Then, dynamically loaded fonts, ordered by name as well
+            .ToArray();
+
+        return (availableFonts, maxLength);
+    }
 }
 
 /// <summary>
-/// Cached data representing available font families and their status
+///     Cached data representing available font families and their status
 /// </summary>
 internal class FontCacheData
 {

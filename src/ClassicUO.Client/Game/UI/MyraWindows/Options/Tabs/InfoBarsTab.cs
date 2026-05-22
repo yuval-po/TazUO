@@ -1,16 +1,18 @@
 #nullable enable
 using System.Collections.Generic;
+using ClassicUO.Common;
 using ClassicUO.Configuration;
 using ClassicUO.Game.Managers;
 using ClassicUO.Game.UI.Gumps;
+using ClassicUO.Game.UI.MyraWindows.Widgets;
 using Myra.Graphics2D.UI;
 using Label = Myra.Graphics2D.UI.Label;
 
-namespace ClassicUO.Game.UI.MyraWindows.Widgets;
+namespace ClassicUO.Game.UI.MyraWindows.Options.Tabs;
 
-public static class InfoBarOptionsContent
+public static class InfoBarsTab
 {
-    public static Widget Build()
+    public static Widget GetContent()
     {
         Profile profile = ProfileManager.CurrentProfile;
         ModernOptionsGumpLanguage.InfoBars ibLang = Language.Instance.GetModernOptionsGumpLanguage.GetInfoBars;
@@ -43,6 +45,12 @@ public static class InfoBarOptionsContent
         ));
 
         root.Widgets.Add(new MyraSpacer(1, 2));
+
+        root.Widgets.Add(OptionTabCommons.StyledFontSelector(
+            ibLang.InfoBarFont,
+            new Accessor<string>(() => profile.InfoBarFont),
+            _ => InfoBarGump.UpdateAllOptions()
+        ));
 
         // Highlight type combo box
         var highlightCombo = new ComboView { MinWidth = 150, VerticalAlignment = VerticalAlignment.Center };

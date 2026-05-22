@@ -2,6 +2,7 @@
 #nullable enable
 
 using System;
+using System.Collections.Generic;
 using ClassicUO.Common;
 using ClassicUO.Game.Managers;
 using ClassicUO.Game.UI.Gumps;
@@ -37,7 +38,8 @@ public static class OptionsFactory
             HorizontalAlignment = HorizontalAlignment.Center
         };
 
-        if (tooltip != null) comboView.Tooltip = tooltip;
+        if (tooltip != null)
+            comboView.Tooltip = tooltip;
 
         for (int i = 0; i < options.Length; i++)
         {
@@ -51,6 +53,45 @@ public static class OptionsFactory
         {
             if (comboView.ListView.SelectedIndex != null)
                 onChange(comboView.ListView.SelectedIndex.Value);
+        };
+
+        return new OptionItem(label, () => new MyraLabel(label, MyraLabel.TextStyle.P).PlaceBefore(comboView));
+    }
+
+    internal static OptionItem CreateComboBox<TValue>(
+        string label,
+        TValue value,
+        TValue[] options,
+        Action<TValue> onChange,
+        string? tooltip = null
+    ) where TValue : IEquatable<TValue>
+    {
+        var comboView = new ComboView
+        {
+            MinWidth = 200,
+            VerticalAlignment = VerticalAlignment.Center,
+            HorizontalAlignment = HorizontalAlignment.Center
+        };
+
+        if (tooltip != null)
+            comboView.Tooltip = tooltip;
+
+        Dictionary<int, TValue> indexToValue = new();
+        Dictionary<TValue, int> valueToIndex = new();
+
+        for (int i = 0; i < options.Length; i++)
+        {
+            TValue option = options[i];
+            indexToValue.Add(i, option);
+            valueToIndex.Add(option, i);
+            comboView.ListView.Widgets.Add(new Label { Text = option.ToString(), Tag = i });
+        }
+
+        comboView.ListView.SelectedIndex = valueToIndex[value];
+        comboView.ListView.SelectedIndexChanged += (_, _) =>
+        {
+            if (comboView.ListView.SelectedIndex.HasValue)
+                onChange(indexToValue[comboView.ListView.SelectedIndex.Value]);
         };
 
         return new OptionItem(label, () => new MyraLabel(label, MyraLabel.TextStyle.P).PlaceBefore(comboView));

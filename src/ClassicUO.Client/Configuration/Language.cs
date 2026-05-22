@@ -74,11 +74,12 @@ namespace ClassicUO.Configuration
         public string ButtonSpeech { get; set; } = "Speech";
         public string ButtonCombatSpells { get; set; } = "Combat & Spells";
         public string ButtonCounters { get; set; } = "Counters";
-        public string ButtonInfobar { get; set; } = "Infobar";
+        public string ButtonInfoBar { get; set; } = "Info Bar";
         public string ButtonContainers { get; set; } = "Containers";
         public string ButtonExperimental { get; set; } = "Experimental";
         public string ButtonIgnoreList { get; set; } = "Ignore List";
-        public string ButtonNameplates { get; set; } = "Nameplate Options";
+        public string ButtonNameplates { get; set; } = "Nameplates";
+        public string ButtonProfiles { get; set; } = "Profiles";
         public string ButtonCooldowns { get; set; } = "Cooldown bars";
         public string ButtonTazUO { get; set; } = "TazUO Specific";
         public string ButtonMobiles { get; set; } = "Mobiles";
@@ -86,6 +87,7 @@ namespace ClassicUO.Configuration
         public string ButtonMisc { get; set; } = "Misc";
         public string ButtonTerrainStatics { get; set; } = "Terrain & Statics";
         public string ButtonGameWindow { get; set; } = "Game window";
+        public string ButtonGameplay { get; set; } = "Gameplay";
         public string ButtonZoom { get; set; } = "Zoom";
         public string ButtonLighting { get; set; } = "Lighting";
         public string ButtonShadows { get; set; } = "Shadows";
@@ -181,6 +183,7 @@ namespace ClassicUO.Configuration
 
             #region General->Gumps
             public string DisableTopMenu { get; set; } = "Disable top menu bar";
+            public string DisableTopMenuTooltip { get; set; } = "The top menu is pretty vital in TazUO, we recommend leaving this unchecked.";
             public string AltForAnchorsGumps { get; set; } = "Require alt to close anchored gumps";
             public string AltToMoveGumps { get; set; } = "Require alt to move gumps";
             public string CloseEntireAnchorWithRClick { get; set; } = "Close entire group of anchored gumps with right click";
@@ -198,6 +201,7 @@ namespace ClassicUO.Configuration
             public string GridLoot { get; set; } = "Grid Loot";
             public string GridLootOptDisable { get; set; } = "Disabled";
             public string GridLootOptOnly { get; set; } = "Grid loot only";
+            public string GridLootOptOnlyTooltip { get; set; } = "This is not the same as grid containers.";
             public string GridLootOptBoth { get; set; } = "Grid loot and normal container";
             public string GridLootTooltip { get; set; } = "This is not the same as Grid Containers, this is a simple grid gump used for looting corpses.";
             public string ShiftContext { get; set; } = "Require shift to open context menus";
@@ -393,6 +397,7 @@ namespace ClassicUO.Configuration
         public class InfoBars
         {
             public string InfoBar { get; set; } = "Info bar";
+            public string InfoBarFont { get; set; } = "Info bar font";
             public string ShowInfoBar { get; set; } = "Show info bar";
             public string HighlightType { get; set; } = "Highlight type";
             public string HighLightOpt_TextColor { get; set; } = "Text color";
@@ -518,6 +523,7 @@ namespace ClassicUO.Configuration
             public string OnlyInWarmode { get; set; } = "Only in warmode";
             public string BorderOpacity { get; set; } = "Border opacity";
             public string BackgroundOpacity { get; set; } = "Background opacity";
+            public string AvoidOverlap { get; set; } = "Avoid overlap";
             #endregion
 
             #region Mobile
