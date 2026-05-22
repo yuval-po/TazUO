@@ -696,6 +696,15 @@ namespace ClassicUO.Configuration
         public string DragToResize { get; set; } = "Drag to resize";
         public string MinMaxWindowButtonTooltip { get; set; } = "Minimize or maximize this window";
         public string ResetWindowSizeButtonTooltip { get; set; } = "Reset window size";
+        public ProfileEditorLanguage ProfileEditor { get; set; } = new ProfileEditorLanguage();
+    }
+
+    public class ProfileEditorLanguage
+    {
+        public string Add { get; set; } = "Add";
+        public string Edit { get; set; } = "Edit";
+        public string Delete { get; set; } = "Delete";
+        public string Profile { get; set; } = "Profile";
     }
 
     public class ErrorsLanguage

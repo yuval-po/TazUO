@@ -5880,9 +5880,9 @@ namespace ClassicUO.Game.UI.Gumps
                     checkboxName, 0, true, (b) =>
                     {
                         if (b)
-                            Option.NameOverheadOptionFlags |= (int)optionFlag;
+                            Option.NameOverheadOptionFlags |= optionFlag;
                         else
-                            Option.NameOverheadOptionFlags &= ~(int)optionFlag;
+                            Option.NameOverheadOptionFlags &= ~optionFlag;
 
                         if (NameOverHeadManager.LastActiveNameOverheadOption.Replace("\\u0026", "&") == Option.Name)
                             NameOverHeadManager.ActiveOverheadOptions =
@@ -5969,7 +5969,7 @@ namespace ClassicUO.Game.UI.Gumps
                 switch ((ButtonType)buttonID)
                 {
                     case ButtonType.CheckAll:
-                        Option.NameOverheadOptionFlags = int.MaxValue;
+                        Option.NameOverheadOptionFlags = EnumUtils.AllBits<NameOverheadOptions>();
                         UpdateCheckboxesByCurrentOptionFlags();
 
                         break;

@@ -14,6 +14,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
+using ClassicUO.Game.UI.MyraWindows.Options.Editors.Profile;
 
 namespace ClassicUO.Game.Managers
 {
@@ -421,7 +422,7 @@ namespace ClassicUO.Game.Managers
         }
     }
 
-    public class NameOverheadOption
+    public class NameOverheadOption : IProfile
     {
         public NameOverheadOption(string name, SDL.SDL_Keycode key, bool alt, bool ctrl, bool shift, int optionflagscode) : this(name)
         {
@@ -429,7 +430,7 @@ namespace ClassicUO.Game.Managers
             Alt = alt;
             Ctrl = ctrl;
             Shift = shift;
-            NameOverheadOptionFlags = optionflagscode;
+            NameOverheadOptionFlags = (NameOverheadOptions)optionflagscode;
         }
 
         public NameOverheadOption(string name)
@@ -440,7 +441,7 @@ namespace ClassicUO.Game.Managers
         public NameOverheadOption(string name, int optionflagcode)
         {
             Name = name;
-            NameOverheadOptionFlags = optionflagcode;
+            NameOverheadOptionFlags = (NameOverheadOptions)optionflagcode;
         }
 
         public string Name { get; }
@@ -449,7 +450,7 @@ namespace ClassicUO.Game.Managers
         public bool Alt { get; set; }
         public bool Ctrl { get; set; }
         public bool Shift { get; set; }
-        public int NameOverheadOptionFlags { get; set; }
+        public NameOverheadOptions NameOverheadOptionFlags { get; set; }
 
         public bool Equals(NameOverheadOption other)
         {
@@ -485,7 +486,7 @@ namespace ClassicUO.Game.Managers
             Alt = bool.Parse(xml.GetAttribute("alt"));
             Ctrl = bool.Parse(xml.GetAttribute("ctrl"));
             Shift = bool.Parse(xml.GetAttribute("shift"));
-            NameOverheadOptionFlags = int.Parse(xml.GetAttribute("optionflagscode"));
+            NameOverheadOptionFlags = (NameOverheadOptions)int.Parse(xml.GetAttribute("optionflagscode"));
         }
     }
 }

@@ -2,6 +2,7 @@ using System;
 using ClassicUO.Assets;
 using ClassicUO.Common;
 using ClassicUO.Utility;
+using Microsoft.Xna.Framework;
 using Myra.Graphics2D.UI;
 using Myra.Graphics2D.UI.WrapPanel;
 
@@ -15,7 +16,14 @@ public static class OptionTabCommons
 
     internal static WrapPanel StyledWrapPanel(Orientation orientation, params Widget[] children)
     {
-        var panel = new WrapPanel { Orientation = orientation, UniformSizing = false, Aligned = false, VerticalSpacing = MyraStyle.STANDARD_SPACING };
+        var panel = new WrapPanel
+        {
+            Orientation = orientation,
+            UniformSizing = false,
+            Aligned = false,
+            VerticalSpacing = MyraStyle.STANDARD_SPACING,
+            VerticalAlignment = VerticalAlignment.Center,
+        };
 
         if (children?.Length > 0)
             panel.AddRange(children);
@@ -54,4 +62,8 @@ public static class OptionTabCommons
 
         return OptionsFactory.CreateComboBox(label, backingProp.Get(), TrueTypeLoader.Instance.OrderedFontNames.Names, callback);
     }
+
+    internal static Widget StyledHorizontalSeparator() =>
+        new HorizontalSeparator { Thickness = 2, Color = new Color(0, 0, 0, 75), BorderThickness = StyleConstantsDefaults.BorderThickness };
+
 }

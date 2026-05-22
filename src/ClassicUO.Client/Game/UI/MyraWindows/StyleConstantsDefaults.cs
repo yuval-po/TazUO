@@ -1,4 +1,6 @@
 using Microsoft.Xna.Framework;
+using Myra.Graphics2D;
+using Myra.Graphics2D.Brushes;
 
 namespace ClassicUO.Game.UI.MyraWindows;
 
@@ -34,6 +36,14 @@ public static class StyleConstantsDefaults
     #region Inputs
 
     public const int NUMERIC_INPUT_BOX_WIDTH = 80;
+
+    #endregion
+
+    #region Containers
+
+    public static readonly IBrush BorderBackgroundBrush = new SolidBrush(new Color(0, 0, 0, 25));
+    public static readonly IBrush BorderLineBrush = new SolidBrush(new Color(0, 0, 0, 75));
+    public static readonly Thickness BorderThickness = new(2);
 
     #endregion
 }
