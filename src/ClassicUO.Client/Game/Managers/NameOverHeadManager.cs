@@ -16,6 +16,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Xml;
+using ClassicUO.Common.Enums;
 using ClassicUO.Game.UI.MyraWindows.Options.Editors.Profile;
 using ClassicUO.Utility;
 
@@ -350,13 +351,12 @@ namespace ClassicUO.Game.Managers
 
         private static void CreateDefaultEntries() => Options.AddRange
             (
-                new[]
-                {
-                    new NameOverheadOption("All", int.MaxValue),
-                    new NameOverheadOption("Mobiles only", (int)NameOverheadOptions.AllMobiles),
-                    new NameOverheadOption("Items only", (int)NameOverheadOptions.AllItems),
-                    new NameOverheadOption("Mobiles & Corpses only", (int)NameOverheadOptions.MobilesAndCorpses),
-                }
+                [
+                    new NameOverheadOption("All", EnumUtils.AllBits<NameOverheadOptions>()) { Deletable = false },
+                    new NameOverheadOption("Mobiles only", NameOverheadOptions.AllMobiles) { Deletable = false },
+                    new NameOverheadOption("Items only", NameOverheadOptions.AllItems) { Deletable = false },
+                    new NameOverheadOption("Mobiles & Corpses only", NameOverheadOptions.MobilesAndCorpses) { Deletable = false }
+                ]
             );
 
         public static NameOverheadOption FindOption(string name) => Options.Find(o => o.Name == name);
@@ -429,6 +429,17 @@ namespace ClassicUO.Game.Managers
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
+        #region Accessors
+
+        public string Name { get; }
+        public bool Alt { get; set => SetField(ref field, value); }
+        public bool Ctrl { get; set => SetField(ref field, value); }
+        public bool Shift { get; set => SetField(ref field, value); }
+        public bool Deletable { get; set => SetField(ref field, value); } = true;
+        public SDL.SDL_Keycode Key { get; set => SetField(ref field, value); }
+
+        #endregion
+
         public NameOverheadOption(string name, SDL.SDL_Keycode key, bool alt, bool ctrl, bool shift, int optionFlagsCode) : this(name)
         {
             Key = key;
@@ -443,18 +454,11 @@ namespace ClassicUO.Game.Managers
             Name = name;
         }
 
-        public NameOverheadOption(string name, int optionFlagCode)
+        public NameOverheadOption(string name, NameOverheadOptions optionFlagCode)
         {
             Name = name;
-            NameOverheadOptionFlags = (NameOverheadOptions)optionFlagCode;
+            NameOverheadOptionFlags = optionFlagCode;
         }
-
-        public string Name { get; }
-
-        public SDL.SDL_Keycode Key { get; set => SetField(ref field, value); }
-        public bool Alt { get; set => SetField(ref field, value); }
-        public bool Ctrl { get; set => SetField(ref field, value); }
-        public bool Shift { get; set => SetField(ref field, value); }
 
         public NameOverheadOptions NameOverheadOptionFlags
         {
@@ -476,6 +480,7 @@ namespace ClassicUO.Game.Managers
         {
             writer.WriteStartElement("nameoverheadoption");
             writer.WriteAttributeString("name", Name);
+            writer.WriteAttributeString("deleteable", Deletable.ToString());
             writer.WriteAttributeString("key", ((int)Key).ToString());
             writer.WriteAttributeString("alt", Alt.ToString());
             writer.WriteAttributeString("ctrl", Ctrl.ToString());
@@ -498,6 +503,7 @@ namespace ClassicUO.Game.Managers
             Shift = bool.Parse(xml.GetAttribute("shift"));
 
             NameOverheadOptionFlags = (NameOverheadOptions)int.Parse(xml.GetAttribute("optionflagscode"));
+            Deletable = !bool.TryParse(xml.GetAttribute("deleteable"), out bool deletable) || deletable;
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

@@ -8,6 +8,7 @@ using ClassicUO.Common;
 using ClassicUO.Common.Enums;
 using ClassicUO.Game.Managers;
 using ClassicUO.Game.UI.Gumps;
+using ClassicUO.Game.UI.MyraWindows.Options.Tabs;
 using ClassicUO.Game.UI.MyraWindows.Widgets;
 using Myra.Graphics2D.UI;
 using Myra.Graphics2D.UI.WrapPanel;
@@ -88,41 +89,8 @@ public static class OptionsFactory
         IEnumerable<TValue> options,
         Action<TValue> onChange,
         string? tooltip = null
-    ) where TValue : IEquatable<TValue>
-    {
-        var comboView = new ComboView
-        {
-            MinWidth = 200,
-            VerticalAlignment = VerticalAlignment.Center,
-            HorizontalAlignment = HorizontalAlignment.Center
-        };
-
-        if (tooltip != null)
-            comboView.Tooltip = tooltip;
-
-        Dictionary<int, TValue> indexToValue = new();
-        Dictionary<TValue, int> valueToIndex = new();
-
-        TValue[] optionsArray = options.ToArray();
-        for (int i = 0; i < optionsArray.Length; i++)
-        {
-            TValue option = optionsArray[i];
-            indexToValue.Add(i, option);
-            valueToIndex.Add(option, i);
-            comboView.ListView.Widgets.Add(new Label { Text = option.ToString(), Tag = i });
-        }
-
-        int selectedIndex = valueToIndex.GetValueOrDefault(value, -1);
-
-        comboView.ListView.SelectedIndex = selectedIndex;
-        comboView.ListView.SelectedIndexChanged += (_, _) =>
-        {
-            if (comboView.ListView.SelectedIndex.HasValue)
-                onChange(indexToValue[comboView.ListView.SelectedIndex.Value]);
-        };
-
-        return new OptionItem(label, () => new MyraLabel(label, MyraLabel.TextStyle.P).PlaceBefore(comboView)) { VerticalAlignment = VerticalAlignment.Center };
-    }
+    ) where TValue : IEquatable<TValue> =>
+        new(label, () => OptionTabCommons.CreateOptionsComboBox(label, value, options, onChange, tooltip)) { VerticalAlignment = VerticalAlignment.Center };
 
     internal static OptionItem PropBoundHuePicker(string label, Accessor<ushort> backingProperty) =>
         CreateHuePicker(label, backingProperty.Get(), backingProperty.Set, 20);

@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using ClassicUO.Assets;
 using ClassicUO.Common;
+using ClassicUO.Game.UI.MyraWindows.Widgets;
 using ClassicUO.Utility;
 using Microsoft.Xna.Framework;
 using Myra.Graphics2D.UI;
@@ -22,7 +25,7 @@ public static class OptionTabCommons
             UniformSizing = false,
             Aligned = false,
             VerticalSpacing = MyraStyle.STANDARD_SPACING,
-            VerticalAlignment = VerticalAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Center
         };
 
         if (children?.Length > 0)
@@ -66,4 +69,41 @@ public static class OptionTabCommons
     internal static Widget StyledHorizontalSeparator() =>
         new HorizontalSeparator { Thickness = 2, Color = new Color(0, 0, 0, 75), BorderThickness = StyleConstantsDefaults.BorderThickness };
 
+
+    internal static StackPanel CreateOptionsComboBox<TValue>(
+        string label,
+        TValue value,
+        IEnumerable<TValue> options,
+        Action<TValue> onChange,
+        string tooltip = null
+    ) where TValue : IEquatable<TValue>
+    {
+        var comboView = new ComboView { MinWidth = 200, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Center };
+
+        if (tooltip != null)
+            comboView.Tooltip = tooltip;
+
+        Dictionary<int, TValue> indexToValue = new();
+        Dictionary<TValue, int> valueToIndex = new();
+
+        TValue[] optionsArray = options.ToArray();
+        for (int i = 0; i < optionsArray.Length; i++)
+        {
+            TValue option = optionsArray[i];
+            indexToValue.Add(i, option);
+            valueToIndex.Add(option, i);
+            comboView.ListView.Widgets.Add(new Label { Text = option.ToString(), Tag = i });
+        }
+
+        int selectedIndex = valueToIndex.GetValueOrDefault(value, -1);
+
+        comboView.ListView.SelectedIndex = selectedIndex;
+        comboView.ListView.SelectedIndexChanged += (_, _) =>
+        {
+            if (comboView.ListView.SelectedIndex.HasValue)
+                onChange(indexToValue[comboView.ListView.SelectedIndex.Value]);
+        };
+
+        return new MyraLabel(label, MyraLabel.TextStyle.P).PlaceBefore(comboView);
+    }
 }

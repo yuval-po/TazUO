@@ -29,7 +29,20 @@ public static class NameplatesTab
 
     private static Widget GetProfilesSubTabContent()
     {
-        var profileEditor = new ProfileEditor<NameOverheadOption>(GetEditorForProfile, NameOverHeadManager.GetAllOptions());
+        var profileEditor = new ProfileEditor<NameOverheadOption>(
+            GetEditorForProfile,
+            name =>
+            {
+                var newProfile = new NameOverheadOption(name);
+                World.Instance.NameOverHeadManager.AddOption(newProfile);
+                return newProfile;
+            },
+            profile =>
+            {
+                World.Instance.NameOverHeadManager.RemoveOption(profile);
+            },
+            NameOverHeadManager.GetAllOptions()
+        );
         return profileEditor;
     }
 

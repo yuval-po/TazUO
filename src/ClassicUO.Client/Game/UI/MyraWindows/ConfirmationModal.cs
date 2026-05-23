@@ -45,11 +45,7 @@ public class ConfirmationModal : MyraControl
 
         ConfigureRootWindow();
 
-        var content = new VerticalStackPanel { HorizontalAlignment = HorizontalAlignment.Stretch };
-        content.Widgets.Add(modalContent);
-        content.Widgets.Add(GetButtonGrid());
-
-        _rootWindow.Content = content;
+        _rootWindow.Content = GetContent(modalContent);
     }
 
     private void ConfigureRootWindow()
@@ -62,6 +58,14 @@ public class ConfirmationModal : MyraControl
         _rootWindow.CloseButton.Visible = false;
         _rootWindow.Props.Minimizable = false;
         _rootWindow.Props.Resize.Enabled = false;
+    }
+
+    private VerticalStackPanel GetContent(Widget modalContent)
+    {
+        var content = new VerticalStackPanel { HorizontalAlignment = HorizontalAlignment.Stretch };
+        content.Widgets.Add(modalContent);
+        content.Widgets.Add(GetButtonGrid());
+        return content;
     }
 
     private Grid GetButtonGrid()
