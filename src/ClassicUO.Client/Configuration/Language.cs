@@ -702,9 +702,10 @@ namespace ClassicUO.Configuration
     public class ProfileEditorLanguage
     {
         public string Add { get; set; } = "Add";
-        public string Edit { get; set; } = "Edit";
         public string Delete { get; set; } = "Delete";
         public string Profile { get; set; } = "Profile";
+        public string DeleteProfile { get; set; } = "Delete profile?";
+        public string DeleteProfileX { get; set; } = "Delete profile \"{0}\"?";
     }
 
     public class ErrorsLanguage

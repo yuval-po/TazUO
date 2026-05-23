@@ -148,12 +148,14 @@ public class ProfileEditor<TProfile> : Widget where TProfile : IProfile
         if (_selectedProfile?.Deletable != true)
             return;
 
+        ProfileEditorLanguage lang = Language.Instance.UiCommons.ProfileEditor;
+
         IGui prevTopmost = UIManager.TopMostControl;
 
         _confirmationModal?.Dispose();
         _confirmationModal = new ConfirmationModal(
-            "Delete Profile?",
-            $"Delete profile \"{_selectedProfile.Name}\"?",
+            lang.DeleteProfile,
+            string.Format(lang.DeleteProfileX, _selectedProfile.Name),
             confirmed =>
             {
                 if (!confirmed)
@@ -252,9 +254,11 @@ public class ProfileEditor<TProfile> : Widget where TProfile : IProfile
 
     private string GetNextProfileName()
     {
+        ProfileEditorLanguage lang = Language.Instance.UiCommons.ProfileEditor;
+
         int index = 1;
-        while (Profiles.Any(p => p.Name == $"Profile {index}"))
+        while (Profiles.Any(p => p.Name == $"{lang.Profile} {index}"))
             index++;
-        return $"Profile {index}";
+        return $"{lang.Profile} {index}";
     }
 }
