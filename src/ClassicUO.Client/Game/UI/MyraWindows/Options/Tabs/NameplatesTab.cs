@@ -46,11 +46,9 @@ public static class NameplatesTab
         return profileEditor;
     }
 
-    private static Widget GetEditorForProfile(NameOverheadOption profile)
+    private static WrapPanel GetEditorForProfile(NameOverheadOption profile)
     {
-        ModernOptionsGumpLanguage lang = Language.Instance.GetModernOptionsGumpLanguage;
-        ModernOptionsGumpLanguage.TazUO tuoLang = lang.GetTazUO;
-        ModernOptionsGumpLanguage.General genLang = lang.GetGeneral;
+        ModernOptionsGumpLanguage.NamePlatesOptionsTab npLang = Language.Instance.GetModernOptionsGumpLanguage.GetNamePlates.OptionsTab;
 
         WrapPanel settingsPanel = OptionTabCommons.StyledHorizontalWrapPanel(
             GetItemsBoxesPanel(profile),
@@ -66,11 +64,11 @@ public static class NameplatesTab
             OptionTabCommons.StyledStackPanel(
                 Orientation.Horizontal,
                 new MyraButton(
-                    "Check All",
+                    npLang.CheckAll,
                     () => profile.NameOverheadOptionFlags = EnumUtils.AllBits<NameOverheadOptions>()
                 ),
                 new MyraButton(
-                    "Uncheck All",
+                    npLang.UncheckAll,
                     () => profile.NameOverheadOptionFlags = NameOverheadOptions.None
                 )
             ),
@@ -78,131 +76,144 @@ public static class NameplatesTab
         );
     }
 
-    private static Widget GetItemsBoxesPanel(NameOverheadOption profile) =>
-        new VisualContainer(
-            new VisualContainerProps { LabelText = "Items" },
+    private static VisualContainer GetItemsBoxesPanel(NameOverheadOption profile)
+    {
+        ModernOptionsGumpLanguage.NamePlatesOptionsTab npLang = Language.Instance.GetModernOptionsGumpLanguage.GetNamePlates.OptionsTab;
+
+        return new VisualContainer(
+            new VisualContainerProps { LabelText = npLang.Items },
             OptionsFactory.CreatePropBoundBitFlagCheckBox(
-                "Containers",
+                npLang.Containers,
                 new Accessor<NameOverheadOptions>(() => profile.NameOverheadOptionFlags),
                 NameOverheadOptions.Containers
             ),
             OptionsFactory.CreatePropBoundBitFlagCheckBox(
-                "Stackable",
+                npLang.Stackable,
                 new Accessor<NameOverheadOptions>(() => profile.NameOverheadOptionFlags),
                 NameOverheadOptions.Stackable
             ),
             OptionsFactory.CreatePropBoundBitFlagCheckBox(
-                "Moveable",
+                npLang.Moveable,
                 new Accessor<NameOverheadOptions>(() => profile.NameOverheadOptionFlags),
                 NameOverheadOptions.Moveable
             ),
             OptionsFactory.CreatePropBoundBitFlagCheckBox(
-                "Other items",
+                npLang.OtherItems,
                 new Accessor<NameOverheadOptions>(() => profile.NameOverheadOptionFlags),
                 NameOverheadOptions.Other
             ),
             OptionsFactory.CreatePropBoundBitFlagCheckBox(
-                "Gold",
+                npLang.Gold,
                 new Accessor<NameOverheadOptions>(() => profile.NameOverheadOptionFlags),
                 NameOverheadOptions.Gold
             ),
             OptionsFactory.CreatePropBoundBitFlagCheckBox(
-                "Locked down",
+                npLang.LockedDown,
                 new Accessor<NameOverheadOptions>(() => profile.NameOverheadOptionFlags),
                 NameOverheadOptions.LockedDown
             ),
             OptionsFactory.CreatePropBoundBitFlagCheckBox(
-                "Immovable",
+                npLang.Immovable,
                 new Accessor<NameOverheadOptions>(() => profile.NameOverheadOptionFlags),
                 NameOverheadOptions.Immoveable
             )
         );
+    }
 
-    private static Widget GetCorpseBoxesPanel(NameOverheadOption profile) =>
-        new VisualContainer(
-            new VisualContainerProps { LabelText = "Corpses" },
+    private static VisualContainer GetCorpseBoxesPanel(NameOverheadOption profile)
+    {
+        ModernOptionsGumpLanguage.NamePlatesOptionsTab npLang = Language.Instance.GetModernOptionsGumpLanguage.GetNamePlates.OptionsTab;
+        return new VisualContainer(
+            new VisualContainerProps { LabelText = npLang.Corpses },
             OptionsFactory.CreatePropBoundBitFlagCheckBox(
-                "Monster",
+                npLang.Monster,
                 new Accessor<NameOverheadOptions>(() => profile.NameOverheadOptionFlags),
                 NameOverheadOptions.MonsterCorpses
             ),
             OptionsFactory.CreatePropBoundBitFlagCheckBox(
-                "Humanoid",
+                npLang.Humanoid,
                 new Accessor<NameOverheadOptions>(() => profile.NameOverheadOptionFlags),
                 NameOverheadOptions.HumanoidCorpses
             )
         );
+    }
 
-    private static Widget GetMobilesByTypeBoxesPanel(NameOverheadOption profile) =>
-        new VisualContainer(
-            new VisualContainerProps { LabelText = "Mobiles by type" },
+    private static VisualContainer GetMobilesByTypeBoxesPanel(NameOverheadOption profile)
+    {
+        ModernOptionsGumpLanguage.NamePlatesOptionsTab npLang = Language.Instance.GetModernOptionsGumpLanguage.GetNamePlates.OptionsTab;
+
+        return new VisualContainer(
+            new VisualContainerProps { LabelText = npLang.MobilesByType },
             OptionsFactory.CreatePropBoundBitFlagCheckBox(
-                "Humanoid",
+                npLang.Humanoid,
                 new Accessor<NameOverheadOptions>(() => profile.NameOverheadOptionFlags),
                 NameOverheadOptions.Humanoid
             ),
             OptionsFactory.CreatePropBoundBitFlagCheckBox(
-                "Your followers",
+                npLang.YourFollowers,
                 new Accessor<NameOverheadOptions>(() => profile.NameOverheadOptionFlags),
                 NameOverheadOptions.OwnFollowers
             ),
             OptionsFactory.CreatePropBoundBitFlagCheckBox(
-                "Exclude yourself",
+                npLang.ExcludeYourself,
                 new Accessor<NameOverheadOptions>(() => profile.NameOverheadOptionFlags),
                 NameOverheadOptions.ExcludeSelf
             ),
             OptionsFactory.CreatePropBoundBitFlagCheckBox(
-                "Monster",
+                npLang.Monster,
                 new Accessor<NameOverheadOptions>(() => profile.NameOverheadOptionFlags),
                 NameOverheadOptions.Monster
             ),
             OptionsFactory.CreatePropBoundBitFlagCheckBox(
-                "Yourself",
+                npLang.Yourself,
                 new Accessor<NameOverheadOptions>(() => profile.NameOverheadOptionFlags),
                 NameOverheadOptions.Self
             )
         );
+    }
 
-    private static Widget GetMobilesByNotorietyBoxesPanel(NameOverheadOption profile) =>
-        new VisualContainer(
-            new VisualContainerProps { LabelText = "Mobiles by notoriety" },
+    private static VisualContainer GetMobilesByNotorietyBoxesPanel(NameOverheadOption profile)
+    {
+        ModernOptionsGumpLanguage.NamePlatesOptionsTab npLang = Language.Instance.GetModernOptionsGumpLanguage.GetNamePlates.OptionsTab;
+        return new VisualContainer(
+            new VisualContainerProps { LabelText = npLang.MobilesByNotoriety },
             OptionsFactory.CreatePropBoundBitFlagCheckBox(
-                "Innocent",
+                npLang.Innocent,
                 new Accessor<NameOverheadOptions>(() => profile.NameOverheadOptionFlags),
                 NameOverheadOptions.Innocent
             ),
             OptionsFactory.CreatePropBoundBitFlagCheckBox(
-                "Attackable",
+                npLang.Attackable,
                 new Accessor<NameOverheadOptions>(() => profile.NameOverheadOptionFlags),
                 NameOverheadOptions.Gray
             ),
             OptionsFactory.CreatePropBoundBitFlagCheckBox(
-                "Enemy",
+                npLang.Enemy,
                 new Accessor<NameOverheadOptions>(() => profile.NameOverheadOptionFlags),
                 NameOverheadOptions.Enemy
             ),
             OptionsFactory.CreatePropBoundBitFlagCheckBox(
-                "Invulnerable",
+                npLang.Invulnerable,
                 new Accessor<NameOverheadOptions>(() => profile.NameOverheadOptionFlags),
                 NameOverheadOptions.Invulnerable
             ),
             OptionsFactory.CreatePropBoundBitFlagCheckBox(
-                "Allied",
+                npLang.Allied,
                 new Accessor<NameOverheadOptions>(() => profile.NameOverheadOptionFlags),
                 NameOverheadOptions.Ally
             ),
             OptionsFactory.CreatePropBoundBitFlagCheckBox(
-                "Criminal",
+                npLang.Criminal,
                 new Accessor<NameOverheadOptions>(() => profile.NameOverheadOptionFlags),
                 NameOverheadOptions.Criminal
             ),
             OptionsFactory.CreatePropBoundBitFlagCheckBox(
-                "Murderer",
+                npLang.Murderer,
                 new Accessor<NameOverheadOptions>(() => profile.NameOverheadOptionFlags),
                 NameOverheadOptions.Murderer
             )
         );
-
+    }
 
     private static WrapPanel GetGeneralNameplatesSubTabContent()
     {

@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using System.Text.Json;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace ClassicUO.Configuration
 {
@@ -451,6 +450,36 @@ namespace ClassicUO.Configuration
             public string NewEntry { get; set; } = "New entry";
             public string NameOverheadEntryName { get; set; } = "Name overhead entry name";
             public string DeleteEntry { get; set; } = "Delete entry";
+            public NamePlatesOptionsTab OptionsTab { get; set; } = new NamePlatesOptionsTab();
+        }
+
+        public class NamePlatesOptionsTab
+        {
+            public string CheckAll { get; set; } = "Check All";
+            public string UncheckAll { get; set; } = "Uncheck All";
+            public string Items { get; set; } = "Items";
+            public string Containers { get; set; } = "Containers";
+            public string Stackable { get; set; } = "Stackable";
+            public string Moveable { get; set; } = "Moveable";
+            public string OtherItems { get; set; } = "Other items";
+            public string Gold { get; set; } = "Gold";
+            public string LockedDown { get; set; } = "Locked down";
+            public string Immovable { get; set; } = "Immovable";
+            public string Corpses { get; set; } = "Corpses";
+            public string Monster { get; set; } = "Monster";
+            public string Humanoid { get; set; } = "Humanoid";
+            public string MobilesByType { get; set; } = "Mobiles by type";
+            public string YourFollowers { get; set; } = "Your followers";
+            public string ExcludeYourself { get; set; } = "Exclude yourself";
+            public string Yourself { get; set; } = "Yourself";
+            public string MobilesByNotoriety { get; set; } = "Mobiles by notoriety";
+            public string Innocent { get; set; } = "Innocent";
+            public string Attackable { get; set; } = "Attackable";
+            public string Enemy { get; set; } = "Enemy";
+            public string Invulnerable { get; set; } = "Invulnerable";
+            public string Allied { get; set; } = "Allied";
+            public string Criminal { get; set; } = "Criminal";
+            public string Murderer { get; set; } = "Murderer";
         }
 
         public class Cooldowns
