@@ -18,21 +18,30 @@ namespace ClassicUO.Game.UI.MyraWindows.Options.Editors.Profile;
 
 public class ProfileEditor<TProfile> : Widget where TProfile : IProfile
 {
+    #region Members
+
     private readonly Func<TProfile, Widget> _configUiGetter;
+    private readonly MyraInputBox _renameInputBox = new();
+    private readonly List<TProfile> _profileRefs = [];
+    private readonly Func<string, TProfile> _createProfile;
+    private readonly Action<TProfile> _onDeleteProfile;
+    private readonly Thickness _profileBomboMargins = new(0, 0, 20, 0);
+    private const int PROFILE_COMBO_WIDTH = 225;
+
     private TProfile _selectedProfile;
     private Widget _currentConfigUi;
     private ConfirmationModal _confirmationModal;
     private bool _isRenaming;
-    private readonly MyraInputBox _renameInputBox = new();
 
-    private readonly List<TProfile> _profileRefs = [];
-    private readonly Func<string, TProfile> _createProfile;
-    private readonly Action<TProfile> _onDeleteProfile;
+    #endregion Members
 
-    private const int PROFILE_COMBO_WIDTH = 225;
-    private readonly Thickness _profileBomboMargins = new(0, 0, 20, 0);
+    #region Accessores
 
     public ObservableCollection<TProfile> Profiles { get; } = [];
+
+    #endregion Accessores
+
+    #region Constructors
 
     public ProfileEditor(
         Func<TProfile, Widget> getConfigUiForProfile,
@@ -62,37 +71,88 @@ public class ProfileEditor<TProfile> : Widget where TProfile : IProfile
         Profiles.CollectionChanged += OnProfilesCollectionChanged;
     }
 
-    private void AddProfile(TProfile profile)
+    #endregion Constructors
+
+    #region Private Methods
+
+    #region Button Handlers
+
+    private void OnAdd()
     {
-        profile.PropertyChanged += OnProfilePropertyChanged;
-        Profiles.Add(profile);
-        _profileRefs.Add(profile);
+        TProfile newProfile = _createProfile(GetNextProfileName());
+        AddProfile(newProfile);
+        ChangeOrUpdateProfile(newProfile);
     }
 
-    private void RemoveProfile(TProfile profile)
+    private void OnRename()
     {
-        if (profile == null)
+        _isRenaming = true;
+        RebuildUi();
+    }
+
+    private void OnDelete()
+    {
+        if (_selectedProfile?.Deletable != true)
             return;
 
-        profile.PropertyChanged -= OnProfilePropertyChanged;
-        Profiles.Remove(profile);
-        _profileRefs.Remove(profile);
+        ProfileEditorLanguage lang = Language.Instance.UiCommons.ProfileEditor;
 
-        // Since we've deleted a profile, we may need to display an empty state
-        if (Profiles.Count > 0)
-            ChangeOrUpdateProfile(Profiles.First());
-        else
-            Children.Add(Build());
+        IGui prevTopmost = UIManager.TopMostControl;
+
+        _confirmationModal?.Dispose();
+        _confirmationModal = new ConfirmationModal(
+            lang.DeleteProfile,
+            string.Format(lang.DeleteProfileX, _selectedProfile.Name),
+            confirmed =>
+            {
+                if (!confirmed)
+                    return;
+
+                if (_selectedProfile?.Deletable != true)
+                {
+                    Log.Warn($"Profile {nameof(TProfile)} is not deletable. This is a logical bug, please report it via GitHub or Discord.");
+                    return;
+                }
+
+                TProfile removedProfile = _selectedProfile;
+                // RemoveProfile updates _selectedProfile so we need to track it first
+                RemoveProfile(removedProfile);
+
+                // Invoke the user callback
+                _onDeleteProfile(removedProfile);
+
+                // Restore focus back to the parent control
+                UIManager.MakeTopMostGump(prevTopmost);
+            }
+        );
+
+        UIManager.Add(_confirmationModal);
     }
 
-    private void OnProfilePropertyChanged(object sender, PropertyChangedEventArgs e)
+    private void OnRenameSave()
     {
-        if (!sender.Equals(_selectedProfile))
+        if (_selectedProfile == null)
             return;
 
-        // Re-render with the updated content
-        ChangeOrUpdateProfile(_selectedProfile);
+        string newName = _renameInputBox.Text;
+        if (string.IsNullOrWhiteSpace(newName))
+            return;
+
+        _selectedProfile.Name = newName;
+
+        _isRenaming = false;
+        RebuildUi();
     }
+
+    private void OnRenameCancel()
+    {
+        _isRenaming = false;
+        RebuildUi();
+    }
+
+    #endregion Button Handlers
+
+    #region UI Building
 
     private WrapPanel Build()
     {
@@ -171,58 +231,6 @@ public class ProfileEditor<TProfile> : Widget where TProfile : IProfile
         return combo;
     }
 
-    private void OnAdd()
-    {
-        TProfile newProfile = _createProfile(GetNextProfileName());
-        AddProfile(newProfile);
-        ChangeOrUpdateProfile(newProfile);
-    }
-
-    private void OnRename()
-    {
-        _isRenaming = true;
-        RebuildUi();
-    }
-
-    private void OnDelete()
-    {
-        if (_selectedProfile?.Deletable != true)
-            return;
-
-        ProfileEditorLanguage lang = Language.Instance.UiCommons.ProfileEditor;
-
-        IGui prevTopmost = UIManager.TopMostControl;
-
-        _confirmationModal?.Dispose();
-        _confirmationModal = new ConfirmationModal(
-            lang.DeleteProfile,
-            string.Format(lang.DeleteProfileX, _selectedProfile.Name),
-            confirmed =>
-            {
-                if (!confirmed)
-                    return;
-
-                if (_selectedProfile?.Deletable != true)
-                {
-                    Log.Warn($"Profile {nameof(TProfile)} is not deletable. This is a logical bug, please report it via GitHub or Discord.");
-                    return;
-                }
-
-                TProfile removedProfile = _selectedProfile;
-                // RemoveProfile updates _selectedProfile so we need to track it first
-                RemoveProfile(removedProfile);
-
-                // Invoke the user callback
-                _onDeleteProfile(removedProfile);
-
-                // Restore focus back to the parent control
-                UIManager.MakeTopMostGump(prevTopmost);
-            }
-        );
-
-        UIManager.Add(_confirmationModal);
-    }
-
     private StackPanel GetRenameProfileInput()
     {
         ProfileEditorLanguage lang = Language.Instance.UiCommons.ProfileEditor;
@@ -247,26 +255,48 @@ public class ProfileEditor<TProfile> : Widget where TProfile : IProfile
         return panel;
     }
 
-    private void OnRenameSave()
+    private void RebuildUi()
     {
-        if (_selectedProfile == null)
-            return;
-
-        string newName = _renameInputBox.Text;
-        if (string.IsNullOrWhiteSpace(newName))
-            return;
-
-        _selectedProfile.Name = newName;
-
-        _isRenaming = false;
-        RebuildUi();
+        Children.Clear();
+        Children.Add(Build());
     }
 
-    private void OnRenameCancel()
+    #endregion UI Building
+
+    #region Profile Management Logic
+
+    private void AddProfile(TProfile profile)
     {
-        _isRenaming = false;
-        RebuildUi();
+        profile.PropertyChanged += OnProfilePropertyChanged;
+        Profiles.Add(profile);
+        _profileRefs.Add(profile);
     }
+
+    private void RemoveProfile(TProfile profile)
+    {
+        if (profile == null)
+            return;
+
+        profile.PropertyChanged -= OnProfilePropertyChanged;
+        Profiles.Remove(profile);
+        _profileRefs.Remove(profile);
+
+        // Since we've deleted a profile, we may need to display an empty state
+        if (Profiles.Count > 0)
+            ChangeOrUpdateProfile(Profiles.First());
+        else
+            Children.Add(Build());
+    }
+
+    private void OnProfilePropertyChanged(object sender, PropertyChangedEventArgs e)
+    {
+        if (!sender.Equals(_selectedProfile))
+            return;
+
+        // Re-render with the updated content
+        ChangeOrUpdateProfile(_selectedProfile);
+    }
+
 
     private void OnProfileSelected(string selectedName)
     {
@@ -332,12 +362,6 @@ public class ProfileEditor<TProfile> : Widget where TProfile : IProfile
         _profileRefs.Clear();
     }
 
-    private void RebuildUi()
-    {
-        Children.Clear();
-        Children.Add(Build());
-    }
-
     private string GetNextProfileName()
     {
         ProfileEditorLanguage lang = Language.Instance.UiCommons.ProfileEditor;
@@ -347,4 +371,8 @@ public class ProfileEditor<TProfile> : Widget where TProfile : IProfile
             index++;
         return $"{lang.Profile} {index}";
     }
+
+    #endregion Profile Management Logic
+
+    #endregion Private Methods
 }

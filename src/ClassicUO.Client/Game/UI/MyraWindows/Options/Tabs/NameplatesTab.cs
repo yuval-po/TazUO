@@ -27,6 +27,8 @@ public static class NameplatesTab
         return tabs;
     }
 
+    #region Profiles
+
     private static Widget GetProfilesSubTabContent()
     {
         var profileEditor = new ProfileEditor<NameOverheadOption>(
@@ -215,6 +217,10 @@ public static class NameplatesTab
         );
     }
 
+    #endregion Profiles
+
+    #region General Sub-Tab
+
     private static WrapPanel GetGeneralNameplatesSubTabContent()
     {
         Profile profile = ProfileManager.CurrentProfile;
@@ -257,4 +263,6 @@ public static class NameplatesTab
             OptionsFactory.CreateCheckboxOption(tuoLang.AvoidOverlap, new Accessor<bool>(() => profile.NamePlateAvoidOverlap))
         );
     }
+
+    #endregion General Sub-Tab
 }
