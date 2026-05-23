@@ -702,10 +702,15 @@ namespace ClassicUO.Configuration
     public class ProfileEditorLanguage
     {
         public string Add { get; set; } = "Add";
+        public string Rename { get; set; } = "Rename";
         public string Delete { get; set; } = "Delete";
+        public string Save { get; set; } = "Save";
+        public string Cancel { get; set; } = "Cancel";
         public string Profile { get; set; } = "Profile";
         public string DeleteProfile { get; set; } = "Delete profile?";
         public string DeleteProfileX { get; set; } = "Delete profile \"{0}\"?";
+        public string CannotRenameBuiltInProfile { get; set; } = "This profile is a built-in one and cannot be renamed";
+        public string CannotDeleteBuiltInProfile { get; set; } = "This profile is a built-in one and cannot be deleted";
     }
 
     public class ErrorsLanguage

@@ -431,7 +431,7 @@ namespace ClassicUO.Game.Managers
 
         #region Accessors
 
-        public string Name { get; }
+        public string Name { get; set => SetField(ref field, value); }
         public bool Alt { get; set => SetField(ref field, value); }
         public bool Ctrl { get; set => SetField(ref field, value); }
         public bool Shift { get; set => SetField(ref field, value); }

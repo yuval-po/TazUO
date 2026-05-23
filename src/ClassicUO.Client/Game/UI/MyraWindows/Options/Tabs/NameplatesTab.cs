@@ -124,7 +124,7 @@ public static class NameplatesTab
             OptionsFactory.CreatePropBoundBitFlagCheckBox(
                 "Monster",
                 new Accessor<NameOverheadOptions>(() => profile.NameOverheadOptionFlags),
-                NameOverheadOptions.Monster
+                NameOverheadOptions.MonsterCorpses
             ),
             OptionsFactory.CreatePropBoundBitFlagCheckBox(
                 "Humanoid",

@@ -17,6 +17,7 @@ public class MyraButton : Button
         Text = text;
         Margin = new Thickness(2);
         VerticalAlignment = VerticalAlignment.Center;
+        DisabledBackground = Background;
 
         Build(style);
     }
@@ -24,7 +25,9 @@ public class MyraButton : Button
     public override void OnTouchDown()
     {
         base.OnTouchDown();
-        _onClick?.Invoke();
+
+        if (Enabled)
+            _onClick?.Invoke();
     }
 
     private void Build(MyraLabel.TextStyle style) => Content = new MyraLabel(Text, style);
