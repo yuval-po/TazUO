@@ -69,6 +69,9 @@ public static class OptionTabCommons
     internal static Widget StyledHorizontalSeparator() =>
         new HorizontalSeparator { Thickness = 2, Color = new Color(0, 0, 0, 75), BorderThickness = StyleConstantsDefaults.BorderThickness };
 
+    internal static Widget StyledVerticalSeparator() =>
+        new VerticalSeparator() { Thickness = 2, Color = new Color(0, 0, 0, 75), BorderThickness = StyleConstantsDefaults.BorderThickness };
+
 
     internal static StackPanel CreateOptionsComboBox<TValue>(
         string label,

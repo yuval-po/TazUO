@@ -17,7 +17,7 @@ public enum MouseWheelEvent
     ScrollDown
 }
 
-public readonly record struct HotkeySelection
+public class HotkeySelection : IEquatable<HotkeySelection>
 {
     public readonly SDL.SDL_Keycode Key;
     public readonly SDL.SDL_Keymod Modifiers;
@@ -25,13 +25,13 @@ public readonly record struct HotkeySelection
     public readonly MouseButtonType? MouseButton;
     public readonly MouseWheelEvent? Wheel;
 
-    public bool Ctrl { get => (Modifiers & SDL.SDL_Keymod.SDL_KMOD_CTRL) != 0; }
-    public bool Shift { get => (Modifiers & SDL.SDL_Keymod.SDL_KMOD_SHIFT) != 0; }
-    public bool Alt { get => (Modifiers & SDL.SDL_Keymod.SDL_KMOD_ALT) != 0; }
+    public bool Ctrl => (Modifiers & SDL.SDL_Keymod.SDL_KMOD_CTRL) != 0;
+    public bool Shift => (Modifiers & SDL.SDL_Keymod.SDL_KMOD_SHIFT) != 0;
+    public bool Alt => (Modifiers & SDL.SDL_Keymod.SDL_KMOD_ALT) != 0;
 
     public HotkeySelection(
-        SDL.SDL_Keycode key,
-        SDL.SDL_Keymod modifiers,
+        SDL.SDL_Keycode key = SDL.SDL_Keycode.SDLK_UNKNOWN,
+        SDL.SDL_Keymod modifiers = SDL.SDL_Keymod.SDL_KMOD_NONE,
         IEnumerable<SDL.SDL_GamepadButton>? gamepadButtons = null,
         MouseButtonType? mouseButton = null,
         MouseWheelEvent? wheel = null
@@ -98,7 +98,7 @@ public readonly record struct HotkeySelection
     public static HotkeySelection FromString(string hotkeyString)
     {
         if (string.IsNullOrWhiteSpace(hotkeyString))
-            return new HotkeySelection(SDL.SDL_Keycode.SDLK_UNKNOWN, SDL.SDL_Keymod.SDL_KMOD_NONE, null, null, null);
+            return new HotkeySelection();
 
         // Matches the split logic used in Keyboard.NormalizeKeyString
         string[] parts = hotkeyString.ToUpperInvariant().Split('+');
@@ -127,6 +127,48 @@ public readonly record struct HotkeySelection
                     break;
             }
 
-        return new HotkeySelection(key, modifiers, null, null, null);
+        return new HotkeySelection(key, modifiers);
+    }
+
+    public bool Equals(HotkeySelection? other)
+    {
+        if (other is null)
+            return false;
+
+        if (ReferenceEquals(this, other))
+            return true;
+
+        return Key == other.Key &&
+               Modifiers == other.Modifiers &&
+               Enumerable.SequenceEqual(GamepadButtons, other.GamepadButtons) &&
+               MouseButton == other.MouseButton &&
+               Wheel == other.Wheel;
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (obj is null)
+            return false;
+
+        if (ReferenceEquals(this, obj))
+            return true;
+
+        if (obj.GetType() != GetType())
+            return false;
+
+        return Equals((HotkeySelection)obj);
+    }
+
+    public override int GetHashCode()
+    {
+        var hash = new HashCode();
+        hash.Add((int)Key);
+        hash.Add((int)Modifiers);
+        foreach (SDL.SDL_GamepadButton button in GamepadButtons)
+            hash.Add(button);
+
+        hash.Add(MouseButton);
+        hash.Add(Wheel);
+        return hash.ToHashCode();
     }
 }

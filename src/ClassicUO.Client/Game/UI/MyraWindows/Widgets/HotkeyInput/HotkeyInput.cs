@@ -10,8 +10,8 @@ namespace ClassicUO.Game.UI.MyraWindows.Widgets.HotkeyInput;
 
 public class SelectionChangedEventArgs : EventArgs
 {
-    public HotkeySelection OldValue { get; init; }
-    public HotkeySelection NewValue { get; init; }
+    public HotkeySelection OldValue { get; init; } = new();
+    public HotkeySelection NewValue { get; init; } = new();
 }
 
 public class HotkeyInput : Panel
@@ -25,12 +25,13 @@ public class HotkeyInput : Panel
     private bool _isRecording;
 
     private HotkeySelection _selection;
+
     public HotkeySelection Selection
     {
         get => _selection;
         set
         {
-            if (_selection == value)
+            if (_selection.Equals(value))
                 return;
 
             _selection = value;
@@ -48,10 +49,7 @@ public class HotkeyInput : Panel
     )
     {
         _onSelectionChanged = onSelectionChanged;
-
-        if (existingSelection.HasValue)
-            _selection = existingSelection.Value;
-
+        _selection = existingSelection ?? new HotkeySelection();
 
         StackPanel panel = OptionTabCommons.StyledStackPanel(Orientation.Horizontal);
         if (!string.IsNullOrEmpty(labelText))
@@ -63,13 +61,13 @@ public class HotkeyInput : Panel
         _input = new TextBox
         {
             Width = 150,
-            Text = existingSelection?.IsEmpty == false ? existingSelection.Value.ToString() : "No hotkey set",
+            Text = !_selection.IsEmpty ? _selection.ToString() : "No hotkey set",
             Cursor = null,
             Selection = null,
             VerticalAlignment = VerticalAlignment.Center
         };
 
-        _input.TouchDown += (s, e) => StartRecording();
+        _input.TouchDown += (_, _) => StartRecording();
         _defaultTextColor = _input.TextColor;
 
         panel.Widgets.Add(_input);
