@@ -106,4 +106,27 @@ public static class OptionTabCommons
 
         return new MyraLabel(label, MyraLabel.TextStyle.P).PlaceBefore(comboView);
     }
+
+    internal static Grid StyledHorizontalSpaceBetween(Widget[] left, Widget[] right)
+    {
+        var grid = new MyraGrid { HorizontalAlignment = HorizontalAlignment.Stretch };
+
+        if (left?.Length > 0)
+        {
+            grid.AddColumn(Proportion.Auto, (uint)left.Length);
+            for (int i = 0; i < left.Length; i++)
+                grid.AddWidget(left[i], 0, i);
+        }
+
+        grid.AddColumn(Proportion.Fill);
+
+        if (right?.Length > 0)
+        {
+            grid.AddColumn(Proportion.Auto, (uint)right.Length);
+            for (int i = 0; i < right.Length; i++)
+                grid.AddWidget(right[i], 0, i + (left?.Length ?? 0) + 1);
+        }
+
+        return grid;
+    }
 }

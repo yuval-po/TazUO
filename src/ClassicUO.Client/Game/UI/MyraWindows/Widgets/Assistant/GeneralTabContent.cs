@@ -26,8 +26,8 @@ public static class GeneralTabContent
         mainContent.Widgets.Add(rightSide);
 
 
-        leftSide.Widgets.Add(new MyraLabel(lang.VisualConfig, MyraLabel.TextStyle.H1));
-        rightSide.Widgets.Add(new MyraLabel(lang.DelayConfig, MyraLabel.TextStyle.H1));
+        leftSide.Widgets.Add(new MyraLabel(lang.VisualConfig, MyraLabel.TextStyle.H2));
+        rightSide.Widgets.Add(new MyraLabel(lang.DelayConfig, MyraLabel.TextStyle.H2));
 
         leftSide.Widgets.Add(LabeledHorizontalSlider.SliderWithLabel(lang.CameraSmoothing, out LabeledHorizontalSlider _cSmoothSlider, v => profile.CameraSmoothingFactor = v, 0, 1, profile.CameraSmoothingFactor));
         _cSmoothSlider.RoundValues = false;
@@ -78,7 +78,7 @@ public static class GeneralTabContent
         // Right side: Misc
         rightSide.Widgets.Add(new MyraSpacer(20, 15));
 
-        rightSide.Widgets.Add(new MyraLabel(lang.Misc, MyraLabel.TextStyle.H1));
+        rightSide.Widgets.Add(new MyraLabel(lang.Misc, MyraLabel.TextStyle.H2));
 
         rightSide.Widgets.Add(MyraCheckButton.CreateWithCallback(profile.QueueManualItemMoves,
             b => profile.QueueManualItemMoves = b, lang.QueueItemMoves, lang.QueueItemMovesTooltip));

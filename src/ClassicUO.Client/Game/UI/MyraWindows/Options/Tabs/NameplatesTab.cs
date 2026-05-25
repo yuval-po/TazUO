@@ -2,10 +2,14 @@ using ClassicUO.Common;
 using ClassicUO.Common.Enums;
 using ClassicUO.Configuration;
 using ClassicUO.Game.Managers;
+using ClassicUO.Game.UI.Gumps;
 using ClassicUO.Game.UI.MyraWindows.Options.Editors.Profile;
 using ClassicUO.Game.UI.MyraWindows.Widgets;
+using ClassicUO.Game.UI.MyraWindows.Widgets.HotkeyInput;
+using ClassicUO.Resources;
 using Myra.Graphics2D.UI;
 using Myra.Graphics2D.UI.WrapPanel;
+using SDL3;
 
 namespace ClassicUO.Game.UI.MyraWindows.Options.Tabs;
 
@@ -62,19 +66,61 @@ public static class NameplatesTab
         settingsPanel.Aligned = false;
         settingsPanel.UniformSizing = false;
 
+
+        // Note that these coalesce both left and right mod keys. Might want to improve specifically later.
+        SDL.SDL_Keymod mods = profile.Alt ? SDL.SDL_Keymod.SDL_KMOD_ALT : 0;
+        mods |= profile.Ctrl ? SDL.SDL_Keymod.SDL_KMOD_CTRL : 0;
+        mods |= profile.Shift ? SDL.SDL_Keymod.SDL_KMOD_SHIFT : 0;
+
+        var currentHotkey = new HotkeySelection(profile.Key, mods);
+
         return OptionTabCommons.StyledVerticalWrapPanel(
-            OptionTabCommons.StyledStackPanel(
-                Orientation.Horizontal,
-                new MyraButton(
-                    npLang.CheckAll,
-                    () => profile.NameOverheadOptionFlags = EnumUtils.AllBits<NameOverheadOptions>()
-                ),
-                new MyraButton(
-                    npLang.UncheckAll,
-                    () => profile.NameOverheadOptionFlags = NameOverheadOptions.None
-                )
+            OptionTabCommons.StyledHorizontalSpaceBetween(
+                [
+                    new HotkeyInput(
+                        existingSelection: currentHotkey,
+                        onSelectionChanged: e => OnProfileHotkeyChanged(profile, e))
+                ],
+                [
+                    new MyraButton(
+                        npLang.CheckAll,
+                        () => profile.NameOverheadOptionFlags = EnumUtils.AllBits<NameOverheadOptions>()
+                    ),
+                    new MyraButton(
+                        npLang.UncheckAll,
+                        () => profile.NameOverheadOptionFlags = NameOverheadOptions.None
+                    )
+                ]
             ),
             settingsPanel
+        );
+    }
+
+    private static void OnProfileHotkeyChanged(NameOverheadOption profile, SelectionChangedEventArgs e)
+    {
+        HotkeySelection value = e.NewValue;
+
+        // We have to check for hotkey conflicts first.
+        NameOverheadOption option = NameOverHeadManager.FindOptionByHotkey(value.Key, value.Alt, value.Ctrl, value.Shift);
+
+        // If there are none, simply update the profile with the new hotkey.
+        if (option == null || option == profile || value.IsEmpty)
+        {
+            profile.Key = value.Key;
+            profile.Alt = value.Alt;
+            profile.Ctrl = value.Ctrl;
+            profile.Shift = value.Shift;
+            return;
+        }
+
+        // Otherwise, raise a notice
+        UIManager.Add(new MessageBoxGump(
+                World.Instance,
+                250,
+                150,
+                string.Format(ResGumps.ThisKeyCombinationAlreadyExists, option.Name),
+                null
+            )
         );
     }
 
