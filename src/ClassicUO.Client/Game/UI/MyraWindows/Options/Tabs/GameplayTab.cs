@@ -27,7 +27,6 @@ public static class GameplayTab
     private static WrapPanel GetTerrainAndStaticsSubTabContent()
     {
         ModernOptionsGumpLanguage.General generalLang = Language.Instance.GetModernOptionsGumpLanguage.GetGeneral;
-        ModernOptionsGumpLanguage gumpLang = Language.Instance.GetModernOptionsGumpLanguage;
         Profile profile = ProfileManager.CurrentProfile;
 
         return OptionTabCommons.StyledVerticalWrapPanel(

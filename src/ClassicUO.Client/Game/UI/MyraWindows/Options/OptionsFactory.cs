@@ -49,6 +49,9 @@ public static class OptionsFactory
     internal static OptionItem PropBoundSliderOption(string label, Accessor<float> backingProperty, float min, float max) =>
         CreateSliderOption(label, min, max, backingProperty.Get(), backingProperty.Set);
 
+    internal static OptionItem PropBoundSliderOption(string label, Accessor<int> backingProperty, int min, int max) =>
+        CreateSliderOption(label, min, max, backingProperty.Get(), value => backingProperty.Set((int)value));
+
     internal static OptionItem CreateSliderOption(string label, float min, float max, float value,
         Action<float> onChange) =>
         new(label, () => LabeledHorizontalSlider.SliderWithLabel(label, out _, onChange, min, max, value));

@@ -85,8 +85,11 @@ namespace ClassicUO.Configuration
         public string ButtonGumpContext { get; set; } = "Gumps & Context";
         public string ButtonMisc { get; set; } = "Misc";
         public string ButtonTerrainStatics { get; set; } = "Terrain & Statics";
+        public string ButtonHealthBars { get; set; } = "Health Bars";
+        public string ButtonGumps { get; set; } = "Gumps";
         public string ButtonGameWindow { get; set; } = "Game window";
         public string ButtonGameplay { get; set; } = "Gameplay";
+        public string ButtonPaperdoll { get; set; } = "Paperdoll";
         public string ButtonZoom { get; set; } = "Zoom";
         public string ButtonLighting { get; set; } = "Lighting";
         public string ButtonShadows { get; set; } = "Shadows";

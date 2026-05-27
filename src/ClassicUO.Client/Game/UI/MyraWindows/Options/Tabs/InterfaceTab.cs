@@ -16,17 +16,41 @@ public static class InterfaceTab
     private static MyraTabControl GetInterfaceMenuTabs()
     {
         ModernOptionsGumpLanguage lang = Language.Instance.GetModernOptionsGumpLanguage;
-        ModernOptionsGumpLanguage.Video videoLang = Language.Instance.GetModernOptionsGumpLanguage.GetVideo;
-        ModernOptionsGumpLanguage gumpLang = Language.Instance.GetModernOptionsGumpLanguage;
 
         var tabs = new MyraTabControl();
         tabs.AddTab(lang.ButtonContainers, ContainersTab.GetContent);
         tabs.AddTab(lang.ButtonNameplates, NameplatesTab.GetContent);
         tabs.AddTab(lang.ButtonInfoBar, InfoBarsTab.GetContent);
         tabs.AddTab(lang.ButtonTerrainStatics, GetTerrainAndStaticsSubTabContent);
+        tabs.AddTab(lang.ButtonHealthBars, HealthBarsTab.GetContent);
+        tabs.AddTab(lang.ButtonGumps, GetGumpsSubTabContent);
+        tabs.AddTab(lang.ButtonPaperdoll, PaperdollTab.GetContent);
         return tabs;
     }
 
+    private static WrapPanel GetTerrainAndStaticsSubTabContent()
+    {
+        ModernOptionsGumpLanguage.General generalLang = Language.Instance.GetModernOptionsGumpLanguage.GetGeneral;
+        Profile profile = ProfileManager.CurrentProfile;
+
+        return OptionTabCommons.StyledVerticalWrapPanel(
+            OptionsFactory.CreateCheckboxOption(generalLang.HideRoof, !profile.DrawRoofs, b => profile.DrawRoofs = !b),
+            OptionsFactory.CreateCheckboxOption(generalLang.TreesToStump, new Accessor<bool>(() => profile.TreeToStumps)),
+            OptionsFactory.CreateCheckboxOption(generalLang.HideVegetation, new Accessor<bool>(() => profile.HideVegetation)),
+            OptionsFactory.CreateComboBox(
+                generalLang.MagicFieldType,
+                profile.FieldsType,
+                [
+                    generalLang.MagicFieldOpt_Normal,
+                    generalLang.MagicFieldOpt_Static,
+                    generalLang.MagicFieldOpt_Tile
+                ],
+                i => profile.FieldsType = i
+            )
+        );
+    }
+
+    /*
     private static WrapPanel GetTerrainAndStaticsSubTabContent()
     {
         Profile profile = ProfileManager.CurrentProfile;
@@ -47,18 +71,6 @@ public static class InterfaceTab
             OptionsFactory.CreateCheckboxOption(genLang.OldStatusGump, new Accessor<bool>(() => profile.UseOldStatusGump)),
             OptionsFactory.CreateCheckboxOption(genLang.PartyInviteGump, new Accessor<bool>(() => profile.PartyInviteGump)),
             OptionsFactory.CreateSpacer(),
-            new OptionItem(
-                genLang.ModernHealthBars,
-                () => new CheckBoxGroup(
-                    new PropertyBinder(new Accessor<bool>(() => profile.CustomBarsToggled), genLang.ModernHealthBars),
-                    OptionsFactory.CreateCheckboxOption(genLang.ModernHPBlackBG, new Accessor<bool>(() => profile.CBBlackBGToggled))
-                )
-            ),
-            OptionsFactory.CreateCheckboxOption(genLang.SaveHPBars, new Accessor<bool>(() => profile.SaveHealthbars)),
-            OptionsFactory.CreateComboBox(genLang.CloseHPGumpsWhen, profile.CloseHealthBarType, [
-                genLang.CloseHPOptDisable, genLang.CloseHPOptOOR,
-                genLang.CloseHPOptDead, genLang.CloseHPOptBoth
-            ], b => profile.CloseHealthBarType = b),
             OptionsFactory.CreateSpacer(),
             OptionsFactory.CreateComboBox(genLang.GridLoot, profile.GridLootType, [
                 genLang.GridLootOptDisable, genLang.GridLootOptOnly,
@@ -69,7 +81,7 @@ public static class InterfaceTab
             OptionsFactory.CreateCheckboxOption(genLang.ShiftSplit, new Accessor<bool>(() => profile.HoldShiftToSplitStack))
         );
     }
-
+*/
     private static WrapPanel GetGumpsSubTabContent()
     {
         Profile profile = ProfileManager.CurrentProfile;
@@ -85,26 +97,7 @@ public static class InterfaceTab
             OptionsFactory.CreateCheckboxOption(genLang.OriginalSkillsGump, new Accessor<bool>(() => profile.StandardSkillsGump)),
             OptionsFactory.CreateCheckboxOption(genLang.OldStatusGump, new Accessor<bool>(() => profile.UseOldStatusGump)),
             OptionsFactory.CreateCheckboxOption(genLang.PartyInviteGump, new Accessor<bool>(() => profile.PartyInviteGump)),
-            OptionsFactory.CreateSpacer(),
-            new OptionItem(
-                genLang.ModernHealthBars,
-                () => new CheckBoxGroup(
-                    new PropertyBinder(new Accessor<bool>(() => profile.CustomBarsToggled), genLang.ModernHealthBars),
-                    OptionsFactory.CreateCheckboxOption(genLang.ModernHPBlackBG, new Accessor<bool>(() => profile.CBBlackBGToggled))
-                )
-            ),
-            OptionsFactory.CreateCheckboxOption(genLang.SaveHPBars, new Accessor<bool>(() => profile.SaveHealthbars)),
-            OptionsFactory.CreateComboBox(
-                genLang.CloseHPGumpsWhen,
-                profile.CloseHealthBarType,
-                [
-                    genLang.CloseHPOptDisable,
-                    genLang.CloseHPOptOOR,
-                    genLang.CloseHPOptDead,
-                    genLang.CloseHPOptBoth
-                ],
-                b => profile.CloseHealthBarType = b
-            )
+            OptionsFactory.CreateSpacer()
         );
     }
 }
