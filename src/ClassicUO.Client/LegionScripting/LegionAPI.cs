@@ -450,19 +450,30 @@ namespace ClassicUO.LegionScripting
 
             uint id = Interlocked.Increment(ref _timedCallbackCurrentId);
             var timer = new Timer(clampedDelay) { AutoReset = false };
-            var callbackData = new TimedCallback(timer, timesToRepeat);
+            var callbackData = new TimedCallback(callback, timer, timesToRepeat);
             timer.Elapsed += (_, _) =>
             {
-                if (_disposed || !_timedCallbacks.ContainsKey(id))
+                if (_disposed || !_timedCallbacks.TryGetValue(id, out TimedCallback freshCallbackData))
                     return;
 
-                ScheduleCallbackActions([WrapScriptCallback(callback)]);
+                lock (freshCallbackData)
+                {
+                    ScheduleCallbackActions([
+                        WrapScriptCallback(() =>
+                        {
+                            if (freshCallbackData.CancellationSource.IsCancellationRequested)
+                                return;
 
-                callbackData.TimesInvoked++;
-                if (callbackData.TimesToRepeat < 0 || callbackData.TimesInvoked <= (ulong)callbackData.TimesToRepeat)
-                    timer.Start();
-                else
-                    RemoveTimedCallback(id);
+                            freshCallbackData.Callback();
+                        })
+                    ]);
+
+                    callbackData.TimesInvoked++;
+                    if (callbackData.TimesToRepeat < 0 || callbackData.TimesInvoked <= (ulong)callbackData.TimesToRepeat)
+                        timer.Start();
+                    else
+                        RemoveTimedCallback(id);
+                }
             };
 
             _timedCallbacks[id] = callbackData;
@@ -480,8 +491,12 @@ namespace ClassicUO.LegionScripting
             if (!_timedCallbacks.TryRemove(id, out TimedCallback callback))
                 return;
 
-            callback.Timer?.Stop();
-            callback.Timer?.Dispose();
+            lock (callback)
+            {
+                callback.CancellationSource?.Cancel();
+                callback.Timer?.Stop();
+                callback.Timer?.Dispose();
+            }
         }
 
         /// <summary>
