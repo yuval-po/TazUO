@@ -434,9 +434,9 @@ namespace ClassicUO.LegionScripting
         /// </param>
         /// <param name="callback">The callback to invoke</param>
         /// <param name="timesToRepeat">
-        /// The number of times the callback the callback should be repeated after the initial invocation.
+        /// The number of times the callback should be repeated after the initial invocation.
         /// Repeated invocations respect the requested delay.
-        /// A negative number means "forever", 0 means "do not repeat" (i.e., invoke once) and positive numbers mean "repeat N times".
+        /// A negative number means "forever", 0 means "do not repeat" (i.e., invoke once), and positive numbers mean "repeat N times".
         /// A repeat of '9', for example, will result in 10 total invocations (1 initial + 9 repeats).
         /// </param>
         /// <returns>
@@ -461,7 +461,9 @@ namespace ClassicUO.LegionScripting
                     ScheduleCallbackActions([
                         WrapScriptCallback(() =>
                         {
-                            if (freshCallbackData.CancellationSource.IsCancellationRequested)
+                            // Notice this is a boolean check, not a CTS.
+                            // Must be done under the lock to remain safe.
+                            if (freshCallbackData.IsCancellationRequested)
                                 return;
 
                             freshCallbackData.Callback();
@@ -493,7 +495,10 @@ namespace ClassicUO.LegionScripting
 
             lock (callback)
             {
-                callback.CancellationSource?.Cancel();
+                // Mark for cancellation - this is relevant only if the task has already been dispatched to the callback queue.
+                // The reason we can't use a CTS here is that lifecycle control is split between multiple threads.
+                // Notice this is set under lock.
+                callback.IsCancellationRequested = true;
                 callback.Timer?.Stop();
                 callback.Timer?.Dispose();
             }
