@@ -4791,32 +4791,21 @@ namespace ClassicUO.Game.UI.Gumps
             string label,
             string selectedFont = "",
             Action<int, string> onSelect = null
-            )
+        )
         {
             const int comboBoxMaxWidth = 300;
 
-            int comboBoxWidth;
-            int selectedFontInd = 0;
-            string[] options;
+            // Fallback to embedded fonts if we've gotten nothing here, for some reason.
+            string[] options = fontNames?.Length > 0 ? fontNames : EmbeddedFontNames.Names.ToArray();
 
-            if (fontNames?.Length > 0)
-            {
-                // Make sure the index is never out-of-bounds;
-                // This can technically happen if a profile is moved to a machine that lacks the currently selected font.
-                // Ideally, we'd want some 'warning' marker in the UI, but that's for a later time.
-                selectedFontInd = Math.Clamp(Array.IndexOf(fontNames, selectedFont), 0, fontNames.Length - 1);
+            // Make sure the index is never out-of-bounds;
+            // This can technically happen if a profile is moved to a machine that lacks the currently selected font.
+            // Ideally, we'd want some 'warning' marker in the UI, but that's for a later time.
+            int selectedFontInd = Math.Clamp(Array.IndexOf(options, selectedFont), 0, options.Length - 1);
 
-                // Guesstimate the combo's width based on the longest font name, otherwise we get bad wrapping/truncations.
-                // Definitely not a "pretty" solution but works well enough until we overhaul the settings pages.
-                comboBoxWidth = Math.Min(maxFontNameLength * 8, comboBoxMaxWidth);
-                options = fontNames;
-            }
-            else
-            {
-                // Fallback to an empty combo
-                comboBoxWidth = comboBoxMaxWidth;
-                options = [];
-            }
+            // Guesstimate the combo's width based on the longest font name, otherwise we get bad wrapping/truncations.
+            // Definitely not a "pretty" solution but works well enough until we overhaul the settings pages.
+            int comboBoxWidth = Math.Min(maxFontNameLength * 8, comboBoxMaxWidth);
 
             return new ComboBoxWithLabel(
                 World,
