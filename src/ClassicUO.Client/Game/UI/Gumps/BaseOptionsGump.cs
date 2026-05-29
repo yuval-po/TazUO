@@ -2264,7 +2264,7 @@ public class BaseOptionsGump : Gump
 
                 string initialText;
                 if (_sortedItems?.Length > 0)
-                    initialText = displayIndex > -1 ? _sortedItems[displayIndex] : _sortedItems[_originalIndices[0]];
+                    initialText = displayIndex > -1 ? _sortedItems[displayIndex] : _sortedItems[0];
                 else
                     initialText = "";
 
