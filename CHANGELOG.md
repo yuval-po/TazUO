@@ -2,7 +2,15 @@
 All notable changes to TazUO will be recorded here.
 
 ---
+## In Development
 
+### Features
+* Pet support for the bandage agent - [P.R 485](https://github.com/PlayTazUO/TazUO/pull/485) ([yuval-po](https://github.com/yuval-po))
+
+### Fixes
+* Mouse wheel macros hijack scroll from shop gumps - [P.R 479](https://github.com/PlayTazUO/TazUO/pull/479) ([yuval-po](https://github.com/yuval-po))
+
+---
 
 ## V5.2.0
 
@@ -44,6 +52,8 @@ All notable changes to TazUO will be recorded here.
 * Two Modern Paperdoll issues (closure and context menus) - [P.R 468](https://github.com/PlayTazUO/TazUO/pull/468) ([yuval-po](https://github.com/yuval-po))
 * Allow resetting of outline color via the SetOutlineColor API - [P.R 471](https://github.com/PlayTazUO/TazUO/pull/471) ([yuval-po](https://github.com/yuval-po))
 
+---
+
 ## V5.1.0
 
 ### Assistant
@@ -52,6 +62,8 @@ All notable changes to TazUO will be recorded here.
 
 ### Fixes
 * Fix accidentally broken game viewport - ([bittiez](https://github.com/bittiez))
+
+---
 
 ## V5.0.0
 
