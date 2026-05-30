@@ -179,6 +179,7 @@ namespace ClassicUO.Configuration
         public bool BandageAgentCheckInvul { get; set => SetProperty(ref field, value); } = true;
         public bool BandageAgentBandageFriends { get; set => SetProperty(ref field, value); } = false;
         public bool BandageAgentBandageAllies { get; set => SetProperty(ref field, value); } = false;
+        public bool BandageAgentBandagePets { get; set => SetProperty(ref field, value); } = false;
         public bool BandageAgentUseDexFormula { get; set => SetProperty(ref field, value); } = false;
         public bool BandageAgentDisableSelfHeal { get; set => SetProperty(ref field, value); } = false;
 
