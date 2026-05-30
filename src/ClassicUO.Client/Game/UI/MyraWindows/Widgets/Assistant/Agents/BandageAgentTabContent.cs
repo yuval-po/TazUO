@@ -43,7 +43,6 @@ public static class BandageAgentTabContent
             bandLang.BandageAlliesCheckbox,
             bandLang.BandageAlliesTooltip
         ));
-        root.Widgets.Add(enableRow);
 
         enableRow.Widgets.Add(MyraCheckButton.CreateWithCallback(
             profile.BandageAgentBandagePets,
@@ -51,7 +50,6 @@ public static class BandageAgentTabContent
             bandLang.BandagePetsCheckbox,
             bandLang.BandagePetsTooltip
         ));
-        root.Widgets.Add(enableRow);
 
         enableRow.Widgets.Add(MyraCheckButton.CreateWithCallback(
             profile.BandageAgentDisableSelfHeal,
@@ -59,6 +57,8 @@ public static class BandageAgentTabContent
             bandLang.DisableSelfHealCheckbox,
             bandLang.DisableSelfHealTooltip
         ));
+
+        root.Widgets.Add(enableRow);
 
         // Delay
         var delayBox = new MyraInputBox
