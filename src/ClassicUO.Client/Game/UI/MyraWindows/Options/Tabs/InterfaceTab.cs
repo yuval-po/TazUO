@@ -1,6 +1,7 @@
 using ClassicUO.Common;
 using ClassicUO.Configuration;
 using ClassicUO.Game.UI.MyraWindows.Widgets;
+using Myra.Graphics2D.UI;
 using Myra.Graphics2D.UI.WrapPanel;
 
 namespace ClassicUO.Game.UI.MyraWindows.Options.Tabs;
@@ -21,33 +22,10 @@ public static class InterfaceTab
         tabs.AddTab(lang.ButtonContainers, ContainersTab.GetContent);
         tabs.AddTab(lang.ButtonNameplates, NameplatesTab.GetContent);
         tabs.AddTab(lang.ButtonInfoBar, InfoBarsTab.GetContent);
-        tabs.AddTab(lang.ButtonTerrainStatics, GetTerrainAndStaticsSubTabContent);
         tabs.AddTab(lang.ButtonHealthBars, HealthBarsTab.GetContent);
         tabs.AddTab(lang.ButtonGumps, GetGumpsSubTabContent);
         tabs.AddTab(lang.ButtonPaperdoll, PaperdollTab.GetContent);
         return tabs;
-    }
-
-    private static WrapPanel GetTerrainAndStaticsSubTabContent()
-    {
-        ModernOptionsGumpLanguage.General generalLang = Language.Instance.GetModernOptionsGumpLanguage.GetGeneral;
-        Profile profile = ProfileManager.CurrentProfile;
-
-        return OptionTabCommons.StyledVerticalWrapPanel(
-            OptionsFactory.CreateCheckboxOption(generalLang.HideRoof, !profile.DrawRoofs, b => profile.DrawRoofs = !b),
-            OptionsFactory.CreateCheckboxOption(generalLang.TreesToStump, new Accessor<bool>(() => profile.TreeToStumps)),
-            OptionsFactory.CreateCheckboxOption(generalLang.HideVegetation, new Accessor<bool>(() => profile.HideVegetation)),
-            OptionsFactory.CreateComboBox(
-                generalLang.MagicFieldType,
-                profile.FieldsType,
-                [
-                    generalLang.MagicFieldOpt_Normal,
-                    generalLang.MagicFieldOpt_Static,
-                    generalLang.MagicFieldOpt_Tile
-                ],
-                i => profile.FieldsType = i
-            )
-        );
     }
 
     /*

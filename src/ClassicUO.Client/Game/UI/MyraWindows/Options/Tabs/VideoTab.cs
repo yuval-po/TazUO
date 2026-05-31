@@ -18,6 +18,20 @@ public static class VideoTab
         return new OptionItem(lang.LabelVideo, GetVideoMenuTabs);
     }
 
+    private static MyraTabControl GetVideoMenuTabs()
+    {
+        ModernOptionsGumpLanguage.Video videoLang = Language.Instance.GetModernOptionsGumpLanguage.GetVideo;
+        ModernOptionsGumpLanguage gumpLang = Language.Instance.GetModernOptionsGumpLanguage;
+
+        var tabs = new MyraTabControl();
+        tabs.AddTab(gumpLang.ButtonGameWindow, GetGameWindowSubTabContent);
+        tabs.AddTab(videoLang.ZoomAndScaling, GetZoomAndScalingSubTubContent);
+        tabs.AddTab(videoLang.LabelLighting, GetLightningSubTabContent);
+        tabs.AddTab(gumpLang.ButtonShadows, GetShadowSubTabContent);
+        tabs.AddTab(gumpLang.ButtonMisc, GetMiscSubTabContent);
+        return tabs;
+    }
+
     private static OptionItem GetViewportSettingsGroup()
     {
         Profile profile = ProfileManager.CurrentProfile;
@@ -116,20 +130,11 @@ public static class VideoTab
         );
     }
 
-    private static MyraTabControl GetVideoMenuTabs()
-    {
-        ModernOptionsGumpLanguage.Video videoLang = Language.Instance.GetModernOptionsGumpLanguage.GetVideo;
-        ModernOptionsGumpLanguage gumpLang = Language.Instance.GetModernOptionsGumpLanguage;
-
-        var tabs = new MyraTabControl();
-        tabs.AddTab(gumpLang.ButtonGameWindow, GetGameWindowSubTabContent);
-        tabs.AddTab(videoLang.Zoom, GetZoomSubTabContent);
-        tabs.AddTab(videoLang.LabelLighting, GetLightningSubTabContent);
-        tabs.AddTab(gumpLang.ButtonShadows, GetShadowSubTabContent);
-        tabs.AddTab(gumpLang.ButtonScaling, GetScalingSubTabContent);
-        tabs.AddTab(gumpLang.ButtonMisc, GetMiscSubTabContent);
-        return tabs;
-    }
+    private static WrapPanel GetZoomAndScalingSubTubContent() =>
+        OptionTabCommons.StyledVerticalWrapPanel(
+            GetZoomSection(),
+            GetScalingSection()
+        );
 
     private static WrapPanel GetGameWindowSubTabContent() =>
         OptionTabCommons.StyledVerticalWrapPanel(
@@ -170,7 +175,7 @@ public static class VideoTab
         );
     }
 
-    private static WrapPanel GetZoomSubTabContent()
+    private static VisualContainer GetZoomSection()
     {
         Profile profile = ProfileManager.CurrentProfile;
         ModernOptionsGumpLanguage lang = Language.Instance.GetModernOptionsGumpLanguage;
@@ -188,7 +193,8 @@ public static class VideoTab
                 / Client.Game.Scene.Camera.ZoomStep
             );
 
-        return OptionTabCommons.StyledVerticalWrapPanel(
+        return new VisualContainer(
+            new VisualContainerProps { LabelText = videoLang.Zoom },
             OptionsFactory.CreateSpacer(),
             OptionsFactory.CreateSliderOption(
                 videoLang.DefaultZoom,
@@ -329,7 +335,7 @@ public static class VideoTab
         );
     }
 
-    private static VisualContainer GetScalingSubTabContent()
+    private static VisualContainer GetScalingSection()
     {
         Profile profile = ProfileManager.CurrentProfile;
         ModernOptionsGumpLanguage lang = Language.Instance.GetModernOptionsGumpLanguage;

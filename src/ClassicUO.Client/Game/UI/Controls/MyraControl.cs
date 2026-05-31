@@ -31,10 +31,7 @@ public class MyraControl : IGui
     public MyraControl(string title)
     {
         _rootWindow = new ResizableWindow(
-            new ResizableWindowProps
-            {
-                Resize = { Placements = ResizeEdges.Bottom | ResizeEdges.Left | ResizeEdges.Right }
-            }
+            new ResizableWindowProps { Resize = { Placements = ResizeEdges.All } }
         ) { Title = title };
 
         _rootWindow.Closed += OnRootWindowOnClosed;

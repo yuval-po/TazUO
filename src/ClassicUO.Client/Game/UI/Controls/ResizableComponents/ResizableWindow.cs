@@ -115,6 +115,7 @@ public class ResizableWindow : Window, IDisposable
     #region Members
 
     private ResizeEdges? _activeResizeEdge;
+    private DragDirection _allowedDragDirections;
 
     private Point _resizeStartMouse;
     private int _resizeStartLeft;
@@ -311,6 +312,10 @@ public class ResizableWindow : Window, IDisposable
         _resizeStartTop = Top;
         _resizeStartWidth = Width ?? Bounds.Width;
         _resizeStartHeight = Height ?? Bounds.Height;
+
+        // Disable dragging during resize. This makes behavior more consistent.
+        _allowedDragDirections = DragDirection;
+        DragDirection = DragDirection.None;
 
         Mouse.LeftButtonClickStateChanged += LeftClickChangedHandler;
         Mouse.Moved += OnMouseMovedWhileResizing;
@@ -808,6 +813,11 @@ public class ResizableWindow : Window, IDisposable
     private void OnDragStop(object _, EventArgs _1)
     {
         _activeResizeEdge = null;
+
+        // Re-enable dragging after resize is done.
+        if (DragDirection == DragDirection.None)
+            DragDirection = _allowedDragDirections;
+
         Mouse.LeftButtonClickStateChanged -= LeftClickChangedHandler;
         Mouse.Moved -= OnMouseMovedWhileResizing;
 

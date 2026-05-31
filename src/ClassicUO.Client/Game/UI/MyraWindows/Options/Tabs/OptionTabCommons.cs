@@ -29,7 +29,11 @@ public static class OptionTabCommons
         };
 
         if (children?.Length > 0)
+        {
+            panel.Widgets.Add(OptionsFactory.CreateSpacer());
             panel.AddRange(children);
+        }
+
         return panel;
     }
 

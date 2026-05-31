@@ -120,6 +120,14 @@ namespace ClassicUO.Configuration
         public Cooldowns GetCooldowns { get; set; } = new();
         public TazUO GetTazUO { get; set; } = new();
 
+        public MobilesLang Mobiles { get; set; } = new();
+
+        public class MobilesLang
+        {
+            public string Highlighting { get; set; } = "Highlighting";
+            public string Hues { get; set; } = "Hues";
+        }
+
         public class General
         {
             public string SharedNone { get; set; } = "None";
@@ -263,6 +271,7 @@ namespace ClassicUO.Configuration
         public class Video
         {
             #region GameWindow
+
             public string EnablePostProcessing { get; set; } = "Enable post processing effects";
             public string PostProcessingEffectType { get; set; } = "Processing type";
             public string LabelRenderer { get; set; } = "Renderer";
@@ -276,16 +285,23 @@ namespace ClassicUO.Configuration
             public string ViewportY { get; set; } = "Viewport position Y";
             public string ViewportW { get; set; } = "Viewport width";
             public string ViewportH { get; set; } = "Viewport height";
+
             #endregion
 
-            #region Zoom
+            #region Zoom & Scaling
+
+            public string ZoomAndScaling { get; set; } = "Zoom & Scaling";
             public string Zoom { get; set; } = "Zoom";
             public string DefaultZoom { get; set; } = "Default zoom";
             public string ZoomWheel { get; set; } = "Enable zooming with ctrl + mousewheel";
             public string ReturnDefaultZoom { get; set; } = "Return to default zoom after ctrl is released";
+            public string PaperdollScaling { get; set; } = "Paperdoll scaling";
+            public string GlobalScaling { get; set; } = "Global scaling";
+
             #endregion
 
             #region Lighting
+
             public string AltLights { get; set; } = "Alternative lights";
             public string CustomLLevel { get; set; } = "Custom light level";
             public string Level { get; set; } = "Light level";
@@ -295,6 +311,7 @@ namespace ClassicUO.Configuration
             public string LightType_Minimum { get; set; } = "Minimum";
             public string DarkNight { get; set; } = "Dark nights";
             public string ColoredLight { get; set; } = "Colored lighting";
+
             #endregion
 
             #region Misc
@@ -309,13 +326,6 @@ namespace ClassicUO.Configuration
             public string EnableShadows { get; set; } = "Enable shadows";
             public string RockTreeShadows { get; set; } = "Rock and tree shadows";
             public string TerrainShadowLevel { get; set; } = "Terrain shadow level";
-            #endregion
-
-            #region Scaling
-
-            public string PaperdollScaling { get; set; } = "Paperdoll scaling";
-            public string GlobalScaling { get; set; } = "Global scaling";
-
             #endregion
         }
 
@@ -358,6 +368,8 @@ namespace ClassicUO.Configuration
 
         public class CombatSpells
         {
+            public string Combat { get; set; } = "Combat";
+            public string Spells { get; set; } = "Spells";
             public string HoldTabForCombat { get; set; } = "Hold tab for combat";
             public string QueryBeforeAttack { get; set; } = "Query before attack";
             public string QueryBeforeBeneficial { get; set; } = "Query before beneficial acts on murderers/criminals/gray";
