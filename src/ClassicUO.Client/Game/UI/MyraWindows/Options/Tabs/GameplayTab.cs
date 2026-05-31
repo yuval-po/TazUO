@@ -16,10 +16,11 @@ public static class GameplayTab
     private static MyraTabControl GetGameplayMenuTabs()
     {
         ModernOptionsGumpLanguage lang = Language.Instance.GetModernOptionsGumpLanguage;
-        ModernOptionsGumpLanguage.Video videoLang = Language.Instance.GetModernOptionsGumpLanguage.GetVideo;
-        ModernOptionsGumpLanguage gumpLang = Language.Instance.GetModernOptionsGumpLanguage;
+        ModernOptionsGumpLanguage.MovementLang movementLang = Language.Instance.GetModernOptionsGumpLanguage.Movement;
 
         var tabs = new MyraTabControl();
+        tabs.AddTab(lang.ButtonCombatSpells, CombatTab.GetContent);
+        tabs.AddTab(movementLang.Movement, MovementTab.GetContent);
         tabs.AddTab(lang.ButtonTerrainStatics, GetTerrainAndStaticsSubTabContent);
         return tabs;
     }

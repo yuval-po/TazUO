@@ -96,16 +96,13 @@ public class OptionsWindow : MyraControl
     private void SetupOptions()
     {
         SetupGeneralOptions();
+        SetupVideo();
+        SetupSound();
         SetupGameplayTab();
         SetupMobileOptions();
         SetupInterfaceOptions();
         SetupMiscOptions();
-        SetupSound();
-        SetupVideo();
-        SetupTooltipOptions();
         SetupChatOptions();
-        SetupCombatOptions();
-        SetupCounterOptions();
         SetupExperimentalOptions();
     }
 
@@ -235,24 +232,6 @@ public class OptionsWindow : MyraControl
 
         general.Add(OptionsFactory.CreateSpacer());
 
-        general.Add(GetPathfindingSettingsGroup());
-
-        general.Add(OptionsFactory.CreateSpacer());
-
-        general.Add(new OptionItem(genLang.AlwaysRun, () => new CheckBoxGroup(
-            new PropertyBinder(new Accessor<bool>(() => profile.AlwaysRun), genLang.AlwaysRun),
-            OptionsFactory.CreateCheckboxOption(genLang.RunUnlessHidden, new Accessor<bool>(() => profile.AlwaysRunUnlessHidden))
-        )));
-
-        general.Add(OptionsFactory.CreateSpacer());
-
-        general.Add(new OptionItem(genLang.AutoOpenDoors, () => new CheckBoxGroup(
-            new PropertyBinder(new Accessor<bool>(() => profile.AutoOpenDoors), genLang.AutoOpenDoors),
-            OptionsFactory.CreateCheckboxOption(genLang.AutoOpenPathfinding, new Accessor<bool>(() => profile.SmoothDoors))
-        )));
-
-        general.Add(OptionsFactory.CreateSpacer());
-
         general.Add(new OptionItem(genLang.AutoOpenCorpse, () => new CheckBoxGroup(
             new PropertyBinder(new Accessor<bool>(() => profile.AutoOpenCorpses), genLang.AutoOpenCorpse),
             OptionsFactory.CreateSliderOption(genLang.CorpseOpenDistance, 0, 5, profile.AutoOpenCorpseRange,
@@ -273,24 +252,6 @@ public class OptionsWindow : MyraControl
         general.Add(OptionsFactory.CreateCheckboxOption(genLang.SallosEasyGrab, new Accessor<bool>(() => profile.SallosEasyGrab), genLang.SallosTooltip));
         general.Add(OptionsFactory.CreateCheckboxOption(genLang.ShowHouseContent, new Accessor<bool>(() => profile.ShowHouseContent), genLang.ClientVersionLimitedTooltip));
         general.Add(OptionsFactory.CreateCheckboxOption(genLang.SmoothBoat, new Accessor<bool>(() => profile.UseSmoothBoatMovement), genLang.ClientVersionLimitedTooltip));
-        //general.Add(OptionsFactory.CreateCheckboxOption(, , b =>  = b));
-    }
-
-    private static OptionItem GetPathfindingSettingsGroup()
-    {
-        Profile profile = ProfileManager.CurrentProfile;
-        ModernOptionsGumpLanguage.General lang = Language.Instance.GetModernOptionsGumpLanguage.GetGeneral;
-        const string tags = "pathfinding, pathing, path";
-
-        return new OptionItem(
-            lang.Pathfinding,
-            () => new CheckBoxGroup(
-                new PropertyBinder(new Accessor<bool>(() => profile.EnablePathfind), lang.Pathfinding),
-                OptionsFactory.CreateCheckboxOption(lang.ShiftPathfinding, new Accessor<bool>(() => profile.UseShiftToPathfind)).SetTags(tags),
-                OptionsFactory.CreateCheckboxOption(lang.SingleClickPathfind, new Accessor<bool>(() => profile.PathfindSingleClick)).SetTags(tags)
-            ),
-            tags
-        );
     }
 
     private void SetupMobileOptions()
@@ -624,19 +585,6 @@ public class OptionsWindow : MyraControl
         optionsList.Add(VideoTab.GetContent());
     }
 
-    private void SetupTooltipOptions()
-    {
-        Profile profile = ProfileManager.CurrentProfile;
-        ModernOptionsGumpLanguage lang = Language.Instance.GetModernOptionsGumpLanguage;
-        const string tooltipKey = "Tooltips";
-
-        if (!_options.ContainsKey(tooltipKey))
-            _options.Add(tooltipKey, []);
-        List<OptionItem> opt = _options[tooltipKey];
-
-        opt.Add(TooltipsTab.GetContent());
-    }
-
     private void SetupChatOptions()
     {
         const string speechKey = "Chat";
@@ -646,31 +594,6 @@ public class OptionsWindow : MyraControl
         List<OptionItem> opt = _options[speechKey];
 
         opt.Add(ChatTab.GetContent());
-    }
-
-    private void SetupCombatOptions()
-    {
-        Profile profile = ProfileManager.CurrentProfile;
-        ModernOptionsGumpLanguage lang = Language.Instance.GetModernOptionsGumpLanguage;
-        const string combatKey = "Combat";
-
-        if (!_options.ContainsKey(combatKey))
-            _options.Add(combatKey, []);
-
-        List<OptionItem> opt = _options[combatKey];
-        opt.Add(CombatTab.GetContent());
-    }
-
-    private void SetupCounterOptions()
-    {
-        const string countersKey = "Counters";
-
-        if (!_options.ContainsKey(countersKey))
-            _options.Add(countersKey, []);
-
-        List<OptionItem> options = _options[countersKey];
-
-        options.Add(CountersTab.GetContent());
     }
 
     private void SetupExperimentalOptions()

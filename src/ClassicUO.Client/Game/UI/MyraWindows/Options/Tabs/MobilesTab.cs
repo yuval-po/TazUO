@@ -28,7 +28,6 @@ public static class MobilesTab
         Profile profile = ProfileManager.CurrentProfile;
         ModernOptionsGumpLanguage lang = Language.Instance.GetModernOptionsGumpLanguage;
         ModernOptionsGumpLanguage.General genLang = lang.GetGeneral;
-        ModernOptionsGumpLanguage.MobilesLang mobilesLang = lang.Mobiles;
 
         return OptionTabCommons.StyledVerticalWrapPanel(
             new CheckBoxGroup(
@@ -112,13 +111,15 @@ public static class MobilesTab
         );
     }
 
-    private static WrapPanel GetEntityHueSettingSection()
+    private static VisualContainer GetEntityHueSettingSection()
     {
         Profile profile = ProfileManager.CurrentProfile;
         ModernOptionsGumpLanguage lang = Language.Instance.GetModernOptionsGumpLanguage;
         ModernOptionsGumpLanguage.CombatSpells spellLang = lang.GetCombatSpells;
+        ModernOptionsGumpLanguage.MobilesLang mobLang = lang.Mobiles;
 
-        return OptionTabCommons.StyledVerticalWrapPanel(
+        return new VisualContainer(
+            new VisualContainerProps { LabelText = mobLang.HueMobileByNotoriety },
             OptionsFactory.CreateHuePicker(spellLang.InnocentColor, profile.InnocentHue, b => profile.InnocentHue = b),
             OptionsFactory.CreateHuePicker(spellLang.BeneficialSpell, profile.BeneficHue, b => profile.BeneficHue = b),
             OptionsFactory.CreateHuePicker(spellLang.FriendColor, profile.FriendHue, b => profile.FriendHue = b),

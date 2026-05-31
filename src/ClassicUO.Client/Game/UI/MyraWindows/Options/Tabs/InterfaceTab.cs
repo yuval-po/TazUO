@@ -1,7 +1,6 @@
 using ClassicUO.Common;
 using ClassicUO.Configuration;
 using ClassicUO.Game.UI.MyraWindows.Widgets;
-using Myra.Graphics2D.UI;
 using Myra.Graphics2D.UI.WrapPanel;
 
 namespace ClassicUO.Game.UI.MyraWindows.Options.Tabs;
@@ -21,9 +20,11 @@ public static class InterfaceTab
         var tabs = new MyraTabControl();
         tabs.AddTab(lang.ButtonContainers, ContainersTab.GetContent);
         tabs.AddTab(lang.ButtonNameplates, NameplatesTab.GetContent);
+        tabs.AddTab(lang.LabelTooltips, TooltipsTab.GetContent);
         tabs.AddTab(lang.ButtonInfoBar, InfoBarsTab.GetContent);
         tabs.AddTab(lang.ButtonHealthBars, HealthBarsTab.GetContent);
         tabs.AddTab(lang.ButtonGumps, GetGumpsSubTabContent);
+        tabs.AddTab(lang.ButtonCounters, CountersTab.GetContent);
         tabs.AddTab(lang.ButtonPaperdoll, PaperdollTab.GetContent);
         return tabs;
     }

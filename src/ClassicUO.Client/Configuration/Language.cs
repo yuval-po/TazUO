@@ -122,10 +122,20 @@ namespace ClassicUO.Configuration
 
         public MobilesLang Mobiles { get; set; } = new();
 
+        public MovementLang Movement { get; set; } = new();
+
+        public class MovementLang
+        {
+            public string Movement { get; set; } = "Movement";
+            public string General { get; set; } = "General";
+            public string Pathfinding { get; set; } = "Pathfinding";
+        }
+
         public class MobilesLang
         {
             public string Highlighting { get; set; } = "Highlighting";
             public string Hues { get; set; } = "Hues";
+            public string HueMobileByNotoriety { get; set; } = "Hue mobiles by notoriety";
         }
 
         public class General
