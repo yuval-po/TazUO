@@ -24,34 +24,32 @@ namespace ClassicUO.Game.UI.Gumps.GridHighLight
         private static readonly Func<char, bool> IntInputFilter = c => char.IsDigit(c) || c == '-';
 
         private readonly World _world;
-        private readonly int _keyLoc;
         private readonly GridHighlightData _data;
 
         private readonly VerticalStackPanel _content = new() { Spacing = MyraStyle.STANDARD_SPACING };
 
-        public GridHighlightProperties(World world, int keyLoc) : base(TazLang.Get("gridhighlight_properties"))
+        public GridHighlightProperties(World world, GridHighlightData data) : base(TazLang.Get("gridhighlight_properties"))
         {
             _world = world;
-            _keyLoc = keyLoc;
-            _data = GridHighlightData.GetGridHighlightData(keyLoc);
+            _data = data;
 
             SetRootContent(new ScrollViewer { MaxHeight = 560, Content = _content });
             Rebuild();
             CenterInViewPort();
         }
 
-        public static void Show(World world, int keyLoc)
+        public static void Show(World world, GridHighlightData data)
         {
             foreach (IGui gump in UIManager.Gumps)
             {
-                if (gump is GridHighlightProperties w && !w.IsDisposed && w._keyLoc == keyLoc)
+                if (gump is GridHighlightProperties w && !w.IsDisposed && ReferenceEquals(w._data, data))
                 {
                     w.BringOnTop();
                     return;
                 }
             }
 
-            UIManager.Add(new GridHighlightProperties(world, keyLoc));
+            UIManager.Add(new GridHighlightProperties(world, data));
         }
 
         private void Rebuild()

@@ -2,6 +2,7 @@ using ClassicUO.Configuration;
 using ClassicUO.Game.Data;
 using ClassicUO.Game.Managers;
 using ClassicUO.Game.GameObjects;
+using ClassicUO.Game.UI.MyraWindows.Options.Editors.Rulebase;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ using ClassicUO.Utility.Logging;
 
 namespace ClassicUO.Game.UI.Gumps.GridHighLight
 {
-    public class GridHighlightData
+    public class GridHighlightData : IRule
     {
         private static GridHighlightData[] allConfigs;
         private readonly GridHighlightSetupEntry _entry;
@@ -35,6 +36,18 @@ namespace ClassicUO.Game.UI.Gumps.GridHighLight
             }
             set => allConfigs = value;
         }
+
+        /// <summary>The entry backing this wrapper, exposed for callers that need to add/remove it from <see cref="GridHighlightsConfig.Highlights"/> directly (e.g. the rulebase-driven menu)</summary>
+        public GridHighlightSetupEntry Entry => _entry;
+
+        /// <inheritdoc/>
+        public uint Order { get; set; }
+
+        /// <inheritdoc/>
+        public bool CanEdit { get; set; } = true;
+
+        /// <inheritdoc/>
+        public bool CanDelete { get; set; } = true;
 
         public bool Enabled
         {
@@ -194,31 +207,16 @@ namespace ClassicUO.Game.UI.Gumps.GridHighLight
         private static readonly List<uint> _reusableRequeueItems = new();
         private bool _cacheValid = false;
 
-        private GridHighlightData(GridHighlightSetupEntry entry)
+        /// <summary>Creates a wrapper around a fresh, unsaved entry; callers add <see cref="Entry"/> to
+        /// <see cref="GridHighlightsConfig.Highlights"/> once the rule is confirmed (e.g. via a rulebase's
+        /// create flow)</summary>
+        public GridHighlightData() : this(new GridHighlightSetupEntry())
+        {
+        }
+
+        public GridHighlightData(GridHighlightSetupEntry entry)
         {
             _entry = entry;
-        }
-
-        public void Delete()
-        {
-            GridHighlightsConfig.Current.Highlights.Remove(_entry);
-            GridHighlightsConfig.Current.Save();
-            allConfigs = null;
-        }
-
-        public void Move(bool up)
-        {
-            List<GridHighlightSetupEntry> list = GridHighlightsConfig.Current.Highlights;
-            int index = list.IndexOf(_entry);
-            if (index == -1) return; // Not found
-
-            // Prevent moving out of bounds
-            if (up && index == 0) return;
-            if (!up && index == list.Count - 1) return;
-
-            list.RemoveAt(index);
-            list.Insert(up ? index - 1 : index + 1, _entry);
-            GridHighlightsConfig.Current.Save();
         }
 
         public static void Unload()
@@ -327,22 +325,6 @@ namespace ClassicUO.Game.UI.Gumps.GridHighLight
                 hasQueuedItems = false;
                 _queuedItems.Clear(); // Clear hashset when queue is empty
             }
-        }
-
-        public static GridHighlightData GetGridHighlightData(int index)
-        {
-            List<GridHighlightSetupEntry> list = GridHighlightsConfig.Current.Highlights;
-            GridHighlightData data = index >= 0 && index < list.Count ? new GridHighlightData(list[index]) : null;
-
-            if (data == null)
-            {
-                var newEntry = new GridHighlightSetupEntry();
-                list.Add(newEntry);
-                GridHighlightsConfig.Current.Save();
-                data = new GridHighlightData(newEntry);
-            }
-
-            return data;
         }
 
         public static void RecheckMatchStatus()
