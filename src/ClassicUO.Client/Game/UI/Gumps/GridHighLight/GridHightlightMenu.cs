@@ -95,75 +95,71 @@ namespace ClassicUO.Game.UI.Gumps.GridHighLight
             return _rulebase;
         }
 
-        private RulebaseColumn<GridHighlightData>[] GetRulebaseColumns()
-        {
-            return
-            [
-                new RulebaseColumn<GridHighlightData>
+        private RulebaseColumn<GridHighlightData>[] GetRulebaseColumns() =>
+        [
+            new()
+            {
+                Header = TazLang.Get("gridhighlight_enabled"),
+                HeaderTooltip = TazLang.Get("gridhighlight_enabled_tooltip"),
+                CellContentAlignment = HorizontalAlignment.Center,
+                Proportion = new Proportion(ProportionType.Auto),
+                CellFactory = data => MyraCheckButton.CreateWithCallback(data.Enabled, isChecked =>
                 {
-                    Header = TazLang.Get("gridhighlight_enabled"),
-                    HeaderTooltip = TazLang.Get("gridhighlight_enabled_tooltip"),
-                    CellContentAlignment = HorizontalAlignment.Center,
-                    Proportion = new Proportion(ProportionType.Auto),
-                    CellFactory = data => MyraCheckButton.CreateWithCallback(data.Enabled, isChecked =>
-                    {
-                        data.Enabled = isChecked;
-                        GridHighlightData.RecheckMatchStatus();
-                    }, tooltip: TazLang.Get("gridhighlight_enabled_tooltip"))
-                },
-                new RulebaseColumn<GridHighlightData>
+                    data.Enabled = isChecked;
+                    GridHighlightData.RecheckMatchStatus();
+                }, tooltip: TazLang.Get("gridhighlight_enabled_tooltip"))
+            },
+            new()
+            {
+                Header = TazLang.Get("gridhighlight_name"),
+                Proportion = new Proportion(ProportionType.Fill),
+                CellFactory = data =>
                 {
-                    Header = TazLang.Get("gridhighlight_name"),
-                    Proportion = new Proportion(ProportionType.Fill),
-                    CellFactory = data =>
-                    {
-                        var nameBox = new MyraInputBox { Text = data.Name ?? "", Width = 150 };
-                        nameBox.TextChangedByUser += (_, _) => data.Name = nameBox.Text ?? "";
-                        return nameBox;
-                    }
-                },
-                new RulebaseColumn<GridHighlightData>
-                {
-                    Header = TazLang.Get("gridhighlight_color"),
-                    Proportion = new Proportion(ProportionType.Auto),
-                    CellFactory = data =>
-                    {
-                        var colorButton = new MyraButton(TazLang.Get("gridhighlight_color")) { Tooltip = TazLang.Get("gridhighlight_color_tooltip") };
-                        ApplyColorButtonStyle(colorButton, data.HighlightColor);
-                        colorButton.OnClick = () => RGBColorPickerGump.Open(data.HighlightColor, selectedColor =>
-                        {
-                            data.HighlightColor = selectedColor;
-                            data.Hue = (ushort)(selectedColor.R + (selectedColor.G << 8) + (selectedColor.B << 16));
-                            ApplyColorButtonStyle(colorButton, selectedColor);
-                            GridHighlightData.RecheckMatchStatus();
-                        });
-                        return colorButton;
-                    }
-                },
-                new RulebaseColumn<GridHighlightData>
-                {
-                    Header = TazLang.Get("gridhighlight_properties"),
-                    Proportion = new Proportion(ProportionType.Auto),
-                    CellFactory = data => new MyraButton(TazLang.Get("gridhighlight_properties"), () => GridHighlightProperties.Show(_world, data))
+                    var nameBox = new MyraInputBox { Text = data.Name ?? "", Width = 150 };
+                    nameBox.TextChangedByUser += (_, _) => data.Name = nameBox.Text ?? "";
+                    return nameBox;
                 }
-            ];
-        }
+            },
+            new()
+            {
+                Header = TazLang.Get("gridhighlight_color"),
+                Proportion = new Proportion(ProportionType.Auto),
+                CellFactory = data =>
+                {
+                    var colorButton = new MyraButton(TazLang.Get("gridhighlight_color")) { Tooltip = TazLang.Get("gridhighlight_color_tooltip") };
+                    ApplyColorButtonStyle(colorButton, data.HighlightColor);
+                    colorButton.OnClick = () => RGBColorPickerGump.Open(data.HighlightColor, selectedColor =>
+                    {
+                        data.HighlightColor = selectedColor;
+                        data.Hue = (ushort)(selectedColor.R + (selectedColor.G << 8) + (selectedColor.B << 16));
+                        ApplyColorButtonStyle(colorButton, selectedColor);
+                        GridHighlightData.RecheckMatchStatus();
+                    });
+                    return colorButton;
+                }
+            },
+            new()
+            {
+                Header = TazLang.Get("gridhighlight_properties"),
+                Proportion = new Proportion(ProportionType.Auto),
+                CellFactory = data => new MyraButton(TazLang.Get("gridhighlight_properties"), () => GridHighlightProperties.Show(_world, data))
+            }
+        ];
 
-        private void OnRuleCrud(object sender, RuleCrudEventArgs<GridHighlightData> args)
+        private static void OnRuleCrud(object sender, RuleCrudEventArgs<GridHighlightData> args)
         {
             switch (args.Event)
             {
                 case RuleCrudEventType.Create:
                     GridHighlightsConfig.Current.Highlights.Add(args.Rule.Entry);
-                    GridHighlightsConfig.Current.Save();
-                    GridHighlightData.RecheckMatchStatus();
                     break;
                 case RuleCrudEventType.Delete:
                     GridHighlightsConfig.Current.Highlights.Remove(args.Rule.Entry);
-                    GridHighlightsConfig.Current.Save();
-                    GridHighlightData.RecheckMatchStatus();
                     break;
             }
+
+            GridHighlightsConfig.Current.Save();
+            GridHighlightData.RecheckMatchStatus();
         }
 
         private void OnReordered(object sender, RulebaseOrderChangedEventArgs<GridHighlightData> args)
