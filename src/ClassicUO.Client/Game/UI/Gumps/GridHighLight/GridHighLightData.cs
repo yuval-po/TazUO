@@ -6,13 +6,15 @@ using ClassicUO.Game.UI.MyraWindows.Options.Editors.Rulebase;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using ClassicUO.Utility.Logging;
 
 namespace ClassicUO.Game.UI.Gumps.GridHighLight
 {
-    public class GridHighlightData : IRule
+    public class GridHighlightData : IRule, INotifyPropertyChanged
     {
         private static GridHighlightData[] allConfigs;
         private readonly GridHighlightSetupEntry _entry;
@@ -52,31 +54,31 @@ namespace ClassicUO.Game.UI.Gumps.GridHighLight
         public bool Enabled
         {
             get => _entry.Enabled;
-            set => _entry.Enabled = value;
+            set { _entry.Enabled = value; OnPropertyChanged(); }
         }
 
         public string Name
         {
             get => _entry.Name;
-            set => _entry.Name = value;
+            set { _entry.Name = value; OnPropertyChanged(); }
         }
 
         public List<string> ItemNames
         {
             get => _entry.ItemNames;
-            set => _entry.ItemNames = value;
+            set { _entry.ItemNames = value; OnPropertyChanged(); }
         }
 
         public ushort Hue
         {
             get => _entry.Hue;
-            set => _entry.Hue = value;
+            set { _entry.Hue = value; OnPropertyChanged(); }
         }
 
         public Color HighlightColor
         {
             get => _entry.GetHighlightColor();
-            set => _entry.SetHighlightColor(value);
+            set { _entry.SetHighlightColor(value); OnPropertyChanged(); }
         }
 
         public List<GridHighlightProperty> Properties
@@ -86,37 +88,38 @@ namespace ClassicUO.Game.UI.Gumps.GridHighLight
             {
                 _entry.Properties = value;
                 InvalidateCache();
+                OnPropertyChanged();
             }
         }
 
         public bool AcceptExtraProperties
         {
             get => _entry.AcceptExtraProperties;
-            set => _entry.AcceptExtraProperties = value;
+            set { _entry.AcceptExtraProperties = value; OnPropertyChanged(); }
         }
 
         public int MinimumProperty
         {
             get => _entry.MinimumProperty;
-            set => _entry.MinimumProperty = value;
+            set { _entry.MinimumProperty = value; OnPropertyChanged(); }
         }
 
         public int MaximumProperty
         {
             get => _entry.MaximumProperty;
-            set => _entry.MaximumProperty = value;
+            set { _entry.MaximumProperty = value; OnPropertyChanged(); }
         }
 
         public int MinimumMatchingProperty
         {
             get => _entry.MinimumMatchingProperty;
-            set => _entry.MinimumMatchingProperty = value;
+            set { _entry.MinimumMatchingProperty = value; OnPropertyChanged(); }
         }
 
         public int MaximumMatchingProperty
         {
             get => _entry.MaximumMatchingProperty;
-            set => _entry.MaximumMatchingProperty = value;
+            set { _entry.MaximumMatchingProperty = value; OnPropertyChanged(); }
         }
 
         public List<string> ExcludeNegatives
@@ -126,25 +129,26 @@ namespace ClassicUO.Game.UI.Gumps.GridHighLight
             {
                 _entry.ExcludeNegatives = value;
                 InvalidateCache();
+                OnPropertyChanged();
             }
         }
 
         public bool Overweight
         {
             get => _entry.Overweight;
-            set => _entry.Overweight = value;
+            set { _entry.Overweight = value; OnPropertyChanged(); }
         }
 
         public int MinimumWeight
         {
             get => _entry.MinimumWeight;
-            set => _entry.MinimumWeight = value;
+            set { _entry.MinimumWeight = value; OnPropertyChanged(); }
         }
 
         public int MaximumWeight
         {
             get => _entry.MaximumWeight;
-            set => _entry.MaximumWeight = value;
+            set { _entry.MaximumWeight = value; OnPropertyChanged(); }
         }
 
         public List<string> RequiredRarities
@@ -154,19 +158,20 @@ namespace ClassicUO.Game.UI.Gumps.GridHighLight
             {
                 _entry.RequiredRarities = value;
                 InvalidateCache();
+                OnPropertyChanged();
             }
         }
 
         public GridHighlightSlot EquipmentSlots
         {
             get => _entry.GridHighlightSlot;
-            set => _entry.GridHighlightSlot = value;
+            set { _entry.GridHighlightSlot = value; OnPropertyChanged(); }
         }
 
         public bool LootOnMatch
         {
             get => _entry.LootOnMatch;
-            set => _entry.LootOnMatch = value;
+            set { _entry.LootOnMatch = value; OnPropertyChanged(); }
         }
 
         public uint DestinationContainer
@@ -176,8 +181,15 @@ namespace ClassicUO.Game.UI.Gumps.GridHighLight
             {
                 _entry.DestinationContainer = value;
                 _cachedLootEntry = null; // Invalidate cache when container changes
+                OnPropertyChanged();
             }
         }
+
+        /// <inheritdoc/>
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null) =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
         private AutoLootManager.AutoLootConfigEntry _cachedLootEntry;
 

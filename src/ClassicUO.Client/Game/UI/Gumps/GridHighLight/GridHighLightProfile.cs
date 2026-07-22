@@ -8,7 +8,7 @@ namespace ClassicUO.Game.UI.Gumps.GridHighLight
     {
         public bool Enabled { get; set; } = true;
         public string Name { get; set; }
-        public List<string> ItemNames { get; set; } = new();
+        public List<string> ItemNames { get; set; } = [];
         public ushort Hue { get; set; }
         public string HighlightColor { get; set; } = "#FF0000";
         public List<GridHighlightProperty> Properties { get; set; } = new();

@@ -8,6 +8,7 @@ using ClassicUO.Utility.Collections;
 using ClassicUO.Utility.Logging;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -80,7 +81,11 @@ namespace ClassicUO.Game.UI.Gumps.GridHighLight
 
             List<GridHighlightSetupEntry> highlights = GridHighlightsConfig.Current.Highlights;
             for (int i = 0; i < highlights.Count; i++)
-                _rulebase.Rules.Add(new GridHighlightData(highlights[i]) { Order = (uint)i });
+            {
+                var rule = new GridHighlightData(highlights[i]) { Order = (uint)i };
+                rule.PropertyChanged += OnRulePropertyChanged;
+                _rulebase.Rules.Add(rule);
+            }
 
             _rulebase.RuleCrud += OnRuleCrud;
             _rulebase.Reordered += OnReordered;
@@ -93,29 +98,45 @@ namespace ClassicUO.Game.UI.Gumps.GridHighLight
             switch (args.Event)
             {
                 case RuleCrudEventType.Create:
+                    args.Rule.PropertyChanged += OnRulePropertyChanged;
                     GridHighlightsConfig.Current.Highlights.Add(args.Rule.Entry);
                     break;
                 case RuleCrudEventType.Delete:
+                    args.Rule.PropertyChanged -= OnRulePropertyChanged;
                     GridHighlightsConfig.Current.Highlights.Remove(args.Rule.Entry);
                     break;
             }
 
-            GridHighlightsConfig.Current.Save();
-            GridHighlightData.RecheckMatchStatus();
+            SaveAndRecheck();
         }
 
         private void OnReordered(object sender, RulebaseOrderChangedEventArgs<GridHighlightData> args)
         {
             GridHighlightsConfig.Current.Highlights.Clear();
             GridHighlightsConfig.Current.Highlights.AddRange(_rulebase.Rules.Select(r => r.Entry));
+            SaveAndRecheck();
+        }
+
+        private static void OnRulePropertyChanged(object sender, PropertyChangedEventArgs args) => SaveAndRecheck();
+
+        private static void SaveAndRecheck()
+        {
             GridHighlightsConfig.Current.Save();
             GridHighlightData.RecheckMatchStatus();
         }
 
-        internal void SaveAndUpdate()
+        public override void Dispose()
         {
-            GridHighlightsConfig.Current.Save();
-            GridHighlightData.RecheckMatchStatus();
+            if (_rulebase != null)
+            {
+                foreach (GridHighlightData rule in _rulebase.Rules)
+                    rule.PropertyChanged -= OnRulePropertyChanged;
+
+                _rulebase.RuleCrud -= OnRuleCrud;
+                _rulebase.Reordered -= OnReordered;
+            }
+
+            base.Dispose();
         }
 
         private static void ExportGridHighlightSettings(World world)
@@ -155,7 +176,6 @@ namespace ClassicUO.Game.UI.Gumps.GridHighLight
                     return;
 
                 GridHighlightsConfig.Current.Highlights.AddRange(imported);
-                GridHighlightsConfig.Current.Save();
 
                 foreach (IGui gump in UIManager.Gumps)
                 {
@@ -163,7 +183,11 @@ namespace ClassicUO.Game.UI.Gumps.GridHighLight
                         continue;
 
                     foreach (GridHighlightSetupEntry entry in imported)
-                        w._rulebase.Rules.Add(new GridHighlightData(entry));
+                    {
+                        var rule = new GridHighlightData(entry);
+                        rule.PropertyChanged += OnRulePropertyChanged;
+                        w._rulebase.Rules.Add(rule);
+                    }
 
                     for (int i = 0; i < w._rulebase.Rules.Count; i++)
                         w._rulebase.Rules[i].Order = (uint)i;
@@ -171,7 +195,7 @@ namespace ClassicUO.Game.UI.Gumps.GridHighLight
                     break;
                 }
 
-                GridHighlightData.RecheckMatchStatus();
+                SaveAndRecheck();
                 GameActions.Print(world, TazLang.Get("gridhighlight_import_success", [file]));
             }
             catch (Exception ex)

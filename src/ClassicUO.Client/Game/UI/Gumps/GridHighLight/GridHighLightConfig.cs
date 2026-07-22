@@ -42,14 +42,14 @@ namespace ClassicUO.Game.UI.Gumps.GridHighLight
             Profile profile = ProfileManager.CurrentProfile;
 
             (string Label, HashSet<string> Set, Action<List<string>> Save)[] categories =
-            {
+            [
                 (TazLang.Get("gridhighlight_cat_properties"),   GridHighlightRules.Properties,             v => profile.ConfigurableProperties = v),
                 (TazLang.Get("gridhighlight_cat_superslayers"), GridHighlightRules.SuperSlayerProperties,  v => profile.ConfigurableSuperSlayers = v),
                 (TazLang.Get("gridhighlight_cat_slayers"),      GridHighlightRules.SlayerProperties,       v => profile.ConfigurableSlayers = v),
                 (TazLang.Get("gridhighlight_cat_resistances"),  GridHighlightRules.Resistances,            v => profile.ConfigurableResistances = v),
                 (TazLang.Get("gridhighlight_cat_negatives"),    GridHighlightRules.NegativeProperties,     v => profile.ConfigurableNegatives = v),
-                (TazLang.Get("gridhighlight_cat_rarity"),       GridHighlightRules.RarityProperties,       v => profile.ConfigurableRarities = v),
-            };
+                (TazLang.Get("gridhighlight_cat_rarity"),       GridHighlightRules.RarityProperties,       v => profile.ConfigurableRarities = v)
+            ];
 
             var root = new VerticalStackPanel { Spacing = MyraStyle.STANDARD_SPACING };
             root.Widgets.Add(new MyraLabel(TazLang.Get("gridhighlight_config_title"), MyraLabel.TextStyle.P));
