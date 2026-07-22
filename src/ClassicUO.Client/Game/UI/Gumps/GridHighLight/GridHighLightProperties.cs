@@ -6,8 +6,8 @@ using ClassicUO.Game.Managers;
 using ClassicUO.Game.UI.Controls;
 using ClassicUO.Game.UI.MyraWindows;
 using ClassicUO.Game.UI.MyraWindows.Widgets;
-using ClassicUO.Utility;
 using Microsoft.Xna.Framework;
+using Myra.Graphics2D;
 using Myra.Graphics2D.UI;
 using Myra.Graphics2D.UI.WrapPanel;
 
@@ -26,14 +26,18 @@ namespace ClassicUO.Game.UI.Gumps.GridHighLight
         private readonly World _world;
         private readonly GridHighlightData _data;
 
-        private readonly VerticalStackPanel _content = new() { Spacing = MyraStyle.STANDARD_SPACING };
+        private readonly VerticalStackPanel _content = new()
+        {
+            Spacing = MyraStyle.STANDARD_SPACING,
+            Padding = new Thickness(MyraStyle.STANDARD_SPACING * 2),
+        };
 
         public GridHighlightProperties(World world, GridHighlightData data) : base(TazLang.Get("gridhighlight_properties"))
         {
             _world = world;
             _data = data;
 
-            SetRootContent(new ScrollViewer { MaxHeight = 560, Content = _content });
+            SetRootContent(new ScrollViewer { MaxHeight = 600, Content = _content });
             Rebuild();
             CenterInViewPort();
         }
@@ -264,11 +268,14 @@ namespace ClassicUO.Game.UI.Gumps.GridHighLight
             foreach ((string label, Func<GridHighlightSlot, bool> get, Action<GridHighlightSlot, bool> set) in slots)
             {
                 Action<GridHighlightSlot, bool> capturedSet = set;
-                MyraCheckButton cb = MyraCheckButton.CreateWithCallback(get(_data.EquipmentSlots), v =>
-                {
-                    capturedSet(_data.EquipmentSlots, v);
-                    GridHighlightData.RecheckMatchStatus();
-                }, label);
+                var cb = MyraCheckButton.CreateWithCallback(
+                    get(_data.EquipmentSlots), v =>
+                    {
+                        capturedSet(_data.EquipmentSlots, v);
+                        GridHighlightData.RecheckMatchStatus();
+                    },
+                    label
+                );
 
                 slotChecks.Add(cb);
                 wrap.Widgets.Add(cb);

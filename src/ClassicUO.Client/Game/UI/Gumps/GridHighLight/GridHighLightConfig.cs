@@ -17,11 +17,8 @@ namespace ClassicUO.Game.UI.Gumps.GridHighLight
     /// </summary>
     public class GridHighlightConfig : MyraControl
     {
-        private readonly World _world;
-
-        public GridHighlightConfig(World world) : base(TazLang.Get("gridhighlight_config_title"))
+        public GridHighlightConfig() : base(TazLang.Get("gridhighlight_config_title"))
         {
-            _world = world;
             Build();
             CenterInViewPort();
         }
@@ -37,7 +34,7 @@ namespace ClassicUO.Game.UI.Gumps.GridHighLight
                 }
             }
 
-            UIManager.Add(new GridHighlightConfig(world));
+            UIManager.Add(new GridHighlightConfig());
         }
 
         private void Build()
@@ -76,8 +73,8 @@ namespace ClassicUO.Game.UI.Gumps.GridHighLight
                 Action<List<string>> capturedSave = save;
                 input.LostFocus = () =>
                 {
-                    List<string> parsed = (input.Text ?? "")
-                        .Split(new[] { ',', '\n' }, StringSplitOptions.RemoveEmptyEntries)
+                    var parsed = (input.Text ?? "")
+                        .Split([',', '\n'], StringSplitOptions.RemoveEmptyEntries)
                         .Select(p => p.Trim())
                         .Where(p => !string.IsNullOrEmpty(p))
                         .Distinct(StringComparer.OrdinalIgnoreCase)

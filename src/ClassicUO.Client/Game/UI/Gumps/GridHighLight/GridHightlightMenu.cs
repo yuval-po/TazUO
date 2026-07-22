@@ -11,8 +11,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
-using Microsoft.Xna.Framework;
-using Myra.Graphics2D.Brushes;
 using Myra.Graphics2D.UI;
 
 namespace ClassicUO.Game.UI.Gumps.GridHighLight
@@ -39,7 +37,7 @@ namespace ClassicUO.Game.UI.Gumps.GridHighLight
         {
             foreach (IGui gump in UIManager.Gumps)
             {
-                if (gump is GridHighlightMenu w && !w.IsDisposed)
+                if (gump is GridHighlightMenu { IsDisposed: false } w)
                 {
                     w.BringOnTop();
                     return;
@@ -54,22 +52,17 @@ namespace ClassicUO.Game.UI.Gumps.GridHighLight
             var root = new VerticalStackPanel { Spacing = MyraStyle.STANDARD_SPACING };
 
             root.Widgets.Add(new MyraLabel(TazLang.Get("gridhighlight_settings_desc"), MyraLabel.TextStyle.P) { Width = 400 });
-
             root.Widgets.Add(BuildToolbar());
-
             root.Widgets.Add(new ScrollViewer { MaxHeight = 400, Content = BuildRulebase() });
 
             SetRootContent(root);
         }
 
-        private Widget BuildToolbar()
+        private HorizontalStackPanel BuildToolbar()
         {
             var toolbar = new HorizontalStackPanel { Spacing = 4, VerticalAlignment = VerticalAlignment.Center };
-
             toolbar.Widgets.Add(new MyraButton(TazLang.Get("gridhighlight_export"), () => ExportGridHighlightSettings(_world)));
-
             toolbar.Widgets.Add(new MyraButton(TazLang.Get("gridhighlight_import"), () => ImportGridHighlightSettings(_world)));
-
             toolbar.Widgets.Add(new MyraButton(TazLang.Get("gridhighlight_configs"), () => GridHighlightConfig.Show(_world)));
 
             return toolbar;
@@ -83,7 +76,7 @@ namespace ClassicUO.Game.UI.Gumps.GridHighLight
                 VerticalAlignment = VerticalAlignment.Top
             };
 
-            _rulebase.Columns.AddRange(GetRulebaseColumns());
+            _rulebase.Columns.AddRange(GridHighlightRulebaseColumns.Get());
 
             List<GridHighlightSetupEntry> highlights = GridHighlightsConfig.Current.Highlights;
             for (int i = 0; i < highlights.Count; i++)
@@ -94,57 +87,6 @@ namespace ClassicUO.Game.UI.Gumps.GridHighLight
 
             return _rulebase;
         }
-
-        private RulebaseColumn<GridHighlightData>[] GetRulebaseColumns() =>
-        [
-            new()
-            {
-                Header = TazLang.Get("gridhighlight_enabled"),
-                HeaderTooltip = TazLang.Get("gridhighlight_enabled_tooltip"),
-                CellContentAlignment = HorizontalAlignment.Center,
-                Proportion = new Proportion(ProportionType.Auto),
-                CellFactory = data => MyraCheckButton.CreateWithCallback(data.Enabled, isChecked =>
-                {
-                    data.Enabled = isChecked;
-                    GridHighlightData.RecheckMatchStatus();
-                }, tooltip: TazLang.Get("gridhighlight_enabled_tooltip"))
-            },
-            new()
-            {
-                Header = TazLang.Get("gridhighlight_name"),
-                Proportion = new Proportion(ProportionType.Fill),
-                CellFactory = data =>
-                {
-                    var nameBox = new MyraInputBox { Text = data.Name ?? "", Width = 150 };
-                    nameBox.TextChangedByUser += (_, _) => data.Name = nameBox.Text ?? "";
-                    return nameBox;
-                }
-            },
-            new()
-            {
-                Header = TazLang.Get("gridhighlight_color"),
-                Proportion = new Proportion(ProportionType.Auto),
-                CellFactory = data =>
-                {
-                    var colorButton = new MyraButton(TazLang.Get("gridhighlight_color")) { Tooltip = TazLang.Get("gridhighlight_color_tooltip") };
-                    ApplyColorButtonStyle(colorButton, data.HighlightColor);
-                    colorButton.OnClick = () => RGBColorPickerGump.Open(data.HighlightColor, selectedColor =>
-                    {
-                        data.HighlightColor = selectedColor;
-                        data.Hue = (ushort)(selectedColor.R + (selectedColor.G << 8) + (selectedColor.B << 16));
-                        ApplyColorButtonStyle(colorButton, selectedColor);
-                        GridHighlightData.RecheckMatchStatus();
-                    });
-                    return colorButton;
-                }
-            },
-            new()
-            {
-                Header = TazLang.Get("gridhighlight_properties"),
-                Proportion = new Proportion(ProportionType.Auto),
-                CellFactory = data => new MyraButton(TazLang.Get("gridhighlight_properties"), () => GridHighlightProperties.Show(_world, data))
-            }
-        ];
 
         private static void OnRuleCrud(object sender, RuleCrudEventArgs<GridHighlightData> args)
         {
@@ -170,13 +112,10 @@ namespace ClassicUO.Game.UI.Gumps.GridHighLight
             GridHighlightData.RecheckMatchStatus();
         }
 
-        private static void ApplyColorButtonStyle(MyraButton button, Color color)
+        internal void SaveAndUpdate()
         {
-            var brush = new SolidBrush(color);
-            button.Background = brush;
-            button.OverBackground = brush;
-            button.PressedBackground = brush;
-            button.DisabledBackground = brush;
+            GridHighlightsConfig.Current.Save();
+            GridHighlightData.RecheckMatchStatus();
         }
 
         private static void ExportGridHighlightSettings(World world)
@@ -211,28 +150,29 @@ namespace ClassicUO.Game.UI.Gumps.GridHighLight
 
                 string json = File.ReadAllText(file);
                 List<GridHighlightSetupEntry> imported = JsonSerializer.Deserialize<List<GridHighlightSetupEntry>>(json);
-                if (imported != null)
+
+                if (imported == null)
+                    return;
+
+                GridHighlightsConfig.Current.Highlights.AddRange(imported);
+                GridHighlightsConfig.Current.Save();
+
+                foreach (IGui gump in UIManager.Gumps)
                 {
-                    GridHighlightsConfig.Current.Highlights.AddRange(imported);
-                    GridHighlightsConfig.Current.Save();
+                    if (gump is not GridHighlightMenu w || w.IsDisposed)
+                        continue;
 
-                    foreach (IGui gump in UIManager.Gumps)
-                    {
-                        if (gump is GridHighlightMenu w && !w.IsDisposed)
-                        {
-                            foreach (GridHighlightSetupEntry entry in imported)
-                                w._rulebase.Rules.Add(new GridHighlightData(entry));
+                    foreach (GridHighlightSetupEntry entry in imported)
+                        w._rulebase.Rules.Add(new GridHighlightData(entry));
 
-                            for (int i = 0; i < w._rulebase.Rules.Count; i++)
-                                w._rulebase.Rules[i].Order = (uint)i;
+                    for (int i = 0; i < w._rulebase.Rules.Count; i++)
+                        w._rulebase.Rules[i].Order = (uint)i;
 
-                            break;
-                        }
-                    }
-
-                    GridHighlightData.RecheckMatchStatus();
-                    GameActions.Print(world, TazLang.Get("gridhighlight_import_success", [file]));
+                    break;
                 }
+
+                GridHighlightData.RecheckMatchStatus();
+                GameActions.Print(world, TazLang.Get("gridhighlight_import_success", [file]));
             }
             catch (Exception ex)
             {

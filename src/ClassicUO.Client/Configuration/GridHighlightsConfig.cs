@@ -39,7 +39,7 @@ namespace ClassicUO.Configuration
 
             if (file != null && File.Exists(file))
             {
-                _current = ConfigurationResolver.Load<GridHighlightsConfig>(file, GridHighlightsJsonContext.DefaultToUse.GridHighlightsConfig)
+                _current = ConfigurationResolver.Load(file, GridHighlightsJsonContext.DefaultToUse.GridHighlightsConfig)
                            ?? new GridHighlightsConfig();
                 return false;
             }
