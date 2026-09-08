@@ -1147,16 +1147,14 @@ internal static class GameActions
 
     internal static void CastSpell(int index)
     {
-        if (index >= 0)
-        {
-            // Check if auto unequip manager wants to intercept
-            if (AutoUnequipActionManager.Instance?.TryInterceptSpellCast(index) ?? false)
-            {
-                return; // Manager will handle the cast via queue
-            }
+        if (index < 0)
+            return;
 
-            CastSpellDirect(index);
-        }
+        // Check if auto unequip manager wants to intercept
+        if (AutoUnequipActionManager.Instance?.TryInterceptSpellCast(index) ?? false)
+            return; // Manager will handle the cast via queue
+
+        CastSpellDirect(index);
     }
 
     internal static void CastSpellDirect(int index)

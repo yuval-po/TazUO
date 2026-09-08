@@ -42,10 +42,20 @@ public sealed partial class AutoUnequipActionManager : IDisposable
 
     /// <summary>
     ///     Checks whether the manager is in a valid state and can intercept calls.
-    ///     Note that this method considers profile settings.
+    ///     Note that this ignores profile settings; those are per-action and checked by each caller.
     /// </summary>
     /// <returns>True if the manager is ready to intercept, false otherwise</returns>
-    private bool CanIntercept => !_disposed && ProfileManager.CurrentProfile?.AutoUnequipForActions == true && IsPlayerBackpackAvailable;
+    private bool CanIntercept => !_disposed && IsPlayerBackpackAvailable;
+
+    /// <summary>
+    /// Whether unequip-on-cast is supported and enabled
+    /// </summary>
+    private bool IsCastInterceptionEnabled => CanIntercept && ProfileManager.CurrentProfile?.AutoUnequipForCast == true;
+
+    /// <summary>
+    /// Whether unequip-on-potion is supported and enabled
+    /// </summary>
+    private bool IsPotionInterceptionEnabled => CanIntercept && ProfileManager.CurrentProfile?.AutoUnequipForPotion == true;
 
     /// <summary>
     ///     Determines whether the player's backpack is available
@@ -65,14 +75,12 @@ public sealed partial class AutoUnequipActionManager : IDisposable
 
             Log.Warn("Auto-Unequip manager task processor faulted:");
             Log.Warn(result.Exception.ToString());
-            // We could restart but honestly if it faulted, we're probably better off leaving it disabled.
+            // We could restart, but honestly, if it faulted, we're probably better off leaving it disabled.
             MainThreadQueue.InvokeOnMainThread(() =>
             {
-                if (_world == null)
-                    return;
                 try
                 {
-                    GameActions.Print(_world, TazLang.Get("auto_unequip_failed_stopped"), Constants.HUE_ERROR);
+                    GameActions.Print(TazLang.Get("auto_unequip_failed_stopped"), Constants.HUE_ERROR);
                 }
                 catch (Exception e)
                 {
@@ -130,7 +138,7 @@ public sealed partial class AutoUnequipActionManager : IDisposable
 
     #endregion
 
-    #region PrivateMethods
+    #region Private Methods
 
     /// <summary>
     ///     Determines whether a spell cast should be intercepted
@@ -139,7 +147,7 @@ public sealed partial class AutoUnequipActionManager : IDisposable
     /// <returns>True if the spell should be intercepted, false otherwise</returns>
     private bool ShouldInterceptCast(int spellIndex)
     {
-        if (!CanIntercept)
+        if (!IsCastInterceptionEnabled)
             return false;
 
         if (spellIndex is >= 100 and <= 678 or >= 700)
@@ -169,7 +177,7 @@ public sealed partial class AutoUnequipActionManager : IDisposable
     /// <returns>True if the event should be intercepted, false otherwise</returns>
     private bool ShouldInterceptDblClick(uint serial, Action<uint> sendDoubleClickDelegate)
     {
-        if (sendDoubleClickDelegate == null || !CanIntercept)
+        if (sendDoubleClickDelegate == null || !IsPotionInterceptionEnabled)
             return false;
 
         return IsDrinkablePotionItem(serial) && GetArmingState().Count > 0;
@@ -233,7 +241,7 @@ public sealed partial class AutoUnequipActionManager : IDisposable
                 // A micro-delay to let producers settle, in case of a series of actions
                 await Task.Delay(50, _cTokenSource.Token);
 
-                // Gather-up whatever tasks we've collected until now
+                // Gather whatever tasks we've collected until now
                 var tasks = new List<Action>();
                 while (_flushChannel.Reader.TryRead(out Action task))
                     tasks.Add(task);

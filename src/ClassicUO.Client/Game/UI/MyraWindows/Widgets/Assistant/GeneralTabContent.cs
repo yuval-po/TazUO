@@ -84,8 +84,11 @@ public static class GeneralTabContent
         rightSide.Widgets.Add(MyraCheckButton.CreateWithCallback(profile.AutoOpenOwnCorpse,
             b => profile.AutoOpenOwnCorpse = b, TazLang.Get("assistant_autoopenowncorpse"), TazLang.Get("assistant_autoopenowncorpse_tooltip")));
 
-        rightSide.Widgets.Add(MyraCheckButton.CreateWithCallback(profile.AutoUnequipForActions,
-            b => profile.AutoUnequipForActions = b, TazLang.Get("assistant_autounequipforactions"), TazLang.Get("assistant_autounequipforactions_tooltip")));
+        rightSide.Widgets.Add(MyraCheckButton.CreateWithCallback(profile.AutoUnequipForCast,
+            b => profile.AutoUnequipForCast = b, TazLang.Get("assistant_autounequipforcast"), TazLang.Get("assistant_autounequipforcast_tooltip")));
+
+        rightSide.Widgets.Add(MyraCheckButton.CreateWithCallback(profile.AutoUnequipForPotion,
+            b => profile.AutoUnequipForPotion = b, TazLang.Get("assistant_autounequipforpotion"), TazLang.Get("assistant_autounequipforpotion_tooltip")));
 
         rightSide.Widgets.Add(MyraCheckButton.CreateWithCallback(profile.DisableWeather,
             b => {

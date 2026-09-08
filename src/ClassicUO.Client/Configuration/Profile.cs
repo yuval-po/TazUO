@@ -890,6 +890,11 @@ namespace ClassicUO.Configuration
         public bool DisableAutolootCorpseRetry { get; set; } = false;
         public bool DisableWeather { get; set; }
         public bool EnablePetScaling { get; set; }
+        public bool AutoUnequipForCast { get; set; }
+        public bool AutoUnequipForPotion { get; set; }
+
+        // Retained only for the one-time split into AutoUnequipForCast/AutoUnequipForPotion. Do not use in new code.
+        [Obsolete("Remove after 09/08/27")]
         public bool AutoUnequipForActions { get; set; }
         public int MinGumpMoveDistance { get; set; } = 5;
         public int QuickHealSpell { get; set; } = 29;
@@ -975,7 +980,9 @@ namespace ClassicUO.Configuration
                 DisableAutolootCorpseRetry = OldDisableAutolootCorpseRetry;
                 DisableWeather = OldDisableWeather;
                 EnablePetScaling = OldEnablePetScaling;
+#pragma warning disable CS0618
                 AutoUnequipForActions = OldAutoUnequipForActions;
+#pragma warning restore CS0618
                 MinGumpMoveDistance = OldMinGumpMoveDistance;
                 QuickHealSpell = OldQuickHealSpell;
                 QuickCureSpell = OldQuickCureSpell;
@@ -1068,6 +1075,21 @@ namespace ClassicUO.Configuration
 
                 ProfileMigrationVersion = 13;
             }
+
+            // Splits the old single "unequip for actions" toggle, which governed both spell casts and potion
+            // drinking, so a profile that had it on keeps both halves on (and one that had it off, both off).
+            //
+            // Deliberately not gated on ProfileMigrationVersion: that counter is global while these fields are
+            // per-profile, so a gate would migrate whichever character logs in first and silently drop the
+            // setting for every other one. Consuming the legacy field makes the step idempotent instead.
+#pragma warning disable CS0618
+            if (AutoUnequipForActions)
+            {
+                AutoUnequipForCast = true;
+                AutoUnequipForPotion = true;
+                AutoUnequipForActions = false;
+            }
+#pragma warning restore CS0618
 
             try //Cleanup old backups from previous save system
             {

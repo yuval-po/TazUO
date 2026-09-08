@@ -215,9 +215,14 @@ namespace ClassicUO.Game.Managers
 
         public CursorTarget TargetingState { get; private set; } = CursorTarget.Invalid;
 
-        public bool IsTargeting { get; private set; }
+        public bool IsTargeting
+        {
+            get;
+            private set;
+        }
 
         public TargetType TargetingType { get; private set; }
+
 
         private void ClearTargetingWithoutTargetCancelPacket()
         {
