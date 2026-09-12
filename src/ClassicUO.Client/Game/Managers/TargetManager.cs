@@ -10,9 +10,6 @@ using ClassicUO.Input;
 using ClassicUO.Network;
 using ClassicUO.Utility;
 using System;
-using System.Threading;
-using System.Threading.Tasks;
-using ClassicUO.Utility.Logging;
 
 namespace ClassicUO.Game.Managers
 {
@@ -154,23 +151,32 @@ namespace ClassicUO.Game.Managers
         }
     }
 
+    public class TargetChangedEventArgs(uint instance, bool isTargeting) : EventArgs
+    {
+        public bool IsTargeting { get; } = isTargeting;
+        public uint Instance { get; } = instance;
+    }
+
     public sealed class TargetManager
     {
-        private uint _targetCursorId, _lastAttack;
+        private uint _targetCursorId;
         private readonly World _world;
         private readonly byte[] _lastDataBuffer = new byte[19];
         private Action<object> _targetCallback;
+        private volatile bool _isTargeting;
 
         public TargetManager(World world) { _world = world; }
+
+        public uint TargetCursorInstanceId { get; private set; }
 
         public uint SelectedTarget, NewTargetSystemSerial;
 
         public uint LastAttack
         {
-            get { return _lastAttack; }
+            get;
             set
             {
-                _lastAttack = value;
+                field = value;
 
                 // Only a real mobile gets a bar: World.Clear() zeroes this on logout and character
                 // switch, which would otherwise open one for serial 0.
@@ -207,18 +213,37 @@ namespace ClassicUO.Game.Managers
             }
         }
 
-        public readonly LastTargetInfo LastTargetInfo = new LastTargetInfo();
+        public readonly LastTargetInfo LastTargetInfo = new();
 
-        public static readonly AutoTargetInfo NextAutoTarget = new AutoTargetInfo();
+        public static readonly AutoTargetInfo NextAutoTarget = new();
 
         public MultiTargetInfo MultiTargetInfo { get; private set; }
 
         public CursorTarget TargetingState { get; private set; } = CursorTarget.Invalid;
 
+        /// <summary>
+        /// Raised on the main thread whenever <see cref="IsTargeting"/> transitions, with the new state.
+        /// Handlers run inside the targeting mutation, so they must be cheap and must not re-enter the manager.
+        /// </summary>
+        public event EventHandler<TargetChangedEventArgs> TargetingChanged;
+
+        /// <summary>
+        /// Whether a target cursor is currently armed. Volatile so off-thread observers see transitions.
+        /// </summary>
         public bool IsTargeting
         {
-            get;
-            private set;
+            get => _isTargeting;
+            private set
+            {
+                if (_isTargeting == value)
+                    return;
+
+                _isTargeting = value;
+
+                // This may theoretically throw an overflow error, but it's just theoretical risk;
+                // It'd take around 276 years of non-stop toggling to reach.
+                TargetingChanged?.Invoke(this, new TargetChangedEventArgs(TargetCursorInstanceId++, value));
+            }
         }
 
         public TargetType TargetingType { get; private set; }
@@ -260,32 +285,24 @@ namespace ClassicUO.Game.Managers
         public bool IsCurrentTargetingAction(Action<object> callback) =>
             callback != null && IsTargeting && TargetingState == CursorTarget.CallbackTarget && ReferenceEquals(_targetCallback, callback);
 
-        public void SetTargeting(CursorTarget targeting, uint cursorID, TargetType cursorType)
+        public void SetTargeting(CursorTarget targeting, uint cursorId, TargetType cursorType)
         {
             if (targeting == CursorTarget.Invalid)
-            {
                 return;
-            }
 
-            bool lastTargetting = IsTargeting;
+            bool lastTargeting = IsTargeting;
             IsTargeting = cursorType < TargetType.Cancel;
             TargetingState = targeting;
             TargetingType = cursorType;
 
-            if (IsTargeting)
-            {
-                //UIManager.RemoveTargetLineGump(LastTarget);
-            }
-            else if (lastTargetting)
-            {
+            if (lastTargeting)
                 CancelTarget();
-            }
 
             // https://github.com/andreakarasho/ClassicUO/issues/1373
             // when receiving a cancellation target from the server we need
             // to send the last active cursorID, so update cursor data later
 
-            _targetCursorId = cursorID;
+            _targetCursorId = cursorId;
         }
 
         public static void SetAutoTarget(uint serial, TargetType targetType, bool matchAnyTargetType = false) => NextAutoTarget.Set(serial, targetType, matchAnyTargetType);

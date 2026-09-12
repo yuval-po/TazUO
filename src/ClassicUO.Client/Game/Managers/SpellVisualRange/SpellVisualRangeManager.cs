@@ -31,7 +31,9 @@ namespace ClassicUO.Game.Managers.SpellVisualRange
         private Dictionary<int, SpellRangeInfo> spellRangeOverrideCache = new();
         private Dictionary<string, SpellRangeInfo> spellRangePowerWordCache = new();
 
-        private bool loaded = false;
+        // Volatile: written by the background load task, read by consumers on the main thread. It gates access
+        // to the caches below, which are not safe to read while a load is populating them.
+        private volatile bool loaded = false;
         private static SpellVisualRangeManager instance;
 
         private bool isCasting { get; set; } = false;
@@ -123,6 +125,26 @@ namespace ClassicUO.Game.Managers.SpellVisualRange
         }
 
         public SpellRangeInfo GetCurrentSpell() => currentSpell;
+
+        /// <summary>
+        /// Looks up a spell's indicator info by its full spell index, preferring the profile's override entry.
+        /// </summary>
+        /// <param name="spellId">The full spell index, as carried by <see cref="SpellDefinition.ID"/></param>
+        /// <param name="spell">The matching info, or null if none was found</param>
+        /// <returns>True if info was found, false for an unknown spell or while the cache is still loading</returns>
+        /// <remarks>
+        /// Call from the main thread. The caches are plain dictionaries repopulated by loads, so the
+        /// <see cref="loaded"/> gate is the only thing keeping a read off a half-built dictionary.
+        /// </remarks>
+        public bool TryGetSpellInfo(int spellId, out SpellRangeInfo spell)
+        {
+            spell = null;
+
+            if (!loaded)
+                return false;
+
+            return spellRangeOverrideCache.TryGetValue(spellId, out spell) || spellRangeCache.TryGetValue(spellId, out spell);
+        }
 
         #region Load and unload
 

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using ClassicUO.Configuration;
 using ClassicUO.Game.Data;
 using ClassicUO.Game.GameObjects;
+using ClassicUO.Game.Managers.SpellVisualRange;
 using ClassicUO.Game.Managers.Structs;
 using ClassicUO.Utility.Logging;
 using Lock = System.Threading.Lock;
@@ -21,15 +22,80 @@ public sealed partial class AutoUnequipActionManager : IDisposable
         public readonly Layer Layer = layer;
     }
 
+    /// <summary>
+    ///     Carries one batched action's dispatch state out of <see cref="ObjectActionQueue" />.
+    ///     The queue fills this in on the main thread as it invokes the action; the consumer thread reads it only
+    ///     after <see cref="Dispatched" /> turns true. One instance per tracked action, so a stale action left over
+    ///     from an abandoned batch writes to its own object and can never be mistaken for the current one.
+    /// </summary>
+    private sealed class ActionDispatch
+    {
+        /// <summary>
+        ///     Target cursor instance counter as it read immediately before the action was sent.
+        ///     Only meaningful once <see cref="Dispatched" /> is true.
+        /// </summary>
+        public uint TargetCursorIdAtDispatch;
+
+        /// <summary>
+        ///     Set once the action has been invoked. Volatile write publishes <see cref="TargetCursorIdAtDispatch" />.
+        /// </summary>
+        public volatile bool Dispatched;
+    }
+
     public static AutoUnequipActionManager Instance { get; private set; }
+
+    /// <summary>
+    ///     How long to wait for the batch's last action to leave <see cref="ObjectActionQueue" />.
+    ///     The queue releases at most one item per <see cref="GlobalActionCooldown" />, and stalls entirely while the
+    ///     cursor is holding an item, so this has to tolerate a badly backed-up queue.
+    /// </summary>
+    private const int BATCH_DISPATCH_TIMEOUT_MS = 30_000;
+
+    /// <summary>
+    ///     Headroom added on top of a spell's effective cast time to cover the round trip to the server.
+    /// </summary>
+    private const int TARGET_CURSOR_LATENCY_SLACK_MS = 1_250;
+
+    /// <summary>
+    ///     Floor for the cursor wait, so an instant-cast spell on a laggy link still gets a fair chance.
+    /// </summary>
+    private const int TARGET_CURSOR_MIN_TIMEOUT_MS = 1_000;
+
+    /// <summary>
+    ///     Ceiling for the cursor wait. Past this we would rather re-arm than leave the player disarmed.
+    /// </summary>
+    private const int TARGET_CURSOR_MAX_TIMEOUT_MS = 10_000;
+
+    /// <summary>
+    ///     Cursor wait for an action with no known cast time - a spell missing from
+    ///     <see cref="SpellVisualRangeManager" />, or one intercepted before its cache finished loading.
+    /// </summary>
+    private const int TARGET_CURSOR_DEFAULT_TIMEOUT_MS = 5_000;
+
+    /// <summary>
+    ///     How long to wait for an open target cursor to be consumed or canceled before re-arming regardless.
+    /// </summary>
+    private const int TARGET_CURSOR_CLOSE_TIMEOUT_MS = 10_000;
 
     private readonly World _world;
     private readonly CancellationTokenSource _cTokenSource = new();
     private readonly Task _interceptConsumerCompletion;
 
-    private readonly Channel<Action> _flushChannel = Channel.CreateUnbounded<Action>(
+    private readonly Channel<EnqueuedAction> _flushChannel = Channel.CreateUnbounded<EnqueuedAction>(
         new UnboundedChannelOptions { SingleReader = true, SingleWriter = false }
     );
+
+    /// <summary>
+    ///     Pulsed by <see cref="OnTargetingChanged" /> on every targeting transition. Used purely as a wake-up;
+    ///     the waiters always re-read live <see cref="TargetManager" /> state, so a stale or spurious signal only
+    ///     costs an extra spin. The wait also supplies the memory barrier that publishes those reads to this thread.
+    /// </summary>
+    private readonly ManualResetEventSlim _targetWaitHandle = new(false, 0);
+
+    /// <summary>
+    ///     Set once the last action of the current batch has been invoked by <see cref="ObjectActionQueue" />.
+    /// </summary>
+    private readonly ManualResetEventSlim _batchDispatched = new(false, 0);
 
     #region Dispose
 
@@ -48,12 +114,12 @@ public sealed partial class AutoUnequipActionManager : IDisposable
     private bool CanIntercept => !_disposed && IsPlayerBackpackAvailable;
 
     /// <summary>
-    /// Whether unequip-on-cast is supported and enabled
+    ///     Whether unequip-on-cast is supported and enabled
     /// </summary>
     private bool IsCastInterceptionEnabled => CanIntercept && ProfileManager.CurrentProfile?.AutoUnequipForCast == true;
 
     /// <summary>
-    /// Whether unequip-on-potion is supported and enabled
+    ///     Whether unequip-on-potion is supported and enabled
     /// </summary>
     private bool IsPotionInterceptionEnabled => CanIntercept && ProfileManager.CurrentProfile?.AutoUnequipForPotion == true;
 
@@ -68,6 +134,9 @@ public sealed partial class AutoUnequipActionManager : IDisposable
     {
         _world = world;
         Instance = this;
+
+        world.TargetManager.TargetingChanged += OnTargetingChanged;
+
         _interceptConsumerCompletion = Task.Run(ActionConsumer).ContinueWith(result =>
         {
             if (result.IsCanceled || result.Exception == null)
@@ -97,8 +166,25 @@ public sealed partial class AutoUnequipActionManager : IDisposable
     /// </summary>
     /// <param name="spellIndex">The spell being intercepted</param>
     /// <returns>True if the spell was intercepted, false otherwise</returns>
-    public bool TryInterceptSpellCast(int spellIndex) =>
-        ShouldInterceptCast(spellIndex) && _flushChannel.Writer.TryWrite(() => GameActions.CastSpellDirect(spellIndex));
+    /// <remarks>
+    ///     Called on the main thread, which is where the spell's cast time and the player's Faster Casting have to be
+    ///     read - the consumer thread must not touch either.
+    /// </remarks>
+    public bool TryInterceptSpellCast(int spellIndex)
+    {
+        if (!ShouldInterceptCast(spellIndex))
+            return false;
+
+        SpellVisualRangeManager.Instance.TryGetSpellInfo(spellIndex, out SpellRangeInfo spell);
+
+        return _flushChannel.Writer.TryWrite(
+            new EnqueuedAction(
+                () => GameActions.CastSpellDirect(spellIndex),
+                spell?.ExpectTargetCursor ?? false, // Unknowns are assumed to not require targeting
+                GetTargetCursorTimeoutMs(spell)
+            )
+        );
+    }
 
     /// <summary>
     ///     Attempts to intercept a double click
@@ -107,7 +193,8 @@ public sealed partial class AutoUnequipActionManager : IDisposable
     /// <param name="sendDoubleClickDelegate">The original 'send double click' function</param>
     /// <returns>True if the click was intercepted, false otherwise</returns>
     public bool TryInterceptDoubleClick(uint itemSerial, Action<uint> sendDoubleClickDelegate) =>
-        ShouldInterceptDblClick(itemSerial, sendDoubleClickDelegate) && _flushChannel.Writer.TryWrite(() => sendDoubleClickDelegate(itemSerial));
+        ShouldInterceptDblClick(itemSerial, sendDoubleClickDelegate) &&
+        _flushChannel.Writer.TryWrite(EnqueuedAction.NonTargeting(() => sendDoubleClickDelegate(itemSerial)));
 
     /// <summary>
     ///     Disposes the manager instance.
@@ -120,16 +207,21 @@ public sealed partial class AutoUnequipActionManager : IDisposable
             if (_disposed)
                 return;
 
+            _world.TargetManager.TargetingChanged -= OnTargetingChanged;
+
             // First, issue a cancel. The token propagates to the wait for the main thread as well
             _cTokenSource.Cancel();
 
             // Then, close the producers
             _flushChannel.Writer.Complete();
 
-            // Wait for the consumer to return
+            // Wait for the consumer to return.
+            // It owns the wait handles below, so nothing can be blocked on them by the time this returns.
             Task.WaitAll(_interceptConsumerCompletion);
             // Finally, dispose of the rest
             _cTokenSource.Dispose();
+            _targetWaitHandle.Dispose();
+            _batchDispatched.Dispose();
             Instance = null;
 
             _disposed = true;
@@ -181,6 +273,30 @@ public sealed partial class AutoUnequipActionManager : IDisposable
             return false;
 
         return IsDrinkablePotionItem(serial) && GetArmingState().Count > 0;
+    }
+
+    /// <summary>
+    ///     Works out how long a spell's target cursor may take to show up once the cast has been sent.
+    /// </summary>
+    /// <param name="spell">The spell's indicator info, or null if it is unknown</param>
+    /// <returns>The cursor wait, in milliseconds</returns>
+    /// <remarks>
+    ///     Main thread only - <see cref="SpellRangeInfo.GetEffectiveCastTime" /> reads the player's Faster Casting
+    ///     and skills. The result only has to be the right order of magnitude: it bounds how long the player stays
+    ///     disarmed when a cast produces no cursor at all, so a half-second spell should not wait out a six-second one.
+    /// </remarks>
+    private static int GetTargetCursorTimeoutMs(SpellRangeInfo spell)
+    {
+        if (spell == null)
+            return TARGET_CURSOR_DEFAULT_TIMEOUT_MS;
+
+        double castTimeMs = spell.GetEffectiveCastTime() * 1000;
+
+        return (int)Math.Clamp(
+            castTimeMs + TARGET_CURSOR_LATENCY_SLACK_MS,
+            TARGET_CURSOR_MIN_TIMEOUT_MS,
+            TARGET_CURSOR_MAX_TIMEOUT_MS
+        );
     }
 
     /// <summary>
@@ -242,8 +358,8 @@ public sealed partial class AutoUnequipActionManager : IDisposable
                 await Task.Delay(50, _cTokenSource.Token);
 
                 // Gather whatever tasks we've collected until now
-                var tasks = new List<Action>();
-                while (_flushChannel.Reader.TryRead(out Action task))
+                var tasks = new List<EnqueuedAction>();
+                while (_flushChannel.Reader.TryRead(out EnqueuedAction task))
                     tasks.Add(task);
 
                 ExecuteBatchedTasks(tasks);
@@ -263,7 +379,7 @@ public sealed partial class AutoUnequipActionManager : IDisposable
     ///     Re-arms the player, afterward.
     /// </summary>
     /// <param name="tasks">The tasks to execute. These could be "cast a spell" or "drink a potion"</param>
-    private void ExecuteBatchedTasks(List<Action> tasks)
+    private void ExecuteBatchedTasks(List<EnqueuedAction> tasks)
     {
         if (_disposed)
             return;
@@ -283,19 +399,186 @@ public sealed partial class AutoUnequipActionManager : IDisposable
 
         _cTokenSource.Token.ThrowIfCancellationRequested();
 
-        // Enqueue a disarm if necessary
+        // Enqueue a disarm if necessary. Any cursor already up would swallow the unequip's item drop,
+        // so let it resolve first.
         if (arms.Count > 0)
+        {
+            _ = WaitCurrentTargetEnd(_cTokenSource.Token);
             EnqueueUnequip(arms);
+        }
+
         _cTokenSource.Token.ThrowIfCancellationRequested();
 
-        // Enqueue all batched actions
-        foreach (Action task in tasks)
-            ObjectActionQueue.Instance.Enqueue(new ObjectActionQueueItem(task), ActionPriority.EquipItem);
+        // The cursor we re-arm behind is the one raised by the last targeting action in the batch;
+        // anything queued after it is fire-and-forget as far as targeting goes.
+        int trackedIndex = arms.Count > 0 ? tasks.FindLastIndex(task => task.Targeting) : -1;
+        ActionDispatch dispatch = EnqueueActions(tasks, trackedIndex);
+
         _cTokenSource.Token.ThrowIfCancellationRequested();
 
         // Enqueue a re-arm if necessary
-        if (arms.Count > 0)
-            EnqueueReEquip(arms);
+        if (arms.Count <= 0)
+            return;
+
+        if (dispatch != null)
+            WaitOutTargetCursor(dispatch, tasks[trackedIndex].TargetCursorTimeoutMs, _cTokenSource.Token);
+
+        EnqueueReEquip(arms);
+    }
+
+    /// <summary>
+    ///     Enqueues the batch's actions, instrumenting the one at <paramref name="trackedIndex" /> so the consumer
+    ///     can tell when it was actually sent and which target cursor it is expected to raise.
+    /// </summary>
+    /// <param name="tasks">The batched actions to enqueue</param>
+    /// <param name="trackedIndex">Index of the action to instrument, or a negative value to instrument none</param>
+    /// <returns>The tracked action's dispatch state, or null if nothing was instrumented</returns>
+    private ActionDispatch EnqueueActions(List<EnqueuedAction> tasks, int trackedIndex)
+    {
+        ActionDispatch dispatch = null;
+
+        for (int i = 0; i < tasks.Count; i++)
+        {
+            Action op = tasks[i].Op;
+            ObjectActionQueueItem item;
+
+            if (i != trackedIndex)
+                item = new ObjectActionQueueItem(op);
+            else
+            {
+                dispatch = new ActionDispatch();
+                item = CreateDispatchTrackedItem(op, dispatch);
+            }
+
+            ObjectActionQueue.Instance.Enqueue(item, ActionPriority.EquipItem);
+        }
+
+        return dispatch;
+    }
+
+    /// <summary>
+    ///     Wraps an action so it records the target cursor counter and flags itself as sent.
+    /// </summary>
+    /// <param name="op">The action to wrap</param>
+    /// <param name="dispatch">The state to fill in when the action runs</param>
+    /// <returns>The queue item to enqueue</returns>
+    private ObjectActionQueueItem CreateDispatchTrackedItem(Action op, ActionDispatch dispatch) =>
+        new(
+            () =>
+            {
+                // Sampling here - on the main thread, immediately before the send - keeps the cursor correlation as
+                // tight as UO allows. The protocol carries no action-to-target linkage, so a targeting operation
+                // interleaving between this line and the server's reply can still fool us.
+                dispatch.TargetCursorIdAtDispatch = World.Instance.TargetManager.TargetCursorInstanceId;
+                op();
+            },
+            _ =>
+            {
+                dispatch.Dispatched = true;
+                _batchDispatched.Set();
+            }
+        );
+
+    /// <summary>
+    ///     Waits for the tracked action to be sent, and then for the target cursor it raises to be consumed.
+    /// </summary>
+    /// <param name="dispatch">The tracked action's dispatch state</param>
+    /// <param name="cursorTimeoutMs">How long the cursor may take to appear once the action has been sent</param>
+    /// <param name="cToken">Cancels the wait</param>
+    /// <exception cref="OperationCanceledException">The manager is shutting down</exception>
+    /// <remarks>
+    ///     Waiting for the send first matters because <see cref="ObjectActionQueue" /> may sit on the action for
+    ///     seconds; timing the cursor from enqueue time would measure the queue, not the cast. Either wait timing out
+    ///     simply re-arms early - the re-equip still lands behind the action in the queue either way.
+    /// </remarks>
+    private void WaitOutTargetCursor(ActionDispatch dispatch, int cursorTimeoutMs, CancellationToken cToken)
+    {
+        if (!WaitForDispatch(dispatch, cToken))
+            return;
+
+        _ = WaitTargetEnd(dispatch.TargetCursorIdAtDispatch, cursorTimeoutMs, cToken);
+    }
+
+    /// <summary>
+    ///     Blocks until the tracked action has been invoked by <see cref="ObjectActionQueue" />.
+    /// </summary>
+    /// <param name="dispatch">The tracked action's dispatch state</param>
+    /// <param name="cToken">Cancels the wait</param>
+    /// <returns>True if the action was sent, false if it did not make it out in time</returns>
+    /// <exception cref="OperationCanceledException">The manager is shutting down</exception>
+    private bool WaitForDispatch(ActionDispatch dispatch, CancellationToken cToken)
+    {
+        long deadline = Environment.TickCount64 + BATCH_DISPATCH_TIMEOUT_MS;
+
+        // The signal is shared, so an action left over from an abandoned batch can wake us. Re-checking this
+        // batch's own flag turns that into a harmless extra spin.
+        while (!dispatch.Dispatched)
+        {
+            int remainingMs = (int)(deadline - Environment.TickCount64);
+            if (remainingMs <= 0 || !_batchDispatched.Wait(remainingMs, cToken))
+                return dispatch.Dispatched;
+
+            _batchDispatched.Reset();
+        }
+
+        return true;
+    }
+
+    private void OnTargetingChanged(object sender, TargetChangedEventArgs e) => _targetWaitHandle.Set();
+
+    /// <summary>
+    ///     Waits for the target cursor raised by an action that was sent while the instance counter read
+    ///     <paramref name="targCursId" /> to both appear and go away.
+    /// </summary>
+    /// <param name="targCursId">The cursor instance ID sampled immediately before the action was sent</param>
+    /// <param name="cursorTimeoutMs">
+    ///     How long the cursor may take to appear, per <see cref="GetTargetCursorTimeoutMs" />
+    /// </param>
+    /// <param name="cToken">Cancels the wait</param>
+    /// <returns>True if the cursor came and went, false if either wait timed out</returns>
+    /// <exception cref="OperationCanceledException">The manager is shutting down</exception>
+    private bool WaitTargetEnd(uint targCursId, int cursorTimeoutMs, CancellationToken cToken)
+    {
+        // The counter advances on every transition, so it reads targCursId + 1 once our cursor is up and
+        // targCursId + 2 once it has closed. Waiting for it to merely pass targCursId would return on open.
+        while (World.Instance.TargetManager.TargetCursorInstanceId <= targCursId)
+            if (!WaitTargetingTransition(cursorTimeoutMs, cToken))
+                return false;
+
+        // The cursor may have already been consumed by the time we got here, in which case this returns at once.
+        return WaitCurrentTargetEnd(cToken);
+    }
+
+    /// <summary>
+    ///     Waits for the currently open target cursor, if any, to be consumed or cancelled.
+    /// </summary>
+    /// <param name="cToken">Cancels the wait</param>
+    /// <returns>True if no cursor is open on return, false if the wait timed out</returns>
+    /// <exception cref="OperationCanceledException">The manager is shutting down</exception>
+    private bool WaitCurrentTargetEnd(CancellationToken cToken)
+    {
+        while (World.Instance.TargetManager.IsTargeting)
+            if (!WaitTargetingTransition(TARGET_CURSOR_CLOSE_TIMEOUT_MS, cToken))
+                return false;
+
+        return true;
+    }
+
+    /// <summary>
+    ///     Blocks until targeting state changes or the timeout elapses.
+    /// </summary>
+    /// <param name="milliSecondsTimeout">How long to wait for a transition</param>
+    /// <param name="cToken">Cancels the wait</param>
+    /// <returns>True if a transition was signalled, false on timeout</returns>
+    /// <exception cref="OperationCanceledException">The manager is shutting down</exception>
+    private bool WaitTargetingTransition(int milliSecondsTimeout, CancellationToken cToken)
+    {
+        // Emulating a lightweight AutoResetEvent here (no KObject).
+        // Resetting after the wait can swallow a signal raised in between, but every caller re-reads live
+        // targeting state afterwards, and that read already reflects the transition the signal announced.
+        bool res = _targetWaitHandle.Wait(milliSecondsTimeout, cToken);
+        _targetWaitHandle.Reset();
+        return res;
     }
 
     /// <summary>
@@ -305,7 +588,7 @@ public sealed partial class AutoUnequipActionManager : IDisposable
     private void EnqueueUnequip(IList<Armament> arms)
     {
         // Issue an unequip for each equipped armament.
-        // Future compatability with Cephalopod based players.
+        // Future compatability with Cephalopod-based players.
         foreach (Armament arm in arms ?? [])
             ObjectActionQueue.Instance.Enqueue(
                 CreateUnequipQueueItem(arm.Serial, arm.Layer),
@@ -368,4 +651,23 @@ public sealed partial class AutoUnequipActionManager : IDisposable
     private static partial Regex IsPotionRegex();
 
     #endregion
+
+    /// <summary>
+    ///     One intercepted action, plus what the consumer needs to know about the target cursor it may raise.
+    /// </summary>
+    /// <param name="Op">The original action, deferred until the player has been disarmed</param>
+    /// <param name="Targeting">Whether the action is expected to raise a target cursor</param>
+    /// <param name="TargetCursorTimeoutMs">
+    ///     How long that cursor may take to appear once the action is sent. Ignored when <paramref name="Targeting" />
+    ///     is false.
+    /// </param>
+    private record struct EnqueuedAction(Action Op, bool Targeting, int TargetCursorTimeoutMs)
+    {
+        /// <summary>
+        ///     Creates an action that is not expected to raise a target cursor.
+        /// </summary>
+        /// <param name="op">The original action</param>
+        /// <returns>The wrapped action</returns>
+        public static EnqueuedAction NonTargeting(Action op) => new(op, false, 0);
+    }
 }
