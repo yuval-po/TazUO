@@ -1079,15 +1079,18 @@ namespace ClassicUO.Configuration
             // Splits the old single "unequip for actions" toggle, which governed both spell casts and potion
             // drinking, so a profile that had it on keeps both halves on (and one that had it off, both off).
             //
-            // Deliberately not gated on ProfileMigrationVersion: that counter is global while these fields are
-            // per-profile, so a gate would migrate whichever character logs in first and silently drop the
-            // setting for every other one. Consuming the legacy field makes the step idempotent instead.
+            // Deliberately not gated on ProfileMigrationVersion: that counter is Global while both the JSON
+            // field and its SQL predecessor are per-character, so a gate would migrate whichever character logs
+            // in first and silently drop the setting for every other one. The legacy SQL value is read directly
+            // here for the same reason - the version-6 step above only copies it for that first character.
+            // Both sources are consumed, which is what makes this step idempotent in place of a version gate.
 #pragma warning disable CS0618
-            if (AutoUnequipForActions)
+            if (AutoUnequipForActions || OldAutoUnequipForActions)
             {
                 AutoUnequipForCast = true;
                 AutoUnequipForPotion = true;
                 AutoUnequipForActions = false;
+                OldAutoUnequipForActions = false;
             }
 #pragma warning restore CS0618
 

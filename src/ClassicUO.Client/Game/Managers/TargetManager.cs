@@ -151,10 +151,19 @@ namespace ClassicUO.Game.Managers
         }
     }
 
-    public class TargetChangedEventArgs(uint instance, bool isTargeting) : EventArgs
+    /// <summary>
+    /// One transition of <see cref="TargetManager.IsTargeting"/>, naming the cursor it concerns: the one that
+    /// just appeared on an open, or the one that just went away on a close.
+    /// </summary>
+    /// <param name="cursorInstanceId">The cursor instance, per <see cref="TargetManager.TargetCursorInstanceId"/></param>
+    /// <param name="isTargeting">Whether a cursor is armed as of this transition</param>
+    public class TargetChangedEventArgs(uint cursorInstanceId, bool isTargeting) : EventArgs
     {
+        /// <summary>Whether a cursor is armed as of this transition.</summary>
         public bool IsTargeting { get; } = isTargeting;
-        public uint Instance { get; } = instance;
+
+        /// <summary>The cursor instance this transition concerns.</summary>
+        public uint Instance { get; } = cursorInstanceId;
     }
 
     public sealed class TargetManager
@@ -164,10 +173,18 @@ namespace ClassicUO.Game.Managers
         private readonly byte[] _lastDataBuffer = new byte[19];
         private Action<object> _targetCallback;
         private volatile bool _isTargeting;
+        private volatile uint _targetCursorInstanceId;
 
         public TargetManager(World world) { _world = world; }
 
-        public uint TargetCursorInstanceId { get; private set; }
+        /// <summary>
+        /// Counts the target cursors raised so far, and so identifies the current (or most recent) one.
+        /// Advanced on open only, never on close, so that a reading of it taken at some point in time, paired
+        /// with <see cref="IsTargeting"/>, tells an off-thread observer whether a cursor raised since that
+        /// reading has yet to appear (counter unmoved), is still up, or has already been consumed.
+        /// Volatile for those observers.
+        /// </summary>
+        public uint TargetCursorInstanceId => _targetCursorInstanceId;
 
         public uint SelectedTarget, NewTargetSystemSerial;
 
@@ -240,14 +257,20 @@ namespace ClassicUO.Game.Managers
 
                 _isTargeting = value;
 
-                // This may theoretically throw an overflow error, but it's just theoretical risk;
-                // It'd take around 276 years of non-stop toggling to reach.
-                TargetingChanged?.Invoke(this, new TargetChangedEventArgs(TargetCursorInstanceId++, value));
+                // Ordered after the flag, and kept that way by both fields being volatile. An observer that
+                // catches the gap reads "cursor up, counter not yet moved" and waits for the event below;
+                // the other order would read "counter moved, nothing up" and conclude the cursor had already
+                // come and gone.
+                //
+                // May theoretically overflow, but it'd take around 276 years of non-stop toggling to reach.
+                if (value)
+                    _targetCursorInstanceId++;
+
+                TargetingChanged?.Invoke(this, new TargetChangedEventArgs(_targetCursorInstanceId, value));
             }
         }
 
         public TargetType TargetingType { get; private set; }
-
 
         private void ClearTargetingWithoutTargetCancelPacket()
         {
@@ -295,7 +318,7 @@ namespace ClassicUO.Game.Managers
             TargetingState = targeting;
             TargetingType = cursorType;
 
-            if (lastTargeting)
+            if (!IsTargeting && lastTargeting)
                 CancelTarget();
 
             // https://github.com/andreakarasho/ClassicUO/issues/1373
