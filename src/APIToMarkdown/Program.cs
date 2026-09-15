@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 public static partial class GenDoc
 {
-    private static bool isMainAPI = false;
+    private static bool isMainApi;
 
     public static Dictionary<string, Tuple<StringBuilder, StringBuilder>> GenerateMarkdown(string filePath)
     {
@@ -20,51 +20,67 @@ public static partial class GenDoc
         foreach (ClassDeclarationSyntax classDeclaration in classes)
         {
             string className = classDeclaration.Identifier.Text;
-            isMainAPI = className == "LegionAPI";
+            isMainApi = className == "LegionAPI";
             classesDict.TryAdd(className, new Tuple<StringBuilder, StringBuilder>(new StringBuilder(), new StringBuilder()));
             StringBuilder sb = classesDict[className].Item1;
             StringBuilder python = classesDict[className].Item2;
 
-            if (isMainAPI)
-                GenUniversalMdHeader(sb);
             GenClassHeader(sb, python, classDeclaration);
             GenClassProperties(sb, python, classDeclaration);
             GenClassFields(sb, python, classDeclaration);
             GenClassEnums(sb, python, classDeclaration);
             GenClassMethods(sb, python, classDeclaration);
+
+            if (isMainApi)
+                PrependUniversalMdHeader(sb);
         }
 
         return classesDict;
     }
 
-    private static void GenUniversalMdHeader(StringBuilder sb)
+    /// <summary>
+    /// Builds the shared header for the main API document and inserts it at the front.
+    /// </summary>
+    /// <param name="sb">The finished document body; receives the header at index 0.</param>
+    /// <remarks>
+    /// Must run after the body is generated: the header carries a hash stamp covering that body,
+    /// so neither the stamp nor the generation date beside it can feed back into the hash.
+    /// </remarks>
+    private static void PrependUniversalMdHeader(StringBuilder sb)
     {
+        string hashStamp = DocFileWriter.FormatHashStamp(DocFileWriter.NormalizeLineEndings(sb.ToString()));
+
+        StringBuilder header = new();
+
         // Add Starlight frontmatter
-        sb.AppendLf("---");
-        sb.AppendLf("title: Python API Documentation");
-        sb.AppendLf("description: Automatically generated documentation for the Python API scripting system");
-        sb.AppendLf("tableOfContents:");
-        sb.AppendLf("  minHeadingLevel: 1");
-        sb.AppendLf("  maxHeadingLevel: 4");
-        sb.AppendLf("---");
-        sb.AppendLf();
+        header.AppendLf("---");
+        header.AppendLf("title: Python API Documentation");
+        header.AppendLf("description: Automatically generated documentation for the Python API scripting system");
+        header.AppendLf("tableOfContents:");
+        header.AppendLf("  minHeadingLevel: 1");
+        header.AppendLf("  maxHeadingLevel: 4");
+        header.AppendLf("---");
+        header.AppendLf();
 
-        sb.AppendLf("This is automatically generated documentation for the Python API scripting.  ");
-        sb.AppendLf();
+        header.AppendLf("This is automatically generated documentation for the Python API scripting.  ");
+        header.AppendLf();
 
-        sb.AppendLf(":::note[Usage]");
-        sb.AppendLf("All methods, properties, enums, etc need to pre prefaced with `API.` for example:\n `API.Msg(\"An example\")`.");
-        sb.AppendLf(":::");
-        sb.AppendLf();
+        header.AppendLf(":::note[Usage]");
+        header.AppendLf("All methods, properties, enums, etc need to pre prefaced with `API.` for example:\n `API.Msg(\"An example\")`.");
+        header.AppendLf(":::");
+        header.AppendLf();
 
-        sb.AppendLf();
-        sb.AppendLf($"*This was generated on `{DateTime.Now.Date.ToString("M/d/yy")}`.*");
-        sb.AppendLf();
+        header.AppendLf();
+        header.AppendLf($"*This was generated on `{DateTime.Now.Date:M/d/yy}`.*");
+        header.AppendLf(hashStamp);
+        header.AppendLf();
+
+        sb.Insert(0, header.ToString());
     }
 
     private static void GenClassHeader(StringBuilder sb, StringBuilder python, ClassDeclarationSyntax classDeclaration)
     {
-        if (!isMainAPI)
+        if (!isMainApi)
         {
             // Add Starlight frontmatter for non-main API classes
             sb.AppendLf("---");
@@ -84,14 +100,14 @@ public static partial class GenDoc
         }
 
         // Add class description section for non-main API
-        if (!string.IsNullOrEmpty(GetXmlSummary(classDeclaration)) && !isMainAPI)
+        if (!string.IsNullOrEmpty(GetXmlSummary(classDeclaration)) && !isMainApi)
         {
             sb.AppendLf("## Class Description");
             sb.AppendLf(GetXmlSummary(classDeclaration));
             sb.AppendLf();
         }
 
-        if (!isMainAPI)
+        if (!isMainApi)
         {
             string baseClasses = string.Empty;
             if (classDeclaration.BaseList != null && classDeclaration.BaseList.Types.Count > 0)
@@ -137,7 +153,7 @@ public static partial class GenDoc
                 }
 
                 string space = string.Empty;
-                if (!isMainAPI)
+                if (!isMainApi)
                     space = "    ";
 
                 string pyType = MapCSharpTypeToPython(property.Type.ToString(), "");
@@ -187,7 +203,7 @@ public static partial class GenDoc
 
                     string space = string.Empty;
 
-                    if (!isMainAPI)
+                    if (!isMainApi)
                         space = "    ";
 
                     string pyType = MapCSharpTypeToPython(typeName, "");
@@ -219,7 +235,7 @@ public static partial class GenDoc
                 if (!enumDeclaration.Modifiers.Any(SyntaxKind.PublicKeyword))
                     continue;
 
-                string pySpace = isMainAPI ? string.Empty : "    ";
+                string pySpace = isMainApi ? string.Empty : "    ";
 
                 python.AppendLf();
                 python.AppendLf($"{pySpace}class {enumDeclaration.Identifier.Text}:");
@@ -295,13 +311,13 @@ public static partial class GenDoc
                 sb.AppendLf("---");
                 sb.AppendLf();
 
-                string pySpace = isMainAPI ? string.Empty : "    ";
+                string pySpace = isMainApi ? string.Empty : "    ";
                 string pyReturn = MapCSharpTypeToPython(method.ReturnType.ToString());
 
                 if (pyReturn != "None")
                     pyReturn = $"\"{pyReturn}\"";
 
-                python.AppendLf($"{pySpace}def {method.Identifier.Text}({GetPythonParameters(method.ParameterList.Parameters, !isMainAPI)})"
+                python.AppendLf($"{pySpace}def {method.Identifier.Text}({GetPythonParameters(method.ParameterList.Parameters, !isMainApi)})"
                                   + $" -> {pyReturn}:");
                 if (!string.IsNullOrWhiteSpace(methodSummary))
                 {
@@ -636,38 +652,38 @@ class Program
 
         string docsDir = args[0];
 
-        string pyFilePath = Path.Combine(docsDir, "API.py");
-        if (File.Exists(pyFilePath))
-            File.Delete(pyFilePath);
+        // Ordinal sort keeps the accumulated API.py stable: the caller's paths come from MSBuild
+        // globs, whose order varies by filesystem.
+        var files = args.Skip(1)
+            .Where(path => !string.IsNullOrEmpty(path) && File.Exists(path))
+            .OrderBy(path => path, StringComparer.Ordinal)
+            .ToList();
 
-        var files = args.Skip(1).ToList();
+        if (files.Count == 0)
+            return;
 
-        foreach (string? filePath in files)
+        Directory.CreateDirectory(docsDir);
+
+        StringBuilder pythonStubs = new();
+
+        foreach (string filePath in files)
         {
             Console.WriteLine("Processing file: " + filePath);
 
-            if (string.IsNullOrEmpty(filePath))
-                continue;
-
-            if (!File.Exists(filePath))
-                continue;
-
             Dictionary<string, Tuple<StringBuilder, StringBuilder>> gen = GenDoc.GenerateMarkdown(filePath);
-            //Console.WriteLine($"Generation complete for [{filePath}].");
-
             foreach (KeyValuePair<string, Tuple<StringBuilder, StringBuilder>> kvp in gen)
             {
-                if (!Directory.Exists(docsDir))
-                    Directory.CreateDirectory(docsDir);
-
                 // Normalize to LF line endings to avoid cross-platform conflicts
-                string mdContent = kvp.Value.Item1.ToString().Replace("\r\n", "\n").Replace("\r", "\n");
-                string pyContent = kvp.Value.Item2.ToString().Replace("\r\n", "\n").Replace("\r", "\n");
+                string mdContent = DocFileWriter.NormalizeLineEndings(kvp.Value.Item1.ToString());
 
-                File.WriteAllText(Path.Combine(docsDir, $"{kvp.Key}.md"), mdContent);
-                File.AppendAllText(pyFilePath, pyContent);
+                DocFileWriter.WriteIfChanged(Path.Combine(docsDir, $"{kvp.Key}.md"), mdContent);
+                pythonStubs.Append(DocFileWriter.NormalizeLineEndings(kvp.Value.Item2.ToString()));
             }
         }
+
+        // Written once at the end rather than appended per class, so a partial run cannot leave a
+        // truncated stub file behind.
+        DocFileWriter.WriteIfChanged(Path.Combine(docsDir, "API.py"), pythonStubs.ToString());
     }
 }
 
