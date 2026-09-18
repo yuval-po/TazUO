@@ -1689,6 +1689,9 @@ namespace ClassicUO.Configuration
                                     case GumpType.PaperDoll:
                                         gump = new ModernPaperdoll(world, world.Player.Serial);
                                         break;
+                                    case GumpType.HealthBarCollector:
+                                        gump = new HealthbarCollectorGump(world);
+                                        break;
                                 }
 
                                 if (gump != null)
