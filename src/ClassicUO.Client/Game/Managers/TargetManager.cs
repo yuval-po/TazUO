@@ -179,7 +179,7 @@ namespace ClassicUO.Game.Managers
 
         /// <summary>
         /// Counts the target cursors raised so far, and so identifies the current (or most recent) one.
-        /// Advanced on open only, never on close, so that a reading of it taken at some point in time, paired
+        /// Advanced on arm only, never on close, so that a reading of it taken at some point in time, paired
         /// with <see cref="IsTargeting"/>, tells an off-thread observer whether a cursor raised since that
         /// reading has yet to appear (counter unmoved), is still up, or has already been consumed.
         /// Volatile for those observers.
@@ -239,7 +239,7 @@ namespace ClassicUO.Game.Managers
         public CursorTarget TargetingState { get; private set; } = CursorTarget.Invalid;
 
         /// <summary>
-        /// Raised on the main thread whenever <see cref="IsTargeting"/> transitions, with the new state.
+        /// Raised on the main thread whenever a cursor is armed or the armed one goes away.
         /// Handlers run inside the targeting mutation, so they must be cheap and must not re-enter the manager.
         /// </summary>
         public event EventHandler<TargetChangedEventArgs> TargetingChanged;
@@ -252,7 +252,10 @@ namespace ClassicUO.Game.Managers
             get => _isTargeting;
             private set
             {
-                if (_isTargeting == value)
+                // Arming counts even when a cursor is already up: the server replaces one cursor with another
+                // without an intervening close, and an observer keyed on the counter would otherwise never see
+                // its own cursor appear. Clearing an already-clear cursor, on the other hand, is a no-op.
+                if (!value && !_isTargeting)
                     return;
 
                 _isTargeting = value;

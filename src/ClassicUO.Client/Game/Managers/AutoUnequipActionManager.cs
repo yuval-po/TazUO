@@ -33,9 +33,15 @@ public sealed partial class AutoUnequipActionManager : IDisposable
     {
         /// <summary>
         ///     Target cursor instance counter as it read immediately before the action was sent.
-        ///     Only meaningful once <see cref="Sent" /> has completed.
+        ///     Only meaningful once <see cref="Sent" /> has completed and <see cref="WasSent" /> is set.
         /// </summary>
         public uint TargetCursorIdAtDispatch;
+
+        /// <summary>
+        ///     Whether the action actually ran. <see cref="ObjectActionQueue" /> completes <see cref="Sent" />
+        ///     for a canceled item too, in which case nothing was sent and there is nothing to wait out.
+        /// </summary>
+        public bool WasSent;
 
         /// <summary>
         ///     Completes once the action has been invoked. A task rather than an event because the queue item
@@ -92,7 +98,7 @@ public sealed partial class AutoUnequipActionManager : IDisposable
     ///     The queue releases at most one item per <see cref="GlobalActionCooldown" />, and stalls entirely while the
     ///     cursor is holding an item, so this has to tolerate a badly backed-up queue.
     /// </summary>
-    private const int BATCH_DISPATCH_TIMEOUT_MS = 20_000;
+    private const int BATCH_DISPATCH_TIMEOUT_MS = 15_000;
 
     /// <summary>
     ///     Headroom added on top of a spell's effective cast time to cover the round trip to the server.
@@ -119,6 +125,24 @@ public sealed partial class AutoUnequipActionManager : IDisposable
     ///     How long to wait for an open target cursor to be consumed or canceled before re-arming regardless.
     /// </summary>
     private const int TARGET_CURSOR_CLOSE_TIMEOUT_MS = 10_000;
+
+    /// <summary>
+    ///     How many targeting transitions a single wait will sit through before giving up. Each transition
+    ///     re-arms the timeout, so a player cycling cursors would otherwise park a batch indefinitely.
+    /// </summary>
+    private const int MAX_TARGETING_TRANSITIONS_PER_WAIT = 16;
+
+    /// <summary>
+    ///     Stand-in cast time for a spell <see cref="SpellVisualRangeManager" /> knows nothing about. Small enough
+    ///     to stay out of the way, but non-zero: re-arming the instant the cast is sent is what disrupts it.
+    /// </summary>
+    private const int UNKNOWN_SPELL_CAST_TIME_MS = 1500;
+
+    /// <summary>
+    ///     Ceiling on the post-send wait for a spell that raises no cursor. Cast times come from a user-editable
+    ///     config, so a bad entry must not strand the player disarmed.
+    /// </summary>
+    private const int SPELL_CAST_MAX_WAIT_MS = 10_000;
 
     private readonly World _world;
     private readonly CancellationTokenSource _cTokenSource = new();
@@ -213,8 +237,10 @@ public sealed partial class AutoUnequipActionManager : IDisposable
         if (!ShouldInterceptCast(spellIndex))
             return false;
 
-        SpellVisualRangeManager.Instance.TryGetSpellInfo(spellIndex, out SpellRangeInfo spell);
-        int castTimeMs = GetEffectiveCastTimeMs(spell);
+        // A spell the indicator config doesn't cover - or one cast before that config finished loading - falls
+        // back to a token cast time rather than to no wait at all, which would re-arm straight into the cast.
+        bool known = SpellVisualRangeManager.Instance.TryGetSpellInfo(spellIndex, out SpellRangeInfo spell);
+        int castTimeMs = known ? GetEffectiveCastTimeMs(spell) : UNKNOWN_SPELL_CAST_TIME_MS;
 
         return _flushChannel.Writer.TryWrite(
             new EnqueuedAction(
@@ -515,6 +541,7 @@ public sealed partial class AutoUnequipActionManager : IDisposable
                 // tight as UO allows. The protocol carries no action-to-target linkage, so a targeting operation
                 // interleaving between this line and the server's reply can still fool us.
                 dispatch.TargetCursorIdAtDispatch = _world.TargetManager.TargetCursorInstanceId;
+                dispatch.WasSent = true;
                 op();
             },
             _ => dispatch.Sent.TrySetResult()
@@ -535,13 +562,15 @@ public sealed partial class AutoUnequipActionManager : IDisposable
     /// </remarks>
     private async Task WaitOutAction(ActionDispatch dispatch, EnqueuedAction action, CancellationToken cToken)
     {
-        if (!await WaitForDispatch(dispatch, cToken))
+        // A canceled queue item completes the dispatch without running, so nothing was sent and there is no
+        // cursor or cast to sit through - the re-equip can go straight in.
+        if (!await WaitForDispatch(dispatch, cToken) || !dispatch.WasSent)
             return;
 
         if (action.Targeting)
             await WaitTargetEnd(dispatch.TargetCursorIdAtDispatch, action.CursorTimeoutMs, cToken);
         else
-            await Task.Delay(action.CastTimeMs, cToken);
+            await Task.Delay(Math.Min(action.CastTimeMs, SPELL_CAST_MAX_WAIT_MS), cToken);
     }
 
     /// <summary>
@@ -599,9 +628,13 @@ public sealed partial class AutoUnequipActionManager : IDisposable
     /// </remarks>
     private async Task<bool> WaitTargetEnd(uint targCursId, int cursorTimeoutMs, CancellationToken cToken)
     {
+        int transitions = 0;
+
         while (_world.TargetManager.TargetCursorInstanceId <= targCursId)
-            if (!await WaitTargetingTransition(cursorTimeoutMs, cToken))
+        {
+            if (!await WaitTargetingTransition(cursorTimeoutMs, cToken) || ++transitions >= MAX_TARGETING_TRANSITIONS_PER_WAIT)
                 return false;
+        }
 
         // The cursor may have already been consumed by the time we got here, in which case this returns at once.
         return await WaitCurrentTargetEnd(cToken);
@@ -611,13 +644,18 @@ public sealed partial class AutoUnequipActionManager : IDisposable
     ///     Waits for the currently open target cursor, if any, to be consumed or cancelled.
     /// </summary>
     /// <param name="cToken">Cancels the wait</param>
-    /// <returns>True if no cursor is open on return, false if the wait timed out</returns>
+    /// <returns>True if no cursor is open on return, false if the wait timed out or ran out of patience</returns>
     /// <exception cref="OperationCanceledException">The manager is shutting down</exception>
     private async Task<bool> WaitCurrentTargetEnd(CancellationToken cToken)
     {
+        int transitions = 0;
+
         while (_world.TargetManager.IsTargeting)
-            if (!await WaitTargetingTransition(TARGET_CURSOR_CLOSE_TIMEOUT_MS, cToken))
+        {
+            if (!await WaitTargetingTransition(TARGET_CURSOR_CLOSE_TIMEOUT_MS, cToken) ||
+                ++transitions >= MAX_TARGETING_TRANSITIONS_PER_WAIT)
                 return false;
+        }
 
         return true;
     }
@@ -717,7 +755,7 @@ public sealed partial class AutoUnequipActionManager : IDisposable
     ///     How long the action takes to complete once sent, for an action that raises no cursor to time itself
     ///     against. Zero for one that is done the moment its packet leaves, such as drinking a potion.
     /// </param>
-    private record struct EnqueuedAction(Action Op, bool Targeting, int CursorTimeoutMs, int CastTimeMs)
+    private readonly record struct EnqueuedAction(Action Op, bool Targeting, int CursorTimeoutMs, int CastTimeMs)
     {
         /// <summary>
         ///     Whether re-arming has to wait on anything at all once this action has been sent. A spell with no
