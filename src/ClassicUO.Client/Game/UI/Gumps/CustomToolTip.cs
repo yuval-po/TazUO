@@ -6,6 +6,7 @@ using ClassicUO.Renderer;
 using ClassicUO.Utility;
 using Microsoft.Xna.Framework;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace ClassicUO.Game.UI.Gumps
 {
@@ -42,7 +43,8 @@ namespace ClassicUO.Game.UI.Gumps
 
         public void RemoveHoverReference() => hoverReference = null;
 
-        private static TextBox.RTLOptions ToolTipOptions => new TextBox.RTLOptions() { Align = ProfileManager.CurrentProfile.LeftAlignToolTips ? FontStashSharp.RichText.TextHorizontalAlignment.Left : FontStashSharp.RichText.TextHorizontalAlignment.Center };
+        // LeftAlignToolTips moves the whole box, so the text inside stays centered either way.
+        private static TextBox.RTLOptions ToolTipOptions => TextBox.RTLOptions.DefaultCentered();
 
         private void BuildGump()
         {
@@ -177,7 +179,7 @@ namespace ClassicUO.Game.UI.Gumps
                 hue_vec
             );
 
-            var borderTexture = SolidColorTextureCache.GetTexture(Color.Gray);
+            Texture2D borderTexture = SolidColorTextureCache.GetTexture(Color.Gray);
 
             int bgX = x - 4;
             int bgY = y - 2;

@@ -9,6 +9,7 @@ using ClassicUO.Renderer;
 using ClassicUO.Utility;
 using ClassicUO.Utility.Logging;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace ClassicUO.Game.UI
 {
@@ -92,18 +93,8 @@ namespace ClassicUO.Game.UI
                 zoom = ProfileManager.CurrentProfile.TooltipDisplayZoom / 100f;
             }
 
-
             if (_textBox == null || _dirty)
             {
-                FontStashSharp.RichText.TextHorizontalAlignment align = FontStashSharp.RichText.TextHorizontalAlignment.Center;
-                if (ProfileManager.CurrentProfile != null)
-                {
-                    if (ProfileManager.CurrentProfile.LeftAlignToolTips)
-                        align = FontStashSharp.RichText.TextHorizontalAlignment.Left;
-                    if (SerialHelper.IsMobile(Serial) && ProfileManager.CurrentProfile.ForceCenterAlignTooltipMobiles)
-                        align = FontStashSharp.RichText.TextHorizontalAlignment.Center;
-                }
-
                 string finalString = Managers.ToolTipOverrideData.ResolveTooltipText(_world, Serial, _textHTML, out _borderHueOverride);
 
                 if (!string.IsNullOrEmpty(Prefix))
@@ -122,10 +113,15 @@ namespace ClassicUO.Game.UI
                         font = ProfileManager.CurrentProfile.SelectedToolTipFont;
                         fontSize = ProfileManager.CurrentProfile.SelectedToolTipFontSize;
                     }
-                    TextBox.RTLOptions tooltipOptions = new() { Align = align, StrokeEffect = true };
-                    _textBox = TextBox.GetOne(TextBox.ConvertHtmlToFontStashSharpCommand(finalString).Trim(), font, fontSize, hue, tooltipOptions);
 
-                    //_textBox.Width = _textBox.MeasuredSize.X + 10;
+                    // Options only apply on creation - the reuse path below keeps the ones the pooled box already carries.
+                    _textBox = TextBox.GetOne(
+                        TextBox.ConvertHtmlToFontStashSharpCommand(finalString).Trim(),
+                        font,
+                        fontSize,
+                        hue,
+                        TextBox.RTLOptions.DefaultCenterStroked()
+                    );
                 }
                 else
                 {
@@ -155,6 +151,10 @@ namespace ClassicUO.Game.UI
             int z_width = _textBox.Width + 8;
             int z_height = _textBox.Height + 8;
 
+            // The whole box moves before the clamp below gets a chance to pull it back on screen.
+            if (ShouldPlaceLeftOfCursor())
+                x -= z_width;
+
             if (x < 0)
             {
                 x = 0;
@@ -173,55 +173,49 @@ namespace ClassicUO.Game.UI
                 y = ScaleHelper.LogicalWindowHeight - z_height;
             }
 
-            X = x - 4;
-            Y = y - 2;
-            Width = (int)(z_width * zoom) + 1;
-            Height = (int)(z_height * zoom) + 1;
-
-            Vector3 hue_vec = ShaderHueTranslator.GetHueVector(1, false, alpha);
-
-            if (ProfileManager.CurrentProfile != null)
-                hue_vec.X = ProfileManager.CurrentProfile.ToolTipBGHue;
-
-            batcher.Draw
-            (
-                SolidColorTextureCache.GetTexture(Color.White),
-                new Rectangle
-                (
-                    x - 4,
-                    y - 2,
-                    (int)(z_width * zoom),
-                    (int)(z_height * zoom)
-                ),
-                hue_vec
-            );
-
-            var borderTexture = SolidColorTextureCache.GetTexture(Color.Gray);
-
             int bgX = x - 4;
             int bgY = y - 2;
             int bgWidth = (int)(z_width * zoom);
             int bgHeight = (int)(z_height * zoom);
 
+            X = bgX;
+            Y = bgY;
+            Width = bgWidth + 1;
+            Height = bgHeight + 1;
+
+            Vector3 hueVec = ShaderHueTranslator.GetHueVector(1, false, alpha);
+
+            if (ProfileManager.CurrentProfile != null)
+                hueVec.X = ProfileManager.CurrentProfile.ToolTipBGHue;
+
+            batcher.Draw
+            (
+                SolidColorTextureCache.GetTexture(Color.White),
+                new Rectangle(bgX, bgY, bgWidth, bgHeight),
+                hueVec
+            );
+
+            Texture2D borderTexture = SolidColorTextureCache.GetTexture(Color.Gray);
+
             // A matched tooltip override draws a colored accent border on the left and top edges only.
             if (_borderHueOverride >= 0)
             {
-                hue_vec = ShaderHueTranslator.GetHueVector(_borderHueOverride, false, alpha);
+                hueVec = ShaderHueTranslator.GetHueVector(_borderHueOverride, false, alpha);
                 borderTexture = SolidColorTextureCache.GetTexture(Color.White);
 
                 const int leftWidth = 2;
-                int topHeight = Managers.ToolTipOverrideData.BorderWidth;
+                const int topHeight = Managers.ToolTipOverrideData.BorderWidth;
 
                 // Both edges sit just outside the background so they don't cover the tooltip text.
                 // Top edge spans the width plus the top-left corner.
-                batcher.Draw(borderTexture, new Rectangle(bgX - leftWidth, bgY - topHeight, bgWidth + leftWidth, topHeight), hue_vec);
+                batcher.Draw(borderTexture, new Rectangle(bgX - leftWidth, bgY - topHeight, bgWidth + leftWidth, topHeight), hueVec);
                 // Left edge.
-                batcher.Draw(borderTexture, new Rectangle(bgX - leftWidth, bgY, leftWidth, bgHeight), hue_vec);
+                batcher.Draw(borderTexture, new Rectangle(bgX - leftWidth, bgY, leftWidth, bgHeight), hueVec);
             }
             else
             {
-                hue_vec = ShaderHueTranslator.GetHueVector(0, false, alpha);
-                batcher.DrawRectangle(borderTexture, bgX, bgY, bgWidth, bgHeight, hue_vec);
+                hueVec = ShaderHueTranslator.GetHueVector(0, false, alpha);
+                batcher.DrawRectangle(borderTexture, bgX, bgY, bgWidth, bgHeight, hueVec);
             }
 
             _textBox.Draw(batcher, x, y);
@@ -260,6 +254,22 @@ namespace ClassicUO.Game.UI
             }
         }
 
+
+        /// <summary>
+        /// Whether the tooltip box hangs off the left of the cursor rather than the right. This is
+        /// placement only - the text stays centered inside the box either way.
+        /// </summary>
+        private bool ShouldPlaceLeftOfCursor()
+        {
+            Profile profile = ProfileManager.CurrentProfile;
+
+            if (profile == null || !profile.LeftAlignToolTips)
+            {
+                return false;
+            }
+
+            return !(SerialHelper.IsMobile(Serial) && profile.ForceCenterAlignTooltipMobiles);
+        }
 
         private string ReadProperties(uint serial, out string htmltext)
         {

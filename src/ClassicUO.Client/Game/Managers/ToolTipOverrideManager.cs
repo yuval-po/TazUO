@@ -106,10 +106,7 @@ namespace ClassicUO.Game.Managers
         }
 
         /// <summary>All overrides from every scope, most-specific first, used for tooltip processing.</summary>
-        public static ToolTipOverrideData[] GetAllToolTipOverrides()
-        {
-            return TooltipOverridesConfig.Current.GetAllOverrides();
-        }
+        public static ToolTipOverrideData[] GetAllToolTipOverrides() => TooltipOverridesConfig.Current.GetAllOverrides();
 
         /// <summary>Copies the given scope's tooltip overrides to the clipboard as JSON.</summary>
         public static void ExportOverrideSettings(World world, SettingsScope scope)

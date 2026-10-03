@@ -1,4 +1,5 @@
 ﻿using System;
+using ClassicUO.Configuration;
 using ClassicUO.Game.UI.Controls;
 using ClassicUO.Renderer;
 
@@ -75,6 +76,10 @@ namespace ClassicUO.Game.UI.Gumps
 
             int z_width = Width + 24;
             int z_height = Height + 8;
+
+            // The whole group moves before the clamp below gets a chance to pull it back on screen.
+            if (ProfileManager.CurrentProfile?.LeftAlignToolTips == true)
+                x -= z_width;
 
             if (x < 0)
             {
