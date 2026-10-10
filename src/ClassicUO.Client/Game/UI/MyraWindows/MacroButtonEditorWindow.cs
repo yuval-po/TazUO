@@ -4,6 +4,7 @@ using System.Linq;
 using ClassicUO.Configuration;
 using ClassicUO.Game.Managers;
 using ClassicUO.Game.UI.Controls;
+using ClassicUO.Game.UI.Controls.ResizableComponents;
 using ClassicUO.Game.UI.Gumps;
 using ClassicUO.Game.UI.MyraWindows.Theme;
 using ClassicUO.Game.UI.MyraWindows.Widgets;
@@ -143,6 +144,7 @@ public sealed class MacroButtonEditorWindow : MyraControl
     {
         _macro = macro;
         _committed = MacroButtonAppearance.Capture(macro);
+        _rootWindow.Help = new ControlHelp("tazuo.org");
 
         CreatePreview();
         Build();
