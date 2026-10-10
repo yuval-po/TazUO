@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using ClassicUO.Configuration;
@@ -130,6 +131,8 @@ public class ResizableWindow : Window, IDisposable
     private IconButton _minMaxButton;
 
     private IconButton _resetSizeButton;
+
+    private Widget _helpButton;
 
     private Widget _content;
 
@@ -362,6 +365,9 @@ public class ResizableWindow : Window, IDisposable
     /// <param name="e">An optional property changed event arguments, if the call was triggered by property changes</param>
     private void Configure(PropertyChangedEventArgs e)
     {
+        TitlePanel.Padding = new Thickness(0, 1, 0, 3);
+        _titleLabel.VerticalAlignment = VerticalAlignment.Center;
+
         if (e == null || e.PropertyName == nameof(Props.InitialSizeStore))
         {
             Point? initialSize = Props.InitialSizeStore?.Get();
@@ -386,6 +392,29 @@ public class ResizableWindow : Window, IDisposable
             ConfigureResizeResetButton();
         else
             RemoveResizeResetButton();
+
+        if (Props.Help != null)
+            ConfigureHelpButton();
+        else
+        {
+            TitlePanel.Widgets.Remove(_helpButton);
+            _helpButton = null;
+        }
+    }
+
+    private void ConfigureHelpButton()
+    {
+        Debug.Assert(Props.Help != null, "Props.Help is null - this indicates an unguarded call");
+        _helpButton = Props.Help;
+
+        int closeButtonIdx = TitlePanel.Widgets.IndexOf(CloseButton);
+        if (closeButtonIdx < 0)
+        {
+            TitlePanel.Widgets.Add(_helpButton);
+            return;
+        }
+
+        TitlePanel.Widgets.Insert(closeButtonIdx, _helpButton);
     }
 
     /// <summary>
